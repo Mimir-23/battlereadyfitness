@@ -1,0 +1,15 @@
+{
+  "projects": {
+    "default": "iauto-d3a10"
+  },
+  "targets": {
+    "iauto-d3a10": {
+      "hosting": {
+        "iauto-site": [
+          "iauto-d3a10"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

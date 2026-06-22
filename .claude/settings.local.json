@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:www.battlereadyfitness.com)",
+      "PowerShell(python --version; python \"C:\\\\Users\\\\deivi\\\\.claude\\\\skills\\\\ui-ux-pro-max\\\\scripts\\\\search.py\" \"gym fitness bootcamp tactical military strength training landing page intense powerful\" --design-system -p \"Battle Ready Fitness\")",
+      "PowerShell(npm run *)",
+      "PowerShell(Remove-Item *)",
+      "PowerShell(npm install *)"
+    ]
+  }
+}
