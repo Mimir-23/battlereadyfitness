@@ -5,7 +5,7 @@ import { EASE } from '../../lib/motion'
 /** Counts up from 0 to `value` the first time it scrolls into view. */
 export default function Counter({ value, suffix }) {
   const ref = useRef(null)
-  const inView = useInView(ref, { once: true, amount: 0.3 })
+  const inView = useInView(ref, { once: true, amount: 0.01, margin: '0px 0px 120px 0px' })
   const mv = useMotionValue(0)
   const [display, setDisplay] = useState(0)
 

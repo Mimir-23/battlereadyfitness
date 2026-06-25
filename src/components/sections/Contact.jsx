@@ -15,7 +15,7 @@ import {
   CITY,
   MAPS_EMBED,
 } from '../../data/site'
-import { fadeUp, stagger, Reveal } from '../../lib/motion'
+import { fadeUp, stagger, Reveal, VIEWPORT } from '../../lib/motion'
 import SectionHeading from '../ui/SectionHeading'
 
 export default function Contact() {
@@ -45,7 +45,7 @@ export default function Contact() {
           variants={stagger}
           initial="hidden"
           whileInView="show"
-          viewport={{ once: true, amount: 0.2 }}
+          viewport={VIEWPORT}
           className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4"
         >
           {cards.map((c) => {

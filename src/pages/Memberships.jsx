@@ -1,7 +1,7 @@
 import { motion } from 'motion/react'
 import { FaCheck, FaWhatsapp, FaArrowRightLong } from 'react-icons/fa6'
 import { PLANS, RECESS_MEMBERSHIPS, WHATSAPP } from '../data/site'
-import { fadeUp, stagger, Reveal } from '../lib/motion'
+import { fadeUp, stagger, Reveal, VIEWPORT } from '../lib/motion'
 import { usePageTitle } from '../lib/usePageTitle'
 import PageBanner from '../components/ui/PageBanner'
 import SectionHeading from '../components/ui/SectionHeading'
@@ -30,7 +30,7 @@ export default function Memberships() {
             variants={stagger}
             initial="hidden"
             whileInView="show"
-            viewport={{ once: true, amount: 0.15 }}
+            viewport={VIEWPORT}
             className="mt-14 grid gap-5 lg:grid-cols-3"
           >
             {PLANS.map((plan) => (

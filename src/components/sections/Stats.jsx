@@ -1,6 +1,6 @@
 import { motion } from 'motion/react'
 import { STATS } from '../../data/site'
-import { fadeUp, stagger } from '../../lib/motion'
+import { fadeUp, stagger, VIEWPORT } from '../../lib/motion'
 import Counter from '../ui/Counter'
 
 export default function Stats() {
@@ -10,7 +10,7 @@ export default function Stats() {
         variants={stagger}
         initial="hidden"
         whileInView="show"
-        viewport={{ once: true, amount: 0.2 }}
+        viewport={VIEWPORT}
         className="mx-auto grid max-w-7xl grid-cols-2 gap-8 px-5 lg:grid-cols-4 lg:px-8"
       >
         {STATS.map((s) => (

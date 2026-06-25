@@ -1,7 +1,7 @@
 import { motion } from 'motion/react'
 import { FaArrowRightLong } from 'react-icons/fa6'
 import { WHY } from '../../data/site'
-import { fadeUp, stagger, Reveal } from '../../lib/motion'
+import { fadeUp, stagger, Reveal, VIEWPORT } from '../../lib/motion'
 import SectionHeading from '../ui/SectionHeading'
 import ParallaxImage from '../ui/ParallaxImage'
 import CTAButton from '../ui/CTAButton'
@@ -51,7 +51,7 @@ export default function WhyUs() {
             variants={stagger}
             initial="hidden"
             whileInView="show"
-            viewport={{ once: true, amount: 0.2 }}
+            viewport={VIEWPORT}
             className="mt-8 grid gap-4 sm:grid-cols-2"
           >
             {WHY.map((w) => {

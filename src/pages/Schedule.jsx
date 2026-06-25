@@ -7,7 +7,7 @@ import {
   HOURS,
   WHATSAPP,
 } from '../data/site'
-import { fadeUp, stagger, Reveal } from '../lib/motion'
+import { fadeUp, stagger, Reveal, VIEWPORT } from '../lib/motion'
 import { usePageTitle } from '../lib/usePageTitle'
 import PageBanner from '../components/ui/PageBanner'
 import SectionHeading from '../components/ui/SectionHeading'
@@ -109,7 +109,7 @@ export default function Schedule() {
             variants={stagger}
             initial="hidden"
             whileInView="show"
-            viewport={{ once: true, amount: 0.05 }}
+            viewport={VIEWPORT}
             className="mt-10 space-y-4 md:hidden"
           >
             {SCHEDULE.map((row) => (
@@ -174,7 +174,7 @@ export default function Schedule() {
           variants={stagger}
           initial="hidden"
           whileInView="show"
-          viewport={{ once: true, amount: 0.3 }}
+          viewport={VIEWPORT}
           className="mx-auto grid max-w-5xl gap-6 px-5 sm:grid-cols-3 lg:px-8"
         >
           {HOURS.map(([d, t]) => (
