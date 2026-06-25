@@ -5,7 +5,9 @@
       "PowerShell(python --version; python \"C:\\\\Users\\\\deivi\\\\.claude\\\\skills\\\\ui-ux-pro-max\\\\scripts\\\\search.py\" \"gym fitness bootcamp tactical military strength training landing page intense powerful\" --design-system -p \"Battle Ready Fitness\")",
       "PowerShell(npm run *)",
       "PowerShell(Remove-Item *)",
-      "PowerShell(npm install *)"
+      "PowerShell(npm install *)",
+      "PowerShell(node -e \"console.log\\(require\\('./node_modules/react-router-dom/package.json'\\).version\\)\")",
+      "PowerShell($ErrorActionPreference='SilentlyContinue'; $p = Get-Command python3.exe, python.exe, py.exe 2>$null | Select-Object -First 1 -ExpandProperty Source; if \\($p\\) { Write-Output \"FOUND: $p\" } else { Write-Output \"NONE\" })"
     ]
   }
 }

@@ -40,6 +40,12 @@
   --animate-marquee-rev: marquee-rev 32s linear infinite;
   --animate-kenburns: kenburns 22s ease-in-out infinite alternate;
   --animate-float: float 3s ease-in-out infinite;
+  --animate-glow: glow 3.5s ease-in-out infinite;
+  --animate-ember: ember 7s linear infinite;
+  --animate-gradient: gradient-pan 6s linear infinite;
+  --animate-shimmer: shimmer 2.2s linear infinite;
+  --animate-blink: blink 1.4s steps(2) infinite;
+  --animate-spin-slow: spin 14s linear infinite;
 }
 
 @keyframes pulse-ring {
@@ -115,6 +121,67 @@
   }
   50% {
     transform: translateY(-6px);
+  }
+}
+
+/* Pulsing yellow glow for featured surfaces */
+@keyframes glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 1px rgba(255, 210, 0, 0.25),
+      0 20px 60px -24px rgba(255, 210, 0, 0.35);
+  }
+  50% {
+    box-shadow: 0 0 0 1px rgba(255, 210, 0, 0.6),
+      0 28px 80px -20px rgba(255, 210, 0, 0.6);
+  }
+}
+
+/* Rising ember particle (fire/intensity motif) */
+@keyframes ember {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.9;
+  }
+  90% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(-120px) scale(0.4);
+    opacity: 0;
+  }
+}
+
+/* Animated gradient sweep for text / borders */
+@keyframes gradient-pan {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+/* Light sweep for skeletons / placeholders */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.2;
   }
 }
 
@@ -223,6 +290,104 @@ html.lenis body {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-battle-deep);
+}
+
+/* ---------- Premium tactical utilities ---------- */
+
+/* Animated gradient text (battle yellow → bright → deep) */
+.text-gradient-battle {
+  background: linear-gradient(
+    100deg,
+    var(--color-battle-deep),
+    var(--color-battle-bright),
+    var(--color-battle),
+    var(--color-battle-bright),
+    var(--color-battle-deep)
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: var(--animate-gradient);
+}
+
+/* Soft yellow halo behind hero / featured elements */
+.glow-battle {
+  box-shadow:
+    0 0 0 1px rgba(255, 210, 0, 0.18),
+    0 24px 70px -28px rgba(255, 210, 0, 0.5);
+}
+
+/* Film-grain overlay for cinematic depth (fixed, non-interactive) */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Tactical corner brackets — wrap any relatively-positioned box */
+.corner-frame::before,
+.corner-frame::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-color: var(--color-battle);
+  border-style: solid;
+  border-width: 0;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+.corner-frame::before {
+  top: 10px;
+  left: 10px;
+  border-top-width: 2px;
+  border-left-width: 2px;
+}
+.corner-frame::after {
+  bottom: 10px;
+  right: 10px;
+  border-bottom-width: 2px;
+  border-right-width: 2px;
+}
+.corner-frame:hover::before,
+.corner-frame:hover::after {
+  opacity: 1;
+}
+
+/* Cursor-tracking spotlight glow (reads --mx / --my set in JS) */
+.spotlight::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  background: radial-gradient(
+    320px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(255, 210, 0, 0.14),
+    transparent 60%
+  );
+  pointer-events: none;
+}
+.spotlight:hover::before {
+  opacity: 1;
+}
+
+/* ---------- Accessible focus ring ---------- */
+:focus-visible {
+  outline: 2px solid var(--color-battle);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+/* Don't double up the native outline when we draw our own */
+a:focus:not(:focus-visible),
+button:focus:not(:focus-visible) {
+  outline: none;
 }
 
 /* Respect reduced motion */
