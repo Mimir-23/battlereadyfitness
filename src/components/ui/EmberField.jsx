@@ -14,7 +14,14 @@ const POOL = Array.from({ length: 28 }, (_, i) => ({
   bottom: Math.random() * 30,
 }))
 
+// Animated, shadowed particles are costly on phone GPUs — desktop/mouse only.
+const isDesktopPointer =
+  typeof window !== 'undefined' &&
+  window.matchMedia('(hover: hover) and (pointer: fine)').matches
+
 export default function EmberField({ count = 18 }) {
+  if (!isDesktopPointer) return null
+
   const embers = POOL.slice(0, count)
 
   return (

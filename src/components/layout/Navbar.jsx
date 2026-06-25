@@ -52,7 +52,7 @@ export default function Navbar() {
       transition={{ duration: 0.6, ease: EASE }}
       className={`fixed inset-x-0 top-0 z-50 transition-colors duration-300 ${
         scrolled
-          ? 'border-b border-iron bg-ink/90 backdrop-blur-md'
+          ? 'border-b border-iron bg-ink/95 lg:bg-ink/90 lg:backdrop-blur-md'
           : 'border-b border-transparent bg-transparent'
       }`}
     >
