@@ -34,7 +34,7 @@ const SOCIALS = [
 
 /** Renders a footer nav entry as a route link or home-anchored hash link. */
 function FootLink({ item }) {
-  const cls = 'text-sm text-fog transition-colors hover:text-battle'
+  const cls = 'inline-block py-1 text-sm text-fog transition-colors hover:text-battle'
   if (item.to) {
     return (
       <Link to={item.to} className={cls}>
@@ -103,7 +103,7 @@ export default function Footer() {
               <li key={p.name}>
                 <Link
                   to={{ pathname: '/', hash: '#programs' }}
-                  className="text-sm text-fog transition-colors hover:text-battle"
+                  className="inline-block py-1 text-sm text-fog transition-colors hover:text-battle"
                 >
                   {p.name}
                 </Link>
@@ -150,7 +150,7 @@ export default function Footer() {
             <li>
               <a
                 href={PHONE_HREF}
-                className="flex items-center gap-3 text-fog transition-colors hover:text-battle"
+                className="flex items-center gap-3 py-1 text-fog transition-colors hover:text-battle"
               >
                 <FaPhone className="shrink-0 text-battle" size={15} /> {PHONE}
               </a>
@@ -160,7 +160,7 @@ export default function Footer() {
                 href={WHATSAPP}
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center gap-3 text-fog transition-colors hover:text-battle"
+                className="flex items-center gap-3 py-1 text-fog transition-colors hover:text-battle"
               >
                 <FaMobileScreenButton className="shrink-0 text-battle" size={15} /> {WHATSAPP_NUMBER}
               </a>
@@ -168,7 +168,7 @@ export default function Footer() {
             <li>
               <a
                 href={`mailto:${EMAIL}`}
-                className="flex items-center gap-3 break-all text-fog transition-colors hover:text-battle"
+                className="flex items-center gap-3 break-all py-1 text-fog transition-colors hover:text-battle"
               >
                 <FaEnvelope className="shrink-0 text-battle" size={15} />
                 {EMAIL}

@@ -73,7 +73,7 @@ export default function Programs() {
                   </p>
                   <Link
                     to="/memberships"
-                    className="mt-4 inline-flex items-center gap-2 font-head text-xs font-semibold uppercase tracking-widest text-battle transition-all group-hover:gap-3"
+                    className="mt-3 inline-flex items-center gap-2 py-2 font-head text-xs font-semibold uppercase tracking-widest text-battle transition-all group-hover:gap-3"
                   >
                     Get Started Now <FaArrowRightLong size={12} />
                   </Link>
@@ -95,7 +95,7 @@ export default function Programs() {
             <div className="mt-6">
               <Link
                 to="/memberships"
-                className="inline-flex items-center gap-2 font-head text-sm font-bold uppercase tracking-widest text-ink"
+                className="inline-flex items-center gap-2 py-2 font-head text-sm font-bold uppercase tracking-widest text-ink"
               >
                 Claim Yours Now <FaArrowRightLong />
               </Link>

@@ -57,7 +57,7 @@ export default function Navbar() {
       }`}
     >
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-5 py-3 lg:px-8">
-        <Link to="/" className="flex items-center gap-2">
+        <Link to="/" className="flex items-center gap-2 py-1" aria-label="Battle Ready Fitness — home">
           <img src={logo} alt="Battle Ready Fitness" className="h-9 w-auto sm:h-10" />
         </Link>
 
