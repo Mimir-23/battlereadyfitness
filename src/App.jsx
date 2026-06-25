@@ -78,7 +78,17 @@ export default function App() {
       lenis?.start()
       document.documentElement.style.overflow = ''
     }
+    // Always restore scrolling if this effect/component tears down.
+    return () => {
+      document.documentElement.style.overflow = ''
+    }
   }, [loading, lenisRef])
+
+  // Safety net: never let the preloader leave the page scroll-locked.
+  useEffect(() => {
+    const t = setTimeout(() => setLoading(false), 4000)
+    return () => clearTimeout(t)
+  }, [])
 
   return (
     <>

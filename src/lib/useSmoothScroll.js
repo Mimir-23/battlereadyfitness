@@ -9,16 +9,24 @@ const prefersReduced =
   typeof window !== 'undefined' &&
   window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
+/* Only run Lenis on real pointer (mouse) devices. On phones/tablets we let the
+   browser handle scrolling natively — Lenis virtualised scrolling can fight
+   touch input and lock the page, so native is both safer and smoother there. */
+const isDesktopPointer =
+  typeof window !== 'undefined' &&
+  window.matchMedia('(hover: hover) and (pointer: fine)').matches
+
 /**
- * Initialises Lenis smooth scrolling and wires it into GSAP's ScrollTrigger so
- * scroll-driven animations stay in sync. Returns a ref holding the Lenis
- * instance (null when reduced motion is preferred).
+ * Initialises Lenis smooth scrolling (desktop only) and wires it into GSAP's
+ * ScrollTrigger so scroll-driven animations stay in sync. Returns a ref holding
+ * the Lenis instance (null on touch devices / reduced motion). ScrollTrigger
+ * falls back to native scroll listening when Lenis is absent.
  */
 export function useSmoothScroll() {
   const lenisRef = useRef(null)
 
   useEffect(() => {
-    if (prefersReduced) return
+    if (prefersReduced || !isDesktopPointer) return
 
     const lenis = new Lenis({
       duration: 1.1,
