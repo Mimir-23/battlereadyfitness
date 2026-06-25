@@ -15,6 +15,10 @@ export const stagger = {
   show: { transition: { staggerChildren: 0.09 } },
 }
 
+/* Shared viewport trigger — low threshold so sections reveal as soon as they
+   peek into view (prevents "blank until you scroll far" on small screens). */
+export const VIEWPORT = { once: true, amount: 0.15 }
+
 /** Fades + lifts its children into view once, on scroll. */
 export function Reveal({ children, className, variants = fadeUp }) {
   return (
@@ -23,7 +27,7 @@ export function Reveal({ children, className, variants = fadeUp }) {
       variants={variants}
       initial="hidden"
       whileInView="show"
-      viewport={{ once: true, amount: 0.25 }}
+      viewport={VIEWPORT}
     >
       {children}
     </motion.div>

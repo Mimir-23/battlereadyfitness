@@ -15,7 +15,7 @@ export default function RevealText({ as: Tag = 'h2', children, className = '', d
         className="inline-block"
         initial={{ y: '110%', opacity: 0 }}
         whileInView={{ y: 0, opacity: 1 }}
-        viewport={{ once: true, amount: 0.5 }}
+        viewport={{ once: true, amount: 0.15 }}
         transition={{ duration: 0.8, ease: EASE, delay }}
       >
         {children}
