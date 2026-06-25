@@ -197,8 +197,11 @@ body {
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* Guard against any single element pushing horizontal overflow on mobile */
-  overflow-x: hidden;
+  /* Clip horizontal overflow WITHOUT turning <body> into a scroll container.
+     `overflow-x: hidden` here breaks touch scrolling on mobile because it makes
+     the body its own scroller, fighting Lenis (which drives window scroll).
+     `clip` recortes the overflow but leaves vertical scrolling to the window. */
+  overflow-x: clip;
 }
 
 ::selection {
