@@ -2,6 +2,12 @@ import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { useLocation } from 'react-router-dom'
 import { EASE } from '../../lib/motion'
 
+// A full-screen animated overlay is risky on mobile (any hiccup can leave it
+// covering content) and wasn't in the original — desktop/mouse only.
+const isDesktopPointer =
+  typeof window !== 'undefined' &&
+  window.matchMedia('(hover: hover) and (pointer: fine)').matches
+
 /**
  * Tactical curtain that sweeps up to reveal each new route. A fresh panel mounts
  * on every navigation covering the viewport, then collapses to the top edge —
@@ -12,8 +18,8 @@ export default function RouteWipe() {
   const { pathname } = useLocation()
   const reduced = useReducedMotion()
 
-  // No full-screen sweep for users who prefer reduced motion.
-  if (reduced) return null
+  // No full-screen sweep on touch devices or for reduced-motion users.
+  if (reduced || !isDesktopPointer) return null
 
   return (
     <AnimatePresence>

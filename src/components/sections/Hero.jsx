@@ -7,6 +7,11 @@ import CTAButton from '../ui/CTAButton'
 import RopeLoader from '../ui/RopeLoader'
 import EmberField from '../ui/EmberField'
 
+// Scroll-linked parallax stutters on mobile Safari — desktop/mouse only.
+const isDesktopPointer =
+  typeof window !== 'undefined' &&
+  window.matchMedia('(hover: hover) and (pointer: fine)').matches
+
 export default function Hero({ loaded }) {
   const ref = useRef(null)
   const { scrollYProgress } = useScroll({
@@ -23,7 +28,7 @@ export default function Hero({ loaded }) {
       ref={ref}
       className="relative flex min-h-svh items-center overflow-hidden bg-ink"
     >
-      <motion.div style={{ scale: imgScale }} className="absolute inset-0">
+      <motion.div style={isDesktopPointer ? { scale: imgScale } : undefined} className="absolute inset-0">
         <img
           src="/images/hero.jpg"
           alt="Athletes training inside Battle Ready Fitness"
@@ -73,7 +78,7 @@ export default function Hero({ loaded }) {
       </div>
 
       <motion.div
-        style={{ y, opacity }}
+        style={isDesktopPointer ? { y, opacity } : undefined}
         className="relative mx-auto w-full max-w-7xl px-5 pt-24 lg:px-8"
       >
         <motion.div

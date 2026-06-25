@@ -18,8 +18,12 @@ export default function Spotlight({
   tilt = true,
   strength = 8,
   style,
+  whileHover,
   ...rest
 }) {
+  // On touch devices a hover state latches on tap and never clears, leaving the
+  // card stuck lifted/transformed. Only honour whileHover on real pointers.
+  const hover = ALLOWED ? whileHover : undefined
   const ref = useRef(null)
   const rx = useMotionValue(0)
   const ry = useMotionValue(0)
@@ -50,6 +54,7 @@ export default function Spotlight({
       ref={ref}
       onMouseMove={onMove}
       onMouseLeave={reset}
+      whileHover={hover}
       style={
         tilt && ALLOWED
           ? { rotateX, rotateY, transformPerspective: 900, ...style }
