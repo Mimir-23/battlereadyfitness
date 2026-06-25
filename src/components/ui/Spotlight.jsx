@@ -17,6 +17,7 @@ export default function Spotlight({
   className = '',
   tilt = true,
   strength = 8,
+  style,
   ...rest
 }) {
   const ref = useRef(null)
@@ -49,7 +50,11 @@ export default function Spotlight({
       ref={ref}
       onMouseMove={onMove}
       onMouseLeave={reset}
-      style={tilt && ALLOWED ? { rotateX, rotateY, transformPerspective: 900 } : undefined}
+      style={
+        tilt && ALLOWED
+          ? { rotateX, rotateY, transformPerspective: 900, ...style }
+          : style
+      }
       className={`spotlight ${className}`}
       {...rest}
     >

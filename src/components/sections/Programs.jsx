@@ -41,7 +41,7 @@ export default function Programs() {
                   src={p.img}
                   alt={p.name}
                   loading="lazy"
-                  className="absolute inset-0 h-full w-full object-cover grayscale transition-all duration-700 group-hover:scale-110 group-hover:grayscale-0"
+                  className="absolute inset-0 h-full w-full object-cover transition-all duration-700 group-hover:scale-110 lg:grayscale lg:group-hover:grayscale-0"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/70 to-ink/20 transition-colors duration-500 group-hover:from-ink group-hover:via-ink/60" />
 
@@ -68,7 +68,7 @@ export default function Programs() {
                   <h3 className="mt-5 font-head text-2xl font-semibold uppercase tracking-wide text-chalk">
                     {p.name}
                   </h3>
-                  <p className="mt-2 max-h-0 overflow-hidden text-sm leading-relaxed text-fog opacity-0 transition-all duration-500 group-hover:max-h-32 group-hover:opacity-100">
+                  <p className="mt-2 overflow-hidden text-sm leading-relaxed text-fog transition-all duration-500 lg:max-h-0 lg:opacity-0 lg:group-hover:max-h-32 lg:group-hover:opacity-100">
                     {p.desc}
                   </p>
                   <Link

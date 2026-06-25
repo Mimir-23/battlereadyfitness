@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from 'motion/react'
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { useLocation } from 'react-router-dom'
 import { EASE } from '../../lib/motion'
 
@@ -10,6 +10,10 @@ import { EASE } from '../../lib/motion'
  */
 export default function RouteWipe() {
   const { pathname } = useLocation()
+  const reduced = useReducedMotion()
+
+  // No full-screen sweep for users who prefer reduced motion.
+  if (reduced) return null
 
   return (
     <AnimatePresence>

@@ -24,7 +24,7 @@ export default function CTABand() {
           <span className="font-head text-sm font-bold uppercase tracking-[0.3em] text-ink/70">
             Are You Ready?
           </span>
-          <h2 className="mt-4 font-display text-6xl leading-[0.9] text-ink sm:text-7xl lg:text-8xl">
+          <h2 className="mt-4 font-display text-[clamp(2.75rem,10vw,6rem)] leading-[0.9] text-ink">
             CLAIM YOUR 3-DAY
             <br />
             FREE PASS

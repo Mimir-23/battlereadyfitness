@@ -32,10 +32,10 @@ export default function Gallery() {
                 src={g.src}
                 alt={g.label}
                 loading="lazy"
-                className="h-full w-full object-cover grayscale transition-all duration-700 group-hover:scale-110 group-hover:grayscale-0"
+                className="h-full w-full object-cover transition-all duration-700 group-hover:scale-110 lg:grayscale lg:group-hover:grayscale-0"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-ink/90 via-transparent to-transparent" />
-              <figcaption className="absolute bottom-0 left-0 flex translate-y-2 items-center gap-2 p-5 opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100">
+              <figcaption className="absolute bottom-0 left-0 flex items-center gap-2 p-5 transition-all duration-500 lg:translate-y-2 lg:opacity-0 lg:group-hover:translate-y-0 lg:group-hover:opacity-100">
                 <span className="h-px w-6 bg-battle" />
                 <span className="font-head text-sm font-semibold uppercase tracking-widest text-chalk">
                   {g.label}

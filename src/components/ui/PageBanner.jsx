@@ -10,7 +10,7 @@ import { EASE } from '../../lib/motion'
  */
 export default function PageBanner({ kicker, title, accent, subtitle, image = '/images/hero.jpg' }) {
   return (
-    <section className="relative flex min-h-[60vh] items-center overflow-hidden bg-ink pt-20">
+    <section className="relative flex min-h-[60svh] items-center overflow-hidden bg-ink pt-24">
       <motion.div
         initial={{ scale: 1.12 }}
         animate={{ scale: 1 }}
@@ -46,7 +46,7 @@ export default function PageBanner({ kicker, title, accent, subtitle, image = '/
 
           <motion.h1
             variants={{ hidden: { opacity: 0, y: 24 }, show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: EASE } } }}
-            className="mt-6 font-display text-6xl leading-[0.88] text-chalk sm:text-7xl lg:text-8xl"
+            className="mt-6 font-display text-[clamp(2.75rem,10vw,6rem)] leading-[0.88] text-chalk"
           >
             {title} {accent && <span className="text-battle">{accent}</span>}
           </motion.h1>

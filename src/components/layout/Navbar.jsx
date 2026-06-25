@@ -75,7 +75,7 @@ export default function Navbar() {
             target="_blank"
             rel="noreferrer"
             aria-label="WhatsApp"
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-iron text-fog transition-colors hover:border-[#25D366] hover:text-[#25D366]"
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-iron text-fog transition-colors hover:border-[#25D366] hover:text-[#25D366]"
           >
             <FaWhatsapp size={18} />
           </a>

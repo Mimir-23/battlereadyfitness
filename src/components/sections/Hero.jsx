@@ -21,7 +21,7 @@ export default function Hero({ loaded }) {
     <section
       id="top"
       ref={ref}
-      className="relative flex min-h-screen items-center overflow-hidden bg-ink"
+      className="relative flex min-h-svh items-center overflow-hidden bg-ink"
     >
       <motion.div style={{ scale: imgScale }} className="absolute inset-0">
         <img
@@ -88,7 +88,7 @@ export default function Hero({ loaded }) {
 
           <motion.h1
             variants={fadeUp}
-            className="mt-6 font-display text-6xl leading-[0.88] text-chalk sm:text-7xl lg:text-[7.5rem]"
+            className="mt-6 font-display text-[clamp(2.5rem,11vw,7.5rem)] leading-[0.88] text-chalk"
           >
             WE&apos;RE NOT JUST
             <br />

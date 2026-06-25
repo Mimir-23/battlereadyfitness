@@ -197,6 +197,8 @@ body {
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* Guard against any single element pushing horizontal overflow on mobile */
+  overflow-x: hidden;
 }
 
 ::selection {
