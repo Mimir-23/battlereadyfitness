@@ -28,6 +28,8 @@ export default function Hero({ loaded }) {
           src="/images/hero.jpg"
           alt="Athletes training inside Battle Ready Fitness"
           className="h-full w-full object-cover"
+          fetchPriority="high"
+          decoding="async"
           style={{ animation: 'var(--animate-kenburns)' }}
         />
       </motion.div>

@@ -14,14 +14,14 @@ export default function Preloader({ onDone }) {
 
   useEffect(() => {
     const controls = animate(0, 100, {
-      duration: 2,
+      duration: 1.1,
       ease: [0.65, 0, 0.35, 1],
       onUpdate: (v) => setCount(Math.round(v)),
-      onComplete: () => setTimeout(onDone, 350),
+      onComplete: () => setTimeout(onDone, 180),
     })
     const wordTimer = setInterval(
       () => setWord((w) => (w + 1) % WORDS.length),
-      650,
+      420,
     )
     return () => {
       controls.stop()

@@ -1,9 +1,5 @@
 import { useEffect, useRef } from 'react'
 import Lenis from 'lenis'
-import { gsap } from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
-
-gsap.registerPlugin(ScrollTrigger)
 
 const prefersReduced =
   typeof window !== 'undefined' &&
@@ -17,10 +13,10 @@ const isDesktopPointer =
   window.matchMedia('(hover: hover) and (pointer: fine)').matches
 
 /**
- * Initialises Lenis smooth scrolling (desktop only) and wires it into GSAP's
- * ScrollTrigger so scroll-driven animations stay in sync. Returns a ref holding
- * the Lenis instance (null on touch devices / reduced motion). ScrollTrigger
- * falls back to native scroll listening when Lenis is absent.
+ * Initialises Lenis smooth scrolling on desktop mouse devices and drives it with
+ * a plain rAF loop (no GSAP dependency). Returns a ref holding the Lenis
+ * instance (null on touch / reduced motion), used elsewhere for programmatic
+ * scrolling.
  */
 export function useSmoothScroll() {
   const lenisRef = useRef(null)
@@ -36,11 +32,12 @@ export function useSmoothScroll() {
     })
     lenisRef.current = lenis
 
-    lenis.on('scroll', ScrollTrigger.update)
-
-    const onTick = (time) => lenis.raf(time * 1000)
-    gsap.ticker.add(onTick)
-    gsap.ticker.lagSmoothing(0)
+    let rafId
+    const raf = (time) => {
+      lenis.raf(time)
+      rafId = requestAnimationFrame(raf)
+    }
+    rafId = requestAnimationFrame(raf)
 
     // Anchor links → smooth scroll via Lenis
     const onClick = (e) => {
@@ -55,13 +52,9 @@ export function useSmoothScroll() {
     }
     document.addEventListener('click', onClick)
 
-    const refresh = () => ScrollTrigger.refresh()
-    window.addEventListener('load', refresh)
-
     return () => {
       document.removeEventListener('click', onClick)
-      window.removeEventListener('load', refresh)
-      gsap.ticker.remove(onTick)
+      cancelAnimationFrame(rafId)
       lenis.destroy()
       lenisRef.current = null
     }

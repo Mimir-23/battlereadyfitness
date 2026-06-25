@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, lazy, Suspense } from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { AnimatePresence } from 'motion/react'
 import { useSmoothScroll } from './lib/useSmoothScroll'
@@ -11,11 +11,23 @@ import RouteWipe from './components/ui/RouteWipe'
 import Navbar from './components/layout/Navbar'
 import Footer from './components/layout/Footer'
 import FloatingActions from './components/layout/FloatingActions'
+import RopeLoader from './components/ui/RopeLoader'
 
+// Home is the landing page — keep it eager. Secondary routes load on demand so
+// they stay out of the initial mobile bundle.
 import Home from './pages/Home'
-import Schedule from './pages/Schedule'
-import Memberships from './pages/Memberships'
-import NotFound from './pages/NotFound'
+const Schedule = lazy(() => import('./pages/Schedule'))
+const Memberships = lazy(() => import('./pages/Memberships'))
+const NotFound = lazy(() => import('./pages/NotFound'))
+
+/** Branded fallback while a lazy route chunk loads. */
+function RouteFallback() {
+  return (
+    <div className="flex min-h-svh items-center justify-center bg-ink">
+      <RopeLoader />
+    </div>
+  )
+}
 
 /**
  * Keeps scroll position sane across route changes: jumps to a `#hash` target
@@ -104,12 +116,14 @@ export default function App() {
       <Navbar />
 
       <main>
-        <Routes>
-          <Route path="/" element={<Home loaded={!loading} />} />
-          <Route path="/schedule" element={<Schedule />} />
-          <Route path="/memberships" element={<Memberships />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <Suspense fallback={<RouteFallback />}>
+          <Routes>
+            <Route path="/" element={<Home loaded={!loading} />} />
+            <Route path="/schedule" element={<Schedule />} />
+            <Route path="/memberships" element={<Memberships />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Suspense>
       </main>
 
       <Footer />
