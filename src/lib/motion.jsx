@@ -1,0 +1,31 @@
+/* eslint-disable react-refresh/only-export-components */
+import { motion } from 'motion/react'
+
+/* Shared easing + variants used across every animated section. */
+
+export const EASE = [0.16, 1, 0.3, 1]
+
+export const fadeUp = {
+  hidden: { opacity: 0, y: 32 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: EASE } },
+}
+
+export const stagger = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.09 } },
+}
+
+/** Fades + lifts its children into view once, on scroll. */
+export function Reveal({ children, className, variants = fadeUp }) {
+  return (
+    <motion.div
+      className={className}
+      variants={variants}
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once: true, amount: 0.25 }}
+    >
+      {children}
+    </motion.div>
+  )
+}
