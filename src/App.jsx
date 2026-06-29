@@ -1,10 +1,8 @@
-import { useEffect, useState, lazy, Suspense } from 'react'
+import { useEffect, lazy, Suspense } from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
-import { AnimatePresence } from 'motion/react'
 import { useSmoothScroll } from './lib/useSmoothScroll'
 
 import Cursor from './components/Cursor'
-import Preloader from './components/Preloader'
 import ScrollProgress from './components/ui/ScrollProgress'
 import GrainOverlay from './components/ui/GrainOverlay'
 import RouteWipe from './components/ui/RouteWipe'
@@ -78,36 +76,16 @@ function ScrollManager({ lenisRef }) {
 
 export default function App() {
   const lenisRef = useSmoothScroll()
-  const [loading, setLoading] = useState(true)
 
-  // Lock scrolling while the preloader is on screen.
+  // No preloader: the page renders immediately and the hero plays its parallax
+  // entrance on mount. Make sure nothing leaves the document scroll-locked.
   useEffect(() => {
-    const lenis = lenisRef.current
-    if (loading) {
-      lenis?.stop()
-      document.documentElement.style.overflow = 'hidden'
-    } else {
-      lenis?.start()
-      document.documentElement.style.overflow = ''
-    }
-    // Always restore scrolling if this effect/component tears down.
-    return () => {
-      document.documentElement.style.overflow = ''
-    }
-  }, [loading, lenisRef])
-
-  // Safety net: never let the preloader leave the page scroll-locked.
-  useEffect(() => {
-    const t = setTimeout(() => setLoading(false), 4000)
-    return () => clearTimeout(t)
+    document.documentElement.style.overflow = ''
   }, [])
 
   return (
     <>
       <Cursor />
-      <AnimatePresence>
-        {loading && <Preloader key="preloader" onDone={() => setLoading(false)} />}
-      </AnimatePresence>
 
       <GrainOverlay />
       <ScrollProgress />
@@ -118,7 +96,7 @@ export default function App() {
       <main>
         <Suspense fallback={<RouteFallback />}>
           <Routes>
-            <Route path="/" element={<Home loaded={!loading} />} />
+            <Route path="/" element={<Home />} />
             <Route path="/schedule" element={<Schedule />} />
             <Route path="/memberships" element={<Memberships />} />
             <Route path="*" element={<NotFound />} />

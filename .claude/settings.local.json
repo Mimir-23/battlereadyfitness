@@ -7,7 +7,24 @@
       "PowerShell(Remove-Item *)",
       "PowerShell(npm install *)",
       "PowerShell(node -e \"console.log\\(require\\('./node_modules/react-router-dom/package.json'\\).version\\)\")",
-      "PowerShell($ErrorActionPreference='SilentlyContinue'; $p = Get-Command python3.exe, python.exe, py.exe 2>$null | Select-Object -First 1 -ExpandProperty Source; if \\($p\\) { Write-Output \"FOUND: $p\" } else { Write-Output \"NONE\" })"
+      "PowerShell($ErrorActionPreference='SilentlyContinue'; $p = Get-Command python3.exe, python.exe, py.exe 2>$null | Select-Object -First 1 -ExpandProperty Source; if \\($p\\) { Write-Output \"FOUND: $p\" } else { Write-Output \"NONE\" })",
+      "Bash(npm run *)",
+      "Bash(awk '{print $5\"  \"$9}')",
+      "Bash(awk '{print $5\" \"$9}')",
+      "PowerShell(npm uninstall *)",
+      "Read(//c/Program Files/Google/Chrome/Application/**)",
+      "Read(//c/Users/deivi/AppData/Local/ms-playwright/**)",
+      "Bash(nohup npm run dev -- --port 5180 --strictPort)",
+      "Bash(curl -s -o /dev/null -w \"dev server: %{http_code}\\\\n\" http://localhost:5180/)",
+      "Bash(node -e \"console.log\\('playwright-core', require\\('./node_modules/playwright-core/package.json'\\).version\\)\")",
+      "Bash(node ./_measure.mjs)",
+      "Bash(nohup npx vite preview --port 4180 --strictPort)",
+      "Bash(curl -s -o /dev/null -w \"preview server: %{http_code}\\\\n\" http://localhost:4180/)",
+      "Bash(npm install *)",
+      "Bash(node ./_final.mjs)",
+      "Bash(pkill -f \"vite preview\")",
+      "Bash(npm uninstall *)",
+      "Bash(rm -f /tmp/preview*.log)"
     ]
   }
 }

@@ -12,7 +12,7 @@ const isDesktopPointer =
   typeof window !== 'undefined' &&
   window.matchMedia('(hover: hover) and (pointer: fine)').matches
 
-export default function Hero({ loaded }) {
+export default function Hero() {
   const ref = useRef(null)
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -28,14 +28,18 @@ export default function Hero({ loaded }) {
       ref={ref}
       className="relative flex min-h-svh items-center overflow-hidden bg-ink"
     >
+      {/* Parallax intro: the hero image opens with a slow zoom-out + settle
+          (replaces the old loading screen), then tracks scroll on desktop. */}
       <motion.div style={isDesktopPointer ? { scale: imgScale } : undefined} className="absolute inset-0">
-        <img
+        <motion.img
           src="/images/hero.jpg"
           alt="Athletes training inside Battle Ready Fitness"
           className="h-full w-full object-cover"
           fetchPriority="high"
           decoding="async"
-          style={{ animation: 'var(--animate-kenburns)' }}
+          initial={{ scale: 1.3, opacity: 0 }}
+          animate={{ scale: 1.05, opacity: 1 }}
+          transition={{ scale: { duration: 1.8, ease: [0.16, 1, 0.3, 1] }, opacity: { duration: 1 } }}
         />
       </motion.div>
       <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/85 to-ink/40" />
@@ -84,7 +88,7 @@ export default function Hero({ loaded }) {
         <motion.div
           variants={stagger}
           initial="hidden"
-          animate={loaded ? 'show' : 'hidden'}
+          animate="show"
           className="max-w-3xl"
         >
           <motion.div variants={fadeUp}>
@@ -104,7 +108,7 @@ export default function Hero({ loaded }) {
             <motion.span
               className="inline-block text-gradient-battle"
               initial={{ opacity: 0, y: 20 }}
-              animate={loaded ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.55, duration: 0.6 }}
             >
               WE&apos;RE SIMPLY UNIQUE.
@@ -137,7 +141,7 @@ export default function Hero({ loaded }) {
                 <motion.span
                   key={i}
                   initial={{ opacity: 0, scale: 0.5 }}
-                  animate={loaded ? { opacity: 1, scale: 1 } : {}}
+                  animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.7 + i * 0.08, type: 'spring', stiffness: 400, damping: 15 }}
                 >
                   <FaStar size={16} />

@@ -10,11 +10,11 @@ import CTABand from '../components/sections/CTABand'
 import Contact from '../components/sections/Contact'
 
 /** Landing page — all the anchored sections, composed in order. */
-export default function Home({ loaded }) {
+export default function Home() {
   usePageTitle()
   return (
     <>
-      <Hero loaded={loaded} />
+      <Hero />
       <Marquee />
       <Stats />
       <Programs />
