@@ -1,5 +1,5 @@
 import { motion } from 'motion/react'
-import { Reveal, VIEWPORT } from '../../lib/motion'
+import { Reveal, VIEWPORT, isTouch } from '../../lib/motion'
 import RevealText from '../RevealText'
 
 /** Kicker + oversized display title used at the top of every major section. */
@@ -35,9 +35,10 @@ export default function SectionHeading({
         {title} {accent && <span className="text-battle">{accent}</span>}
       </RevealText>
       <motion.div
-        initial={{ scaleX: 0 }}
-        whileInView={{ scaleX: 1 }}
-        viewport={VIEWPORT}
+        initial={isTouch ? false : { scaleX: 0 }}
+        whileInView={isTouch ? undefined : { scaleX: 1 }}
+        animate={isTouch ? { scaleX: 1 } : undefined}
+        viewport={isTouch ? undefined : VIEWPORT}
         transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
         className={`mt-5 h-0.5 w-24 origin-left bg-gradient-to-r from-battle to-transparent ${
           align === 'center' ? 'mx-auto' : ''

@@ -2,7 +2,7 @@ import { motion } from 'motion/react'
 import { Link } from 'react-router-dom'
 import { FaArrowRightLong } from 'react-icons/fa6'
 import { PROGRAMS } from '../../data/site'
-import { fadeUp, stagger, VIEWPORT } from '../../lib/motion'
+import { fadeUp, stagger, reveal } from '../../lib/motion'
 import SectionHeading from '../ui/SectionHeading'
 import Spotlight from '../ui/Spotlight'
 
@@ -18,9 +18,7 @@ export default function Programs() {
 
         <motion.div
           variants={stagger}
-          initial="hidden"
-          whileInView="show"
-          viewport={VIEWPORT}
+          {...reveal}
           className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3"
         >
           {PROGRAMS.map((p, i) => {

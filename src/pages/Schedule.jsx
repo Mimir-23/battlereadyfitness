@@ -7,7 +7,7 @@ import {
   HOURS,
   WHATSAPP,
 } from '../data/site'
-import { fadeUp, stagger, Reveal, VIEWPORT } from '../lib/motion'
+import { fadeUp, stagger, Reveal, reveal } from '../lib/motion'
 import { usePageTitle } from '../lib/usePageTitle'
 import PageBanner from '../components/ui/PageBanner'
 import SectionHeading from '../components/ui/SectionHeading'
@@ -107,9 +107,7 @@ export default function Schedule() {
           {/* Mobile: stacked per time slot */}
           <motion.div
             variants={stagger}
-            initial="hidden"
-            whileInView="show"
-            viewport={VIEWPORT}
+            {...reveal}
             className="mt-10 space-y-4 md:hidden"
           >
             {SCHEDULE.map((row) => (
@@ -172,9 +170,7 @@ export default function Schedule() {
       <section className="border-y border-iron bg-coal py-16">
         <motion.div
           variants={stagger}
-          initial="hidden"
-          whileInView="show"
-          viewport={VIEWPORT}
+          {...reveal}
           className="mx-auto grid max-w-5xl gap-6 px-5 sm:grid-cols-3 lg:px-8"
         >
           {HOURS.map(([d, t]) => (

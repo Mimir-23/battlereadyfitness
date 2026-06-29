@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
 import { useInView, useMotionValue, animate } from 'motion/react'
-import { EASE } from '../../lib/motion'
+import { EASE, isTouch } from '../../lib/motion'
 
-/** Counts up from 0 to `value` the first time it scrolls into view. */
+/** Counts up from 0 to `value` the first time it scrolls into view (desktop) —
+    or on mount on touch, where scroll observers are unreliable. */
 export default function Counter({ value, suffix }) {
   const ref = useRef(null)
-  const inView = useInView(ref, { once: true, amount: 0.01, margin: '0px 0px 120px 0px' })
+  const scrolledIntoView = useInView(ref, { once: true, amount: 0.01, margin: '0px 0px 120px 0px' })
+  const inView = isTouch || scrolledIntoView
   const mv = useMotionValue(0)
   const [display, setDisplay] = useState(0)
 

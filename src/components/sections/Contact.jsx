@@ -15,7 +15,7 @@ import {
   CITY,
   MAPS_EMBED,
 } from '../../data/site'
-import { fadeUp, stagger, Reveal, VIEWPORT } from '../../lib/motion'
+import { fadeUp, stagger, Reveal, reveal } from '../../lib/motion'
 import SectionHeading from '../ui/SectionHeading'
 
 export default function Contact() {
@@ -43,9 +43,7 @@ export default function Contact() {
         <SectionHeading number="04" kicker="Get In Touch" title="FIND THE" accent="GYM" />
         <motion.div
           variants={stagger}
-          initial="hidden"
-          whileInView="show"
-          viewport={VIEWPORT}
+          {...reveal}
           className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4"
         >
           {cards.map((c) => {

@@ -1,6 +1,6 @@
 import { motion } from 'motion/react'
 import { GALLERY } from '../../data/site'
-import { fadeUp, stagger, VIEWPORT } from '../../lib/motion'
+import { fadeUp, stagger, reveal } from '../../lib/motion'
 import SectionHeading from '../ui/SectionHeading'
 
 export default function Gallery() {
@@ -14,9 +14,7 @@ export default function Gallery() {
 
         <motion.div
           variants={stagger}
-          initial="hidden"
-          whileInView="show"
-          viewport={VIEWPORT}
+          {...reveal}
           className="mt-14 grid auto-rows-[200px] grid-cols-2 gap-4 sm:grid-cols-4"
         >
           {GALLERY.map((g) => (

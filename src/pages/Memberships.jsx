@@ -1,7 +1,7 @@
 import { motion } from 'motion/react'
 import { FaCheck, FaWhatsapp, FaArrowRightLong } from 'react-icons/fa6'
 import { PLANS, RECESS_MEMBERSHIPS, WHATSAPP } from '../data/site'
-import { fadeUp, stagger, Reveal, VIEWPORT } from '../lib/motion'
+import { fadeUp, stagger, Reveal, reveal, isTouch } from '../lib/motion'
 import { usePageTitle } from '../lib/usePageTitle'
 import PageBanner from '../components/ui/PageBanner'
 import SectionHeading from '../components/ui/SectionHeading'
@@ -28,9 +28,7 @@ export default function Memberships() {
 
           <motion.div
             variants={stagger}
-            initial="hidden"
-            whileInView="show"
-            viewport={VIEWPORT}
+            {...reveal}
             className="mt-14 grid gap-5 lg:grid-cols-3"
           >
             {PLANS.map((plan) => (
@@ -70,9 +68,9 @@ export default function Memberships() {
                   {plan.perks.map((perk, pi) => (
                     <motion.li
                       key={perk}
-                      initial={{ opacity: 0, x: -8 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      viewport={{ once: true }}
+                      initial={isTouch ? false : { opacity: 0, x: -8 }}
+                      whileInView={isTouch ? undefined : { opacity: 1, x: 0 }}
+                      viewport={isTouch ? undefined : { once: true }}
                       transition={{ delay: 0.1 + pi * 0.08, duration: 0.4 }}
                       className="flex items-center gap-3 text-sm text-fog"
                     >
