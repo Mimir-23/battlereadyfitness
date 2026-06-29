@@ -1,6 +1,6 @@
 import { motion } from 'motion/react'
 import { GALLERY } from '../../data/site'
-import { fadeUp, stagger, reveal } from '../../lib/motion'
+import { fadeUp, stagger, reveal, isTouch } from '../../lib/motion'
 import SectionHeading from '../ui/SectionHeading'
 
 export default function Gallery() {
@@ -29,7 +29,7 @@ export default function Gallery() {
               <img
                 src={g.src}
                 alt={g.label}
-                loading="lazy"
+                loading={isTouch ? 'eager' : 'lazy'}
                 className="h-full w-full object-cover transition-all duration-700 group-hover:scale-110 lg:grayscale lg:group-hover:grayscale-0"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-ink/90 via-transparent to-transparent" />

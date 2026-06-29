@@ -38,12 +38,12 @@ export default function Hero() {
           className="h-full w-full object-cover"
           fetchPriority="high"
           decoding="async"
-          initial={isDesktopPointer ? { scale: 1.3, opacity: 0 } : { opacity: 0 }}
-          animate={isDesktopPointer ? { scale: 1.05, opacity: 1 } : { opacity: 1 }}
+          initial={isDesktopPointer ? { scale: 1.3, opacity: 0 } : false}
+          animate={isDesktopPointer ? { scale: 1.05, opacity: 1 } : undefined}
           transition={
             isDesktopPointer
               ? { scale: { duration: 1.8, ease: [0.16, 1, 0.3, 1] }, opacity: { duration: 1 } }
-              : { opacity: { duration: 0.6 } }
+              : undefined
           }
         />
       </motion.div>
@@ -92,7 +92,7 @@ export default function Hero() {
       >
         <motion.div
           variants={stagger}
-          initial="hidden"
+          initial={isDesktopPointer ? 'hidden' : false}
           animate="show"
           className="max-w-3xl"
         >
@@ -112,7 +112,7 @@ export default function Hero() {
             <br />
             <motion.span
               className="inline-block text-gradient-battle"
-              initial={{ opacity: 0, y: 20 }}
+              initial={isDesktopPointer ? { opacity: 0, y: 20 } : false}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.55, duration: 0.6 }}
             >
@@ -145,7 +145,7 @@ export default function Hero() {
               {[0, 1, 2, 3, 4].map((i) => (
                 <motion.span
                   key={i}
-                  initial={{ opacity: 0, scale: 0.5 }}
+                  initial={isDesktopPointer ? { opacity: 0, scale: 0.5 } : false}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.7 + i * 0.08, type: 'spring', stiffness: 400, damping: 15 }}
                 >

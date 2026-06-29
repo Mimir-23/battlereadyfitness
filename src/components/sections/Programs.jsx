@@ -2,7 +2,7 @@ import { motion } from 'motion/react'
 import { Link } from 'react-router-dom'
 import { FaArrowRightLong } from 'react-icons/fa6'
 import { PROGRAMS } from '../../data/site'
-import { fadeUp, stagger, reveal } from '../../lib/motion'
+import { fadeUp, stagger, reveal, isTouch } from '../../lib/motion'
 import SectionHeading from '../ui/SectionHeading'
 import Spotlight from '../ui/Spotlight'
 
@@ -38,7 +38,7 @@ export default function Programs() {
                 <img
                   src={p.img}
                   alt={p.name}
-                  loading="lazy"
+                  loading={isTouch ? 'eager' : 'lazy'}
                   className="absolute inset-0 h-full w-full object-cover transition-all duration-700 group-hover:scale-110 lg:grayscale lg:group-hover:grayscale-0"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/70 to-ink/20 transition-colors duration-500 group-hover:from-ink group-hover:via-ink/60" />
