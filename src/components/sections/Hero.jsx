@@ -28,8 +28,9 @@ export default function Hero() {
       ref={ref}
       className="relative flex min-h-svh items-center overflow-hidden bg-ink"
     >
-      {/* Parallax intro: the hero image opens with a slow zoom-out + settle
-          (replaces the old loading screen), then tracks scroll on desktop. */}
+      {/* Parallax intro: on desktop the hero image opens with a slow zoom-out +
+          settle and then tracks scroll. On touch, animating a full-screen image
+          transform janks/freezes mobile Safari, so we only do a light fade. */}
       <motion.div style={isDesktopPointer ? { scale: imgScale } : undefined} className="absolute inset-0">
         <motion.img
           src="/images/hero.jpg"
@@ -37,9 +38,13 @@ export default function Hero() {
           className="h-full w-full object-cover"
           fetchPriority="high"
           decoding="async"
-          initial={{ scale: 1.3, opacity: 0 }}
-          animate={{ scale: 1.05, opacity: 1 }}
-          transition={{ scale: { duration: 1.8, ease: [0.16, 1, 0.3, 1] }, opacity: { duration: 1 } }}
+          initial={isDesktopPointer ? { scale: 1.3, opacity: 0 } : { opacity: 0 }}
+          animate={isDesktopPointer ? { scale: 1.05, opacity: 1 } : { opacity: 1 }}
+          transition={
+            isDesktopPointer
+              ? { scale: { duration: 1.8, ease: [0.16, 1, 0.3, 1] }, opacity: { duration: 1 } }
+              : { opacity: { duration: 0.6 } }
+          }
         />
       </motion.div>
       <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/85 to-ink/40" />
