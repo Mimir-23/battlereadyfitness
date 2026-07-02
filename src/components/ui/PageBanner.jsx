@@ -1,23 +1,32 @@
 import { motion } from 'motion/react'
 import { Link } from 'react-router-dom'
 import { FaLocationDot } from 'react-icons/fa6'
-import { EASE } from '../../lib/motion'
+import { EASE, isDesktopPointer, prefersReducedMotion } from '../../lib/motion'
 
 /**
  * Reusable hero banner for interior pages (Schedule, Memberships). Mirrors the
  * home hero's tactical treatment — image, gradients, grid, scanline — but at
  * banner height.
  */
-export default function PageBanner({ kicker, title, accent, subtitle, image = '/images/hero.jpg' }) {
+export default function PageBanner({ kicker, title, accent, subtitle, image = '/images/hero.webp' }) {
   return (
     <section className="relative flex min-h-[60svh] items-center overflow-hidden bg-ink pt-24">
+      {/* Full-screen scale intro is desktop-only: animating a viewport-sized
+          image transform janks mobile GPUs (same fix as the home hero). */}
       <motion.div
-        initial={{ scale: 1.12 }}
-        animate={{ scale: 1 }}
-        transition={{ duration: 1.4, ease: EASE }}
+        initial={isDesktopPointer ? { scale: 1.12 } : false}
+        animate={isDesktopPointer ? { scale: 1 } : undefined}
+        transition={isDesktopPointer ? { duration: 1.4, ease: EASE } : undefined}
         className="absolute inset-0"
       >
-        <img src={image} alt="" aria-hidden="true" className="h-full w-full object-cover" />
+        <img
+          src={image}
+          alt=""
+          aria-hidden="true"
+          fetchPriority="high"
+          decoding="async"
+          className="h-full w-full object-cover"
+        />
       </motion.div>
       <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/85 to-ink/40" />
       <div className="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-ink/60" />
@@ -31,7 +40,7 @@ export default function PageBanner({ kicker, title, accent, subtitle, image = '/
 
       <div className="relative mx-auto w-full max-w-7xl px-5 lg:px-8">
         <motion.div
-          initial="hidden"
+          initial={prefersReducedMotion ? false : 'hidden'}
           animate="show"
           variants={{ hidden: {}, show: { transition: { staggerChildren: 0.1 } } }}
           className="max-w-3xl"

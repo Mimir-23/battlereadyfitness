@@ -1,15 +1,18 @@
 import { FaStar } from 'react-icons/fa6'
 import { Reveal, isTouch } from '../../lib/motion'
+import { useContent } from '../../content/ContentProvider'
 
 export default function Testimonial() {
+  const t = useContent().testimonial
   return (
     <section className="relative overflow-hidden border-y border-iron py-28">
       <img
-        src="/images/g1.jpg"
+        src={t.image}
         alt=""
         aria-hidden="true"
         className="absolute inset-0 h-full w-full object-cover"
         loading={isTouch ? 'eager' : 'lazy'}
+        decoding="async"
       />
       <div className="absolute inset-0 bg-ink/85" />
       <div className="absolute inset-0 bg-grid opacity-40" />
@@ -23,20 +26,19 @@ export default function Testimonial() {
             ))}
           </div>
           <blockquote className="font-head text-3xl font-medium leading-snug text-chalk sm:text-4xl">
-            &ldquo;Professional, motivating, super clean boot-camp gym! Evelyn
-            will kick your behind to get the workout in.{' '}
-            <span className="text-battle">Results guaranteed!</span>&rdquo;
+            &ldquo;{t.quote}{' '}
+            {t.highlight && <span className="text-battle">{t.highlight}</span>}&rdquo;
           </blockquote>
           <div className="mt-8 flex items-center justify-center gap-3">
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-battle font-head text-lg font-bold text-ink">
-              AM
+              {initials(t.author)}
             </div>
             <div className="text-left">
               <div className="font-head font-semibold uppercase tracking-wide text-chalk">
-                Ana Machado
+                {t.author}
               </div>
               <div className="text-xs uppercase tracking-widest text-smoke">
-                Verified via Google
+                {t.role}
               </div>
             </div>
           </div>
@@ -44,4 +46,14 @@ export default function Testimonial() {
       </div>
     </section>
   )
+}
+
+/** First letters of the author's name for the avatar badge. */
+function initials(name = '') {
+  return name
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0]?.toUpperCase())
+    .join('')
 }

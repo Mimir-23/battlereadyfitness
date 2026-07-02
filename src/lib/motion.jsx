@@ -14,6 +14,16 @@ export const isTouch =
   typeof window !== 'undefined' &&
   !window.matchMedia('(hover: hover) and (pointer: fine)').matches
 
+/* The CSS reduced-motion rule can't reach Motion's JS-driven animations, so
+   JS effects must check this flag themselves. */
+export const prefersReducedMotion =
+  typeof window !== 'undefined' &&
+  window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+/* Heavy showpiece effects (parallax, full-screen zooms, particles) run only on
+   mouse/desktop AND when the user hasn't asked for reduced motion. */
+export const isDesktopPointer = !isTouch && !prefersReducedMotion
+
 export const fadeUp = {
   hidden: { opacity: 0, y: 24 },
   show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: EASE } },
@@ -33,9 +43,10 @@ export const VIEWPORT = { once: true, amount: 0.01, margin: '0px 0px 180px 0px' 
    it reveals on scroll; on touch it jumps straight to "show" (no observer, so
    content can never be left invisible). Children variants still resolve because
    the parent broadcasts the "show" label. */
-export const reveal = isTouch
-  ? { initial: false, animate: 'show' }
-  : { initial: 'hidden', whileInView: 'show', viewport: VIEWPORT }
+export const reveal =
+  isTouch || prefersReducedMotion
+    ? { initial: false, animate: 'show' }
+    : { initial: 'hidden', whileInView: 'show', viewport: VIEWPORT }
 
 /** Fades + lifts its children into view once, on scroll (desktop) — or renders
     them immediately visible on touch. */

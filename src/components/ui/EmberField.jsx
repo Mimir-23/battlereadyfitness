@@ -4,6 +4,8 @@
  * load (outside render, so components stay pure). Auto-hides under reduced motion.
  */
 
+import { isDesktopPointer } from '../../lib/motion'
+
 // Pre-generated pool — sliced per instance. Built once when the module loads.
 const POOL = Array.from({ length: 28 }, (_, i) => ({
   id: i,
@@ -13,11 +15,6 @@ const POOL = Array.from({ length: 28 }, (_, i) => ({
   duration: 5 + Math.random() * 5,
   bottom: Math.random() * 30,
 }))
-
-// Animated, shadowed particles are costly on phone GPUs — desktop/mouse only.
-const isDesktopPointer =
-  typeof window !== 'undefined' &&
-  window.matchMedia('(hover: hover) and (pointer: fine)').matches
 
 export default function EmberField({ count = 18 }) {
   if (!isDesktopPointer) return null

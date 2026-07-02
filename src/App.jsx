@@ -18,6 +18,10 @@ const Schedule = lazy(() => import('./pages/Schedule'))
 const Memberships = lazy(() => import('./pages/Memberships'))
 const NotFound = lazy(() => import('./pages/NotFound'))
 
+// Admin panel — fully lazy (incl. the Supabase SDK) so it never weighs on the
+// public site bundle.
+const AdminApp = lazy(() => import('./pages/admin/AdminApp'))
+
 /** Branded fallback while a lazy route chunk loads. */
 function RouteFallback() {
   return (
@@ -76,12 +80,24 @@ function ScrollManager({ lenisRef }) {
 
 export default function App() {
   const lenisRef = useSmoothScroll()
+  const { pathname } = useLocation()
+  const isAdminArea = pathname.startsWith('/admin')
 
   // No preloader: the page renders immediately and the hero plays its parallax
   // entrance on mount. Make sure nothing leaves the document scroll-locked.
   useEffect(() => {
     document.documentElement.style.overflow = ''
   }, [])
+
+  // The admin panel is its own self-contained app shell — no public chrome
+  // (navbar, footer, smooth-scroll, cursor effects).
+  if (isAdminArea) {
+    return (
+      <Suspense fallback={<RouteFallback />}>
+        <AdminApp />
+      </Suspense>
+    )
+  }
 
   return (
     <>

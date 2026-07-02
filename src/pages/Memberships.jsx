@@ -1,6 +1,7 @@
 import { motion } from 'motion/react'
 import { FaCheck, FaWhatsapp, FaArrowRightLong } from 'react-icons/fa6'
-import { PLANS, RECESS_MEMBERSHIPS, WHATSAPP } from '../data/site'
+import { useContent } from '../content/ContentProvider'
+import { whatsappUrl } from '../content/defaults'
 import { fadeUp, stagger, Reveal, reveal, isTouch } from '../lib/motion'
 import { usePageTitle } from '../lib/usePageTitle'
 import PageBanner from '../components/ui/PageBanner'
@@ -11,6 +12,9 @@ import Spotlight from '../components/ui/Spotlight'
 
 export default function Memberships() {
   usePageTitle('Memberships')
+  const { plans: PLANS, brand } = useContent()
+  const RECESS_MEMBERSHIPS = brand.recessUrl
+  const WHATSAPP = whatsappUrl(brand)
   return (
     <>
       <PageBanner
@@ -18,7 +22,7 @@ export default function Memberships() {
         title="MEMBER"
         accent="SHIPS"
         subtitle="One pass, every battle program. Start with 3 free days, then pick the plan that matches your fight."
-        image="/images/cta.jpg"
+        image="/images/cta.webp"
       />
 
       {/* Plan cards */}

@@ -1,12 +1,14 @@
 import { motion } from 'motion/react'
 import { Link } from 'react-router-dom'
 import { FaArrowRightLong } from 'react-icons/fa6'
-import { PROGRAMS } from '../../data/site'
+import { useContent } from '../../content/ContentProvider'
+import { getIcon } from '../../content/icons'
 import { fadeUp, stagger, reveal, isTouch } from '../../lib/motion'
 import SectionHeading from '../ui/SectionHeading'
 import Spotlight from '../ui/Spotlight'
 
 export default function Programs() {
+  const PROGRAMS = useContent().programs
   return (
     <section id="programs" className="bg-ink bg-grid py-24">
       <div className="mx-auto max-w-7xl px-5 lg:px-8">
@@ -22,7 +24,7 @@ export default function Programs() {
           className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3"
         >
           {PROGRAMS.map((p, i) => {
-            const Icon = p.icon
+            const Icon = getIcon(p.icon)
             const featured = i === 1
             return (
               <Spotlight
@@ -39,6 +41,7 @@ export default function Programs() {
                   src={p.img}
                   alt={p.name}
                   loading={isTouch ? 'eager' : 'lazy'}
+                  decoding="async"
                   className="absolute inset-0 h-full w-full object-cover transition-all duration-700 group-hover:scale-110 lg:grayscale lg:group-hover:grayscale-0"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/70 to-ink/20 transition-colors duration-500 group-hover:from-ink group-hover:via-ink/60" />

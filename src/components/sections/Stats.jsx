@@ -1,9 +1,10 @@
 import { motion } from 'motion/react'
-import { STATS } from '../../data/site'
+import { useContent } from '../../content/ContentProvider'
 import { fadeUp, stagger, reveal } from '../../lib/motion'
 import Counter from '../ui/Counter'
 
 export default function Stats() {
+  const STATS = useContent().stats
   return (
     <section className="border-b border-iron bg-coal py-14">
       <motion.div

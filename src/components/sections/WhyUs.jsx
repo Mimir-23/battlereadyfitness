@@ -1,6 +1,7 @@
 import { motion } from 'motion/react'
 import { FaArrowRightLong } from 'react-icons/fa6'
-import { WHY } from '../../data/site'
+import { useContent } from '../../content/ContentProvider'
+import { getIcon } from '../../content/icons'
 import { fadeUp, stagger, Reveal, reveal } from '../../lib/motion'
 import SectionHeading from '../ui/SectionHeading'
 import ParallaxImage from '../ui/ParallaxImage'
@@ -8,6 +9,8 @@ import CTAButton from '../ui/CTAButton'
 import Spotlight from '../ui/Spotlight'
 
 export default function WhyUs() {
+  const why = useContent().why
+  const WHY = why.items
   return (
     <section id="welcome" className="relative border-y border-iron bg-coal py-24">
       <div className="mx-auto grid max-w-7xl items-center gap-14 px-5 lg:grid-cols-2 lg:px-8">
@@ -15,7 +18,7 @@ export default function WhyUs() {
           <div className="relative">
             <div className="bg-hazard absolute -left-3 -top-3 z-10 h-16 w-16 rounded-tl-2xl opacity-90" />
             <ParallaxImage
-              src="/images/coach.jpg"
+              src={why.image}
               alt="Coach motivating an athlete through a workout"
               className="aspect-[4/5] w-full rounded-2xl border border-iron"
               strength={50}
@@ -53,7 +56,7 @@ export default function WhyUs() {
             className="mt-8 grid gap-4 sm:grid-cols-2"
           >
             {WHY.map((w) => {
-              const Icon = w.icon
+              const Icon = getIcon(w.icon)
               return (
                 <Spotlight
                   key={w.title}

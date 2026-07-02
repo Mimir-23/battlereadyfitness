@@ -24,7 +24,13 @@
       "Bash(node ./_final.mjs)",
       "Bash(pkill -f \"vite preview\")",
       "Bash(npm uninstall *)",
-      "Bash(rm -f /tmp/preview*.log)"
+      "Bash(rm -f /tmp/preview*.log)",
+      "Bash(node *)",
+      "Bash(npx eslint *)",
+      "Bash(python \"C:\\\\Users\\\\deivi\\\\.claude\\\\skills\\\\ui-ux-pro-max\\\\scripts\\\\search.py\" \"fitness gym bold dark landing page\" --design-system -f markdown)",
+      "Bash(npm i *)",
+      "Bash(sed -i 's|/images/\\\\\\([a-z0-9]*\\\\\\)\\\\.jpg|/images/\\\\1.webp|g' src/content/defaults.js src/content/schema.js src/pages/Schedule.jsx src/pages/Memberships.jsx src/components/ui/PageBanner.jsx index.html)",
+      "Bash(sed -i \"s|from '/logo-removebg-preview.png'|from '/logo.webp'|\" src/components/layout/Navbar.jsx src/components/layout/Footer.jsx)"
     ]
   }
 }

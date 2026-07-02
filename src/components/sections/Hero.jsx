@@ -1,18 +1,16 @@
 import { useRef } from 'react'
 import { motion, useScroll, useTransform } from 'motion/react'
 import { FaStar, FaLocationDot, FaArrowRightLong, FaWhatsapp } from 'react-icons/fa6'
-import { WHATSAPP } from '../../data/site'
-import { fadeUp, stagger } from '../../lib/motion'
+import { useContent } from '../../content/ContentProvider'
+import { whatsappUrl } from '../../content/defaults'
+import { fadeUp, stagger, isDesktopPointer } from '../../lib/motion'
 import CTAButton from '../ui/CTAButton'
 import RopeLoader from '../ui/RopeLoader'
 import EmberField from '../ui/EmberField'
 
-// Scroll-linked parallax stutters on mobile Safari — desktop/mouse only.
-const isDesktopPointer =
-  typeof window !== 'undefined' &&
-  window.matchMedia('(hover: hover) and (pointer: fine)').matches
-
 export default function Hero() {
+  const { hero, brand } = useContent()
+  const WHATSAPP = whatsappUrl(brand)
   const ref = useRef(null)
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -33,7 +31,7 @@ export default function Hero() {
           transform janks/freezes mobile Safari, so we only do a light fade. */}
       <motion.div style={isDesktopPointer ? { scale: imgScale } : undefined} className="absolute inset-0">
         <motion.img
-          src="/images/hero.jpg"
+          src={hero.image}
           alt="Athletes training inside Battle Ready Fitness"
           className="h-full w-full object-cover"
           fetchPriority="high"
@@ -98,7 +96,7 @@ export default function Hero() {
         >
           <motion.div variants={fadeUp}>
             <span className="inline-flex items-center gap-2 rounded-full border border-battle/40 bg-battle/10 px-4 py-1.5 font-head text-xs font-medium uppercase tracking-[0.2em] text-battle backdrop-blur-sm">
-              <FaLocationDot size={12} /> Hialeah, Florida · Boot-Camp Gym
+              <FaLocationDot size={12} /> {hero.badge}
             </span>
           </motion.div>
 
@@ -106,23 +104,30 @@ export default function Hero() {
             variants={fadeUp}
             className="mt-6 font-display text-[clamp(2.5rem,11vw,7.5rem)] leading-[0.88] text-chalk"
           >
-            WE&apos;RE NOT JUST
-            <br />
-            THE BEST.
-            <br />
-            <motion.span
-              className="inline-block text-gradient-battle"
-              initial={isDesktopPointer ? { opacity: 0, y: 20 } : false}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.55, duration: 0.6 }}
-            >
-              WE&apos;RE SIMPLY UNIQUE.
-            </motion.span>
+            {hero.titleLine1}
+            {hero.titleLine2 && (
+              <>
+                <br />
+                {hero.titleLine2}
+              </>
+            )}
+            {hero.accent && (
+              <>
+                <br />
+                <motion.span
+                  className="inline-block text-gradient-battle"
+                  initial={isDesktopPointer ? { opacity: 0, y: 20 } : false}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.55, duration: 0.6 }}
+                >
+                  {hero.accent}
+                </motion.span>
+              </>
+            )}
           </motion.h1>
 
           <motion.p variants={fadeUp} className="mt-6 max-w-xl text-lg leading-relaxed text-fog">
-            A high-intensity boot-camp gym where coaches push you, the community
-            lifts you, and results are guaranteed. No excuses. Just the work.
+            {hero.paragraph}
           </motion.p>
 
           <motion.div
@@ -154,7 +159,7 @@ export default function Hero() {
               ))}
             </div>
             <span className="font-head uppercase tracking-wider">
-              Rated 5★ by warriors on Google
+              {hero.ratingText}
             </span>
           </motion.div>
         </motion.div>

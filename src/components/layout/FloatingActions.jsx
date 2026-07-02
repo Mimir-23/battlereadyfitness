@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 import { FaArrowUp, FaWhatsapp } from 'react-icons/fa6'
-import { WHATSAPP } from '../../data/site'
+import { useContent } from '../../content/ContentProvider'
+import { whatsappUrl } from '../../content/defaults'
 
 /** Fixed WhatsApp button + back-to-top control that appears after scrolling. */
 export default function FloatingActions() {
+  const WHATSAPP = whatsappUrl(useContent().brand)
   const [show, setShow] = useState(false)
   useEffect(() => {
     const onScroll = () => setShow(window.scrollY > 600)

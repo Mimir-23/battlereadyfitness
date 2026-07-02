@@ -1,9 +1,10 @@
 import { motion } from 'motion/react'
-import { GALLERY } from '../../data/site'
+import { useContent } from '../../content/ContentProvider'
 import { fadeUp, stagger, reveal, isTouch } from '../../lib/motion'
 import SectionHeading from '../ui/SectionHeading'
 
 export default function Gallery() {
+  const GALLERY = useContent().gallery
   return (
     <section id="gallery" className="bg-ink py-24">
       <div className="mx-auto max-w-7xl px-5 lg:px-8">
@@ -30,6 +31,7 @@ export default function Gallery() {
                 src={g.src}
                 alt={g.label}
                 loading={isTouch ? 'eager' : 'lazy'}
+                decoding="async"
                 className="h-full w-full object-cover transition-all duration-700 group-hover:scale-110 lg:grayscale lg:group-hover:grayscale-0"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-ink/90 via-transparent to-transparent" />

@@ -2,10 +2,11 @@ import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 import { Link } from 'react-router-dom'
 import { FaBars, FaXmark, FaWhatsapp } from 'react-icons/fa6'
-import { NAV, WHATSAPP } from '../../data/site'
+import { useContent } from '../../content/ContentProvider'
+import { whatsappUrl } from '../../content/defaults'
 import { EASE } from '../../lib/motion'
 import CTAButton from '../ui/CTAButton'
-import logo from '/logo-removebg-preview.png'
+import logo from '/logo.webp'
 
 /** Renders a nav item as a route <Link> (`to`) or a home-anchored hash link. */
 function NavItem({ item, onClick, mobile }) {
@@ -35,6 +36,8 @@ function NavItem({ item, onClick, mobile }) {
 }
 
 export default function Navbar() {
+  const { nav: NAV, brand } = useContent()
+  const WHATSAPP = whatsappUrl(brand)
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
 

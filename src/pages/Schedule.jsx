@@ -1,12 +1,9 @@
+import { createElement } from 'react'
 import { motion } from 'motion/react'
 import { FaArrowRightLong, FaClock, FaWhatsapp } from 'react-icons/fa6'
-import {
-  SCHEDULE,
-  SCHEDULE_DAYS,
-  PROGRAMS,
-  HOURS,
-  WHATSAPP,
-} from '../data/site'
+import { useContent } from '../content/ContentProvider'
+import { getIcon } from '../content/icons'
+import { whatsappUrl } from '../content/defaults'
 import { fadeUp, stagger, Reveal, reveal } from '../lib/motion'
 import { usePageTitle } from '../lib/usePageTitle'
 import PageBanner from '../components/ui/PageBanner'
@@ -14,24 +11,18 @@ import SectionHeading from '../components/ui/SectionHeading'
 import CTAButton from '../components/ui/CTAButton'
 import Spotlight from '../components/ui/Spotlight'
 
-/** Quick lookup: program name → its icon, for the timetable + legend. */
-const ICON_BY_NAME = Object.fromEntries(PROGRAMS.map((p) => [p.name, p.icon]))
-
 /** Today's three-letter label (Mon–Sat), or null on Sunday/rest day. */
 const TODAY = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][new Date().getDay()]
 
-function ClassCell({ name }) {
+function ClassCell({ name, iconName }) {
   if (!name) {
     return <div className="h-full min-h-[58px] rounded-lg border border-dashed border-iron/60" />
   }
-  const Icon = ICON_BY_NAME[name]
   return (
     <div className="group flex h-full min-h-[58px] flex-col justify-center gap-1 rounded-lg border border-iron bg-ink p-2.5 transition-colors duration-300 hover:border-battle/60 hover:bg-battle/5">
       <div className="flex items-center gap-2">
-        {Icon && (
-          <span className="text-battle">
-            <Icon size={13} />
-          </span>
+        {iconName && (
+          <span className="text-battle">{createElement(getIcon(iconName), { size: 13 })}</span>
         )}
         <span className="font-head text-[11px] font-semibold uppercase leading-tight tracking-wide text-chalk">
           {name}
@@ -43,6 +34,11 @@ function ClassCell({ name }) {
 
 export default function Schedule() {
   usePageTitle('Class Schedule')
+  const { schedule, programs: PROGRAMS, hours: HOURS, brand } = useContent()
+  const SCHEDULE = schedule.rows
+  const SCHEDULE_DAYS = schedule.days
+  const WHATSAPP = whatsappUrl(brand)
+  const ICON_BY_NAME = Object.fromEntries(PROGRAMS.map((p) => [p.name, p.icon]))
   return (
     <>
       <PageBanner
@@ -50,7 +46,7 @@ export default function Schedule() {
         title="CLASS"
         accent="SCHEDULE"
         subtitle="Lock in your battle. Every slot below is a coached, high-intensity session — just show up ready to work."
-        image="/images/bootcamp.jpg"
+        image="/images/bootcamp.webp"
       />
 
       {/* Timetable */}
@@ -96,7 +92,7 @@ export default function Schedule() {
                         d === TODAY ? 'bg-battle/5' : ''
                       }`}
                     >
-                      <ClassCell name={row.classes[d]} />
+                      <ClassCell name={row.classes[d]} iconName={ICON_BY_NAME[row.classes[d]]} />
                     </div>
                   ))}
                 </div>
@@ -138,7 +134,7 @@ export default function Schedule() {
           {/* Legend */}
           <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
             {PROGRAMS.map((p) => {
-              const Icon = p.icon
+              const Icon = getIcon(p.icon)
               return (
                 <span
                   key={p.name}
@@ -173,17 +169,17 @@ export default function Schedule() {
           {...reveal}
           className="mx-auto grid max-w-5xl gap-6 px-5 sm:grid-cols-3 lg:px-8"
         >
-          {HOURS.map(([d, t]) => (
+          {HOURS.map(({ day, time }) => (
             <Spotlight
-              key={d}
+              key={day}
               variants={fadeUp}
               tilt={false}
               className="rounded-2xl border border-iron bg-ink p-6 text-center transition-colors duration-300 hover:border-battle/40"
             >
               <div className="font-head text-xs font-semibold uppercase tracking-[0.2em] text-battle">
-                {d}
+                {day}
               </div>
-              <div className="mt-2 font-display text-2xl text-chalk">{t}</div>
+              <div className="mt-2 font-display text-2xl text-chalk">{time}</div>
             </Spotlight>
           ))}
         </motion.div>

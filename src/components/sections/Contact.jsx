@@ -5,35 +5,28 @@ import {
   FaLocationDot,
   FaWhatsapp,
 } from 'react-icons/fa6'
-import {
-  WHATSAPP,
-  PHONE,
-  PHONE_HREF,
-  WHATSAPP_NUMBER,
-  EMAIL,
-  ADDRESS,
-  CITY,
-  MAPS_EMBED,
-} from '../../data/site'
+import { useContent } from '../../content/ContentProvider'
+import { whatsappUrl } from '../../content/defaults'
 import { fadeUp, stagger, Reveal, reveal } from '../../lib/motion'
 import SectionHeading from '../ui/SectionHeading'
 
 export default function Contact() {
+  const brand = useContent().brand
   const cards = [
-    { icon: FaLocationDot, label: 'Visit', lines: [ADDRESS, CITY] },
-    { icon: FaPhone, label: 'Call', lines: [PHONE], href: PHONE_HREF },
+    { icon: FaLocationDot, label: 'Visit', lines: [brand.address, brand.city] },
+    { icon: FaPhone, label: 'Call', lines: [brand.phone], href: brand.phoneHref },
     {
       icon: FaWhatsapp,
       label: 'WhatsApp',
-      lines: [WHATSAPP_NUMBER],
-      href: WHATSAPP,
+      lines: [brand.whatsappNumber],
+      href: whatsappUrl(brand),
       external: true,
     },
     {
       icon: FaEnvelope,
       label: 'Email',
-      lines: [EMAIL],
-      href: `mailto:${EMAIL}`,
+      lines: [brand.email],
+      href: `mailto:${brand.email}`,
     },
   ]
 
@@ -85,7 +78,7 @@ export default function Contact() {
         <Reveal className="mt-6 overflow-hidden rounded-2xl border border-iron">
           <iframe
             title="Battle Ready Fitness location"
-            src={MAPS_EMBED}
+            src={brand.mapsEmbed}
             className="h-72 w-full grayscale"
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"

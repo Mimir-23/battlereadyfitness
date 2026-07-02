@@ -10,27 +10,10 @@ import {
   FaInstagram,
   FaXTwitter,
 } from 'react-icons/fa6'
-import {
-  NAV,
-  PROGRAMS,
-  HOURS,
-  WHATSAPP,
-  PHONE,
-  PHONE_HREF,
-  WHATSAPP_NUMBER,
-  EMAIL,
-  ADDRESS,
-  CITY,
-} from '../../data/site'
+import { useContent } from '../../content/ContentProvider'
+import { whatsappUrl } from '../../content/defaults'
 import CTAButton from '../ui/CTAButton'
-import logo from '/logo-removebg-preview.png'
-
-const SOCIALS = [
-  { icon: FaFacebookF, href: 'https://facebook.com/battlereadyfit', label: 'Facebook' },
-  { icon: FaInstagram, href: 'https://instagram.com/battle_readyfit', label: 'Instagram' },
-  { icon: FaXTwitter, href: 'https://twitter.com/Battle_ReadyFit', label: 'Twitter' },
-  { icon: FaWhatsapp, href: WHATSAPP, label: 'WhatsApp' },
-]
+import logo from '/logo.webp'
 
 /** Renders a footer nav entry as a route link or home-anchored hash link. */
 function FootLink({ item }) {
@@ -50,6 +33,14 @@ function FootLink({ item }) {
 }
 
 export default function Footer() {
+  const { nav: NAV, programs: PROGRAMS, hours: HOURS, brand } = useContent()
+  const WHATSAPP = whatsappUrl(brand)
+  const SOCIALS = [
+    { icon: FaFacebookF, href: 'https://facebook.com/battlereadyfit', label: 'Facebook' },
+    { icon: FaInstagram, href: 'https://instagram.com/battle_readyfit', label: 'Instagram' },
+    { icon: FaXTwitter, href: 'https://twitter.com/Battle_ReadyFit', label: 'Twitter' },
+    { icon: FaWhatsapp, href: WHATSAPP, label: 'WhatsApp' },
+  ]
   return (
     <footer className="border-t border-iron bg-ink">
       {/* top CTA strip */}
@@ -127,10 +118,10 @@ export default function Footer() {
             <FaClock size={13} className="text-battle" /> Hours
           </h4>
           <ul className="mt-3 space-y-1.5">
-            {HOURS.map(([d, t]) => (
-              <li key={d} className="flex justify-between gap-4 text-sm text-fog">
-                <span>{d}</span>
-                <span className="text-smoke">{t}</span>
+            {HOURS.map(({ day, time }) => (
+              <li key={day} className="flex justify-between gap-4 text-sm text-fog">
+                <span>{day}</span>
+                <span className="text-smoke">{time}</span>
               </li>
             ))}
           </ul>
@@ -144,15 +135,15 @@ export default function Footer() {
             <li className="flex gap-3 text-fog">
               <FaLocationDot className="mt-0.5 shrink-0 text-battle" size={15} />
               <span>
-                {ADDRESS}, {CITY}
+                {brand.address}, {brand.city}
               </span>
             </li>
             <li>
               <a
-                href={PHONE_HREF}
+                href={brand.phoneHref}
                 className="flex items-center gap-3 py-1 text-fog transition-colors hover:text-battle"
               >
-                <FaPhone className="shrink-0 text-battle" size={15} /> {PHONE}
+                <FaPhone className="shrink-0 text-battle" size={15} /> {brand.phone}
               </a>
             </li>
             <li>
@@ -162,16 +153,16 @@ export default function Footer() {
                 rel="noreferrer"
                 className="flex items-center gap-3 py-1 text-fog transition-colors hover:text-battle"
               >
-                <FaMobileScreenButton className="shrink-0 text-battle" size={15} /> {WHATSAPP_NUMBER}
+                <FaMobileScreenButton className="shrink-0 text-battle" size={15} /> {brand.whatsappNumber}
               </a>
             </li>
             <li>
               <a
-                href={`mailto:${EMAIL}`}
+                href={`mailto:${brand.email}`}
                 className="flex items-center gap-3 break-all py-1 text-fog transition-colors hover:text-battle"
               >
                 <FaEnvelope className="shrink-0 text-battle" size={15} />
-                {EMAIL}
+                {brand.email}
               </a>
             </li>
           </ul>

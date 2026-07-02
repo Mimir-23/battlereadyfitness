@@ -1,10 +1,6 @@
 import { useRef } from 'react'
 import { motion, useScroll, useTransform } from 'motion/react'
-
-// Scroll-linked parallax stutters on mobile Safari — desktop/mouse only.
-const isDesktopPointer =
-  typeof window !== 'undefined' &&
-  window.matchMedia('(hover: hover) and (pointer: fine)').matches
+import { isDesktopPointer } from '../../lib/motion'
 
 /** Scroll-linked parallax image inside a clipped, relatively-positioned parent. */
 export default function ParallaxImage({ src, alt, className = '', strength = 80 }) {
@@ -22,6 +18,7 @@ export default function ParallaxImage({ src, alt, className = '', strength = 80 
         style={isDesktopPointer ? { y } : undefined}
         className={`w-full object-cover ${isDesktopPointer ? 'h-[120%]' : 'h-full'}`}
         loading={isDesktopPointer ? 'lazy' : 'eager'}
+        decoding="async"
       />
     </div>
   )
