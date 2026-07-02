@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { FaArrowRightLong } from 'react-icons/fa6'
 import { useContent } from '../../content/ContentProvider'
 import { getIcon } from '../../content/icons'
-import { fadeUp, stagger, reveal, isTouch } from '../../lib/motion'
+import { fadeUp, stagger, reveal } from '../../lib/motion'
 import SectionHeading from '../ui/SectionHeading'
 import Spotlight from '../ui/Spotlight'
 
@@ -40,7 +40,7 @@ export default function Programs() {
                 <img
                   src={p.img}
                   alt={p.name}
-                  loading={isTouch ? 'eager' : 'lazy'}
+                  loading="lazy"
                   decoding="async"
                   className="absolute inset-0 h-full w-full object-cover transition-all duration-700 group-hover:scale-110 lg:grayscale lg:group-hover:grayscale-0"
                 />

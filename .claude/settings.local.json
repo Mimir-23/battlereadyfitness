@@ -30,7 +30,11 @@
       "Bash(python \"C:\\\\Users\\\\deivi\\\\.claude\\\\skills\\\\ui-ux-pro-max\\\\scripts\\\\search.py\" \"fitness gym bold dark landing page\" --design-system -f markdown)",
       "Bash(npm i *)",
       "Bash(sed -i 's|/images/\\\\\\([a-z0-9]*\\\\\\)\\\\.jpg|/images/\\\\1.webp|g' src/content/defaults.js src/content/schema.js src/pages/Schedule.jsx src/pages/Memberships.jsx src/components/ui/PageBanner.jsx index.html)",
-      "Bash(sed -i \"s|from '/logo-removebg-preview.png'|from '/logo.webp'|\" src/components/layout/Navbar.jsx src/components/layout/Footer.jsx)"
+      "Bash(sed -i \"s|from '/logo-removebg-preview.png'|from '/logo.webp'|\" src/components/layout/Navbar.jsx src/components/layout/Footer.jsx)",
+      "Bash(curl -s -o bebas-neue.woff2 \"https://fonts.gstatic.com/s/bebasneue/v16/JTUSjIg69CK48gW7PXoo9Wlhyw.woff2\")",
+      "Bash(curl -s -o inter-var.woff2 \"https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2\")",
+      "Bash(curl -s -o oswald-var.woff2 \"https://fonts.gstatic.com/s/oswald/v57/TK3IWkUHHAIjg75cFRf3bXL8LICs1_Fv40pKlN4NNSeSASz7FmlWHYg.woff2\")",
+      "Bash(file *.woff2)"
     ]
   }
 }

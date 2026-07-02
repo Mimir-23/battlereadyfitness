@@ -1,5 +1,5 @@
 import { FaStar } from 'react-icons/fa6'
-import { Reveal, isTouch } from '../../lib/motion'
+import { Reveal } from '../../lib/motion'
 import { useContent } from '../../content/ContentProvider'
 
 export default function Testimonial() {
@@ -11,7 +11,7 @@ export default function Testimonial() {
         alt=""
         aria-hidden="true"
         className="absolute inset-0 h-full w-full object-cover"
-        loading={isTouch ? 'eager' : 'lazy'}
+        loading="lazy"
         decoding="async"
       />
       <div className="absolute inset-0 bg-ink/85" />

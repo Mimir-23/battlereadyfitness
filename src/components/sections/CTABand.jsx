@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { FaArrowRightLong, FaWhatsapp } from 'react-icons/fa6'
 import { useContent } from '../../content/ContentProvider'
 import { whatsappUrl } from '../../content/defaults'
-import { Reveal, isTouch } from '../../lib/motion'
+import { Reveal } from '../../lib/motion'
 
 /** Full-bleed yellow "claim your free pass" call-to-action band. */
 export default function CTABand() {
@@ -16,7 +16,7 @@ export default function CTABand() {
         aria-hidden="true"
         className="absolute inset-0 h-full w-full object-cover"
         style={{ animation: 'var(--animate-kenburns)' }}
-        loading={isTouch ? 'eager' : 'lazy'}
+        loading="lazy"
         decoding="async"
       />
       <div className="absolute inset-0 bg-battle/85" />

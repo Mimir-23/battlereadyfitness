@@ -13,6 +13,8 @@ const ROOT = path.resolve(import.meta.dirname, '..', 'public')
 // renderizados (x2 para pantallas retina).
 const JOBS = [
   { file: 'images/hero.jpg', width: 1920, quality: 72 },
+  // Variante móvil del hero (LCP): pantallas pequeñas no necesitan 1920px.
+  { file: 'images/hero.jpg', out: 'images/hero-sm.webp', width: 828, quality: 68 },
   { file: 'images/cta.jpg', width: 1600, quality: 72 },
   { file: 'images/bootcamp.jpg', width: 1280, quality: 72 },
   { file: 'images/kickboxing.jpg', width: 1280, quality: 72 },

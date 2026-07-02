@@ -17,7 +17,7 @@ export default function ParallaxImage({ src, alt, className = '', strength = 80 
         alt={alt}
         style={isDesktopPointer ? { y } : undefined}
         className={`w-full object-cover ${isDesktopPointer ? 'h-[120%]' : 'h-full'}`}
-        loading={isDesktopPointer ? 'lazy' : 'eager'}
+        loading="lazy"
         decoding="async"
       />
     </div>

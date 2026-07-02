@@ -11,6 +11,12 @@ import EmberField from '../ui/EmberField'
 export default function Hero() {
   const { hero, brand } = useContent()
   const WHATSAPP = whatsappUrl(brand)
+  // The 828w mobile variant only exists for the bundled default image; a
+  // custom image saved from the admin panel has no generated variants.
+  const heroSrcSet =
+    hero.image === '/images/hero.webp'
+      ? '/images/hero-sm.webp 828w, /images/hero.webp 1920w'
+      : undefined
   const ref = useRef(null)
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -32,6 +38,8 @@ export default function Hero() {
       <motion.div style={isDesktopPointer ? { scale: imgScale } : undefined} className="absolute inset-0">
         <motion.img
           src={hero.image}
+          srcSet={heroSrcSet}
+          sizes={heroSrcSet ? '100vw' : undefined}
           alt="Athletes training inside Battle Ready Fitness"
           className="h-full w-full object-cover"
           fetchPriority="high"
