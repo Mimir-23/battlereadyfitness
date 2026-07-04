@@ -141,6 +141,9 @@ las 2 claves que copiaste en el paso A.5:
 
 - Deja marcados los 3 entornos (Production, Preview, Development).
 - Cuidado con espacios o saltos de línea al pegar.
+- **`VITE_SUPABASE_URL` debe ser SOLO el dominio** (`https://xxx.supabase.co`),
+  sin `/rest/v1` ni barra final. Cópiala de _Project Settings → API → Project URL_.
+  Si le pegas una ruta REST, el login y la lectura de contenido dan **404**.
 
 > Los nombres deben ser **exactos** (empiezan por `VITE_`, en mayúsculas).
 > Si te equivocas aquí, el sitio funciona igual con el contenido de fábrica,
