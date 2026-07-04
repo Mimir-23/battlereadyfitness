@@ -1,4 +1,4 @@
-import { FaPlus, FaTrashCan } from 'react-icons/fa6'
+import { FaPlus, FaTrashCan, FaArrowUp, FaArrowDown } from 'react-icons/fa6'
 
 /* ------------------------------------------------------------------ */
 /*  Custom editor for the weekly class timetable.                      */
@@ -25,6 +25,13 @@ export default function ScheduleEditor({ value, onChange }) {
   const addRow = () =>
     setRows([...rows, { time: '', classes: Object.fromEntries(days.map((d) => [d, ''])) }])
   const removeRow = (i) => setRows(rows.filter((_, j) => j !== i))
+  const moveRow = (i, dir) => {
+    const j = i + dir
+    if (j < 0 || j >= rows.length) return
+    const next = [...rows]
+    ;[next[i], next[j]] = [next[j], next[i]]
+    setRows(next)
+  }
 
   return (
     <div className="space-y-5">
@@ -118,15 +125,38 @@ export default function ScheduleEditor({ value, onChange }) {
                     />
                   </td>
                 ))}
-                <td className="border border-iron p-1.5 text-center">
-                  <button
-                    type="button"
-                    onClick={() => removeRow(i)}
-                    className="text-smoke hover:text-alert"
-                    aria-label="Eliminar fila"
-                  >
-                    <FaTrashCan size={13} />
-                  </button>
+                <td className="border border-iron p-1.5">
+                  <div className="flex items-center justify-center gap-0.5">
+                    <button
+                      type="button"
+                      onClick={() => moveRow(i, -1)}
+                      disabled={i === 0}
+                      className="rounded p-1 text-smoke hover:text-chalk disabled:opacity-30"
+                      aria-label="Subir fila"
+                      title="Subir"
+                    >
+                      <FaArrowUp size={11} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => moveRow(i, 1)}
+                      disabled={i === rows.length - 1}
+                      className="rounded p-1 text-smoke hover:text-chalk disabled:opacity-30"
+                      aria-label="Bajar fila"
+                      title="Bajar"
+                    >
+                      <FaArrowDown size={11} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => removeRow(i)}
+                      className="rounded p-1 text-smoke hover:text-alert"
+                      aria-label="Eliminar fila"
+                      title="Eliminar"
+                    >
+                      <FaTrashCan size={13} />
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}

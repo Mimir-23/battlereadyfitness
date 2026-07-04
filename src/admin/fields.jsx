@@ -5,6 +5,8 @@ import {
   FaTrashCan,
   FaArrowUp,
   FaArrowDown,
+  FaCopy,
+  FaChevronDown,
 } from 'react-icons/fa6'
 import { ICON_NAMES, ICON_LABELS, getIcon } from '../content/icons'
 import { uploadImage } from './contentApi'
@@ -33,10 +35,10 @@ function Label({ field }) {
 function ImageUploader({ value, onChange }) {
   const fileRef = useRef(null)
   const [busy, setBusy] = useState(false)
+  const [dragging, setDragging] = useState(false)
   const notify = useToast()
 
-  const pick = async (e) => {
-    const file = e.target.files?.[0]
+  const handleFile = async (file) => {
     if (!file) return
     if (!file.type.startsWith('image/')) {
       notify('El archivo debe ser una imagen.', 'error')
@@ -60,16 +62,35 @@ function ImageUploader({ value, onChange }) {
   }
 
   return (
-    <div className="flex items-start gap-3">
-      <div className="h-20 w-20 shrink-0 overflow-hidden rounded-lg border border-iron bg-coal">
+    <div
+      onDragOver={(e) => {
+        e.preventDefault()
+        setDragging(true)
+      }}
+      onDragLeave={() => setDragging(false)}
+      onDrop={(e) => {
+        e.preventDefault()
+        setDragging(false)
+        handleFile(e.dataTransfer.files?.[0])
+      }}
+      className={`flex items-start gap-3 rounded-xl border border-dashed p-2 transition-colors ${
+        dragging ? 'border-battle bg-battle/10' : 'border-transparent'
+      }`}
+    >
+      <button
+        type="button"
+        onClick={() => fileRef.current?.click()}
+        title="Cambiar imagen"
+        className="group h-20 w-20 shrink-0 overflow-hidden rounded-lg border border-iron bg-coal"
+      >
         {value ? (
-          <img src={value} alt="" className="h-full w-full object-cover" />
+          <img src={value} alt="" className="h-full w-full object-cover transition-opacity group-hover:opacity-70" />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-[10px] text-smoke">
+          <span className="flex h-full w-full items-center justify-center text-[10px] text-smoke">
             Sin imagen
-          </div>
+          </span>
         )}
-      </div>
+      </button>
       <div className="flex-1 space-y-2">
         <button
           type="button"
@@ -86,7 +107,8 @@ function ImageUploader({ value, onChange }) {
           placeholder="o pega una URL de imagen"
           className={inputCls}
         />
-        <input ref={fileRef} type="file" accept="image/*" onChange={pick} className="hidden" />
+        <p className="text-[11px] text-smoke">También puedes arrastrar y soltar la imagen aquí.</p>
+        <input ref={fileRef} type="file" accept="image/*" onChange={(e) => handleFile(e.target.files?.[0])} className="hidden" />
       </div>
     </div>
   )
@@ -125,11 +147,36 @@ function StringList({ value, onChange, itemLabel = 'Elemento' }) {
   const set = (i, v) => onChange(list.map((x, j) => (j === i ? v : x)))
   const add = () => onChange([...list, ''])
   const remove = (i) => onChange(list.filter((_, j) => j !== i))
+  const move = (i, dir) => {
+    const j = i + dir
+    if (j < 0 || j >= list.length) return
+    const next = [...list]
+    ;[next[i], next[j]] = [next[j], next[i]]
+    onChange(next)
+  }
   return (
     <div className="space-y-2">
       {list.map((item, i) => (
-        <div key={i} className="flex items-center gap-2">
+        <div key={i} className="flex items-center gap-1.5">
           <input value={item} onChange={(e) => set(i, e.target.value)} className={inputCls} />
+          <button
+            type="button"
+            onClick={() => move(i, -1)}
+            disabled={i === 0}
+            className="shrink-0 rounded p-1.5 text-smoke hover:text-chalk disabled:opacity-30"
+            aria-label="Subir"
+          >
+            <FaArrowUp size={11} />
+          </button>
+          <button
+            type="button"
+            onClick={() => move(i, 1)}
+            disabled={i === list.length - 1}
+            className="shrink-0 rounded p-1.5 text-smoke hover:text-chalk disabled:opacity-30"
+            aria-label="Bajar"
+          >
+            <FaArrowDown size={11} />
+          </button>
           <button
             type="button"
             onClick={() => remove(i)}
@@ -160,7 +207,7 @@ export function FieldInput({ field, value, onChange }) {
           rows={3}
           value={value ?? ''}
           onChange={(e) => onChange(e.target.value)}
-          className={inputCls}
+          className={inputCls + ' min-h-20 resize-y'}
         />
       )
     case 'number':
@@ -266,36 +313,60 @@ export function ListField({ field, value, onChange }) {
     onChange([...list, field.newItem ? field.newItem() : {}])
     setOpen(list.length)
   }
-  const remove = (i) => onChange(list.filter((_, j) => j !== i))
+  const duplicate = (i) => {
+    const next = [...list]
+    next.splice(i + 1, 0, JSON.parse(JSON.stringify(list[i])))
+    onChange(next)
+    setOpen(i + 1)
+  }
+  const remove = (i) => {
+    onChange(list.filter((_, j) => j !== i))
+    if (open === i) setOpen(-1)
+    else if (open > i) setOpen(open - 1)
+  }
   const move = (i, dir) => {
     const j = i + dir
     if (j < 0 || j >= list.length) return
     const next = [...list]
     ;[next[i], next[j]] = [next[j], next[i]]
     onChange(next)
+    if (open === i) setOpen(j)
+    else if (open === j) setOpen(i)
   }
   const labelOf = (it, i) =>
     typeof field.itemLabel === 'function' ? field.itemLabel(it, i) : `Elemento ${i + 1}`
 
   return (
     <div className="space-y-2">
+      {list.length > 1 && (
+        <div className="text-[11px] text-smoke">
+          {list.length} elementos — pulsa uno para abrirlo o cerrarlo.
+        </div>
+      )}
       {list.map((item, i) => (
         <div key={i} className="overflow-hidden rounded-xl border border-iron bg-coal">
           <div className="flex items-center gap-1 px-3 py-2">
             <button
               type="button"
               onClick={() => setOpen(open === i ? -1 : i)}
-              className="flex-1 text-left font-head text-sm font-semibold text-chalk"
+              className="flex flex-1 items-center gap-2 text-left font-head text-sm font-semibold text-chalk"
             >
+              <FaChevronDown
+                size={11}
+                className={`shrink-0 text-smoke transition-transform ${open === i ? '' : '-rotate-90'}`}
+              />
               <span className="text-smoke">#{i + 1}</span> {labelOf(item, i)}
             </button>
-            <button type="button" onClick={() => move(i, -1)} disabled={i === 0} className="rounded p-1.5 text-smoke hover:text-chalk disabled:opacity-30" aria-label="Subir">
+            <button type="button" onClick={() => move(i, -1)} disabled={i === 0} className="rounded p-1.5 text-smoke hover:text-chalk disabled:opacity-30" aria-label="Subir" title="Subir">
               <FaArrowUp size={12} />
             </button>
-            <button type="button" onClick={() => move(i, 1)} disabled={i === list.length - 1} className="rounded p-1.5 text-smoke hover:text-chalk disabled:opacity-30" aria-label="Bajar">
+            <button type="button" onClick={() => move(i, 1)} disabled={i === list.length - 1} className="rounded p-1.5 text-smoke hover:text-chalk disabled:opacity-30" aria-label="Bajar" title="Bajar">
               <FaArrowDown size={12} />
             </button>
-            <button type="button" onClick={() => remove(i)} className="rounded p-1.5 text-smoke hover:text-alert" aria-label="Eliminar">
+            <button type="button" onClick={() => duplicate(i)} className="rounded p-1.5 text-smoke hover:text-battle" aria-label="Duplicar" title="Duplicar">
+              <FaCopy size={12} />
+            </button>
+            <button type="button" onClick={() => remove(i)} className="rounded p-1.5 text-smoke hover:text-alert" aria-label="Eliminar" title="Eliminar">
               <FaTrashCan size={13} />
             </button>
           </div>

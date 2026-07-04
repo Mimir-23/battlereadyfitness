@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
-import { FaLock, FaArrowRightLong } from 'react-icons/fa6'
+import { FaLock, FaArrowRightLong, FaEye, FaEyeSlash } from 'react-icons/fa6'
 import { useAuth } from '../../admin/AuthProvider'
 import { Spinner } from '../../admin/ui'
 import SetupNotice from './SetupNotice'
@@ -11,6 +11,7 @@ export default function AdminLogin() {
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [showPass, setShowPass] = useState(false)
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
 
@@ -71,13 +72,23 @@ export default function AdminLogin() {
             <label className="mb-1 block font-head text-xs font-semibold uppercase tracking-wider text-fog">
               Contraseña
             </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              autoComplete="current-password"
-              className="w-full rounded-lg border border-iron bg-ink px-3 py-2.5 text-sm text-chalk focus:border-battle focus:outline-none"
-            />
+            <div className="relative">
+              <input
+                type={showPass ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                autoComplete="current-password"
+                className="w-full rounded-lg border border-iron bg-ink px-3 py-2.5 pr-10 text-sm text-chalk focus:border-battle focus:outline-none"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPass((v) => !v)}
+                aria-label={showPass ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1.5 text-smoke hover:text-chalk"
+              >
+                {showPass ? <FaEyeSlash size={14} /> : <FaEye size={14} />}
+              </button>
+            </div>
           </div>
 
           {error && <p className="text-sm text-alert">{error}</p>}

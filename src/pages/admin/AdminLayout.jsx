@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { NavLink, Navigate, Outlet, Link } from 'react-router-dom'
+import { NavLink, Navigate, Outlet, Link, useNavigate, useLocation } from 'react-router-dom'
 import {
   FaRightFromBracket,
   FaHouse,
@@ -8,7 +8,7 @@ import {
   FaArrowUpRightFromSquare,
 } from 'react-icons/fa6'
 import { useAuth } from '../../admin/AuthProvider'
-import { Spinner } from '../../admin/ui'
+import { Spinner, useConfirm, useUnsaved } from '../../admin/ui'
 import { SECTIONS } from '../../content/schema'
 import { sectionIcon } from '../../admin/sectionIcons'
 import SetupNotice from './SetupNotice'
@@ -20,6 +20,47 @@ import SetupNotice from './SetupNotice'
 export default function AdminLayout() {
   const { configured, loading, session, isAdmin, user, signOut } = useAuth()
   const [menuOpen, setMenuOpen] = useState(false)
+  const { dirty, setDirty } = useUnsaved()
+  const confirm = useConfirm()
+  const navigate = useNavigate()
+  const location = useLocation()
+
+  // In-panel navigation with an unsaved draft: intercept, ask, then go.
+  const guardedNav = (e, to) => {
+    setMenuOpen(false)
+    if (!dirty) return
+    // Clicking the section you're already on isn't leaving it.
+    if (location.pathname === to) {
+      e.preventDefault()
+      return
+    }
+    e.preventDefault()
+    confirm({
+      title: 'Cambios sin guardar',
+      body: 'Si sales ahora perderás los cambios que no has guardado.',
+      confirmLabel: 'Salir sin guardar',
+      danger: true,
+    }).then((ok) => {
+      if (ok) {
+        setDirty(false)
+        navigate(to)
+      }
+    })
+  }
+
+  const guardedSignOut = async () => {
+    if (dirty) {
+      const ok = await confirm({
+        title: 'Cambios sin guardar',
+        body: 'Si cierras sesión ahora perderás los cambios que no has guardado.',
+        confirmLabel: 'Cerrar sesión',
+        danger: true,
+      })
+      if (!ok) return
+      setDirty(false)
+    }
+    signOut()
+  }
 
   if (!configured) return <SetupNotice />
   // isAdmin === null → the admin check is still resolving; keep the spinner
@@ -66,7 +107,7 @@ export default function AdminLayout() {
                 <NavLink
                   key={s.key}
                   to={`/admin/${s.key}`}
-                  onClick={() => setMenuOpen(false)}
+                  onClick={(e) => guardedNav(e, `/admin/${s.key}`)}
                   className={({ isActive }) =>
                     `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors ${
                       isActive
@@ -92,7 +133,7 @@ export default function AdminLayout() {
             </Link>
             <div className="px-3 pb-2 pt-1 text-[11px] text-smoke">{user?.email}</div>
             <button
-              onClick={signOut}
+              onClick={guardedSignOut}
               className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-fog hover:bg-ink hover:text-alert"
             >
               <FaRightFromBracket size={14} /> Cerrar sesión
@@ -114,7 +155,11 @@ export default function AdminLayout() {
           <button onClick={() => setMenuOpen(true)} aria-label="Abrir menú" className="text-chalk">
             <FaBars size={20} />
           </button>
-          <Link to="/admin" className="flex items-center gap-2 font-head text-sm font-semibold uppercase tracking-wider text-chalk">
+          <Link
+            to="/admin"
+            onClick={(e) => guardedNav(e, '/admin')}
+            className="flex items-center gap-2 font-head text-sm font-semibold uppercase tracking-wider text-chalk"
+          >
             <FaHouse size={14} /> Panel
           </Link>
         </header>

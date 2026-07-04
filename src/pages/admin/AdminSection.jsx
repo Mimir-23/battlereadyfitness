@@ -1,21 +1,24 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import {
   FaFloppyDisk,
   FaRotateLeft,
   FaTriangleExclamation,
   FaArrowLeftLong,
+  FaChevronLeft,
+  FaChevronRight,
   FaEye,
+  FaCircleCheck,
 } from 'react-icons/fa6'
-import { SECTION_BY_KEY, validateSection } from '../../content/schema'
+import { SECTIONS, SECTION_BY_KEY, validateSection } from '../../content/schema'
 import { DEFAULT_CONTENT } from '../../content/defaults'
 import { useContentMeta } from '../../content/ContentProvider'
 import { useAuth } from '../../admin/AuthProvider'
-import { saveSection, resetSection } from '../../admin/contentApi'
+import { saveSection, resetSection, fetchSavedMeta } from '../../admin/contentApi'
 import { FieldInput, ObjectFields, ListField } from '../../admin/fields'
 import ScheduleEditor from '../../admin/ScheduleEditor'
 import SectionPreview from '../../admin/preview/Previews'
-import { useToast, Spinner } from '../../admin/ui'
+import { useToast, useConfirm, useUnsaved, Spinner } from '../../admin/ui'
 
 const clone = (v) => JSON.parse(JSON.stringify(v ?? null))
 
@@ -55,19 +58,38 @@ function SectionEditor({ sectionKey, section, initial }) {
   const { refresh } = useContentMeta()
   const { user } = useAuth()
   const notify = useToast()
+  const confirm = useConfirm()
+  const navigate = useNavigate()
+  const { setDirty: setGlobalDirty } = useUnsaved()
   const key = sectionKey
 
-  const [draft, setDraft] = useState(() => clone(initial))
+  const [draft, setDraftRaw] = useState(() => clone(initial))
   const [baseline, setBaseline] = useState(() => clone(initial))
   const [saving, setSaving] = useState(false)
   const [resetting, setResetting] = useState(false)
+  const [errors, setErrors] = useState([])
+  // null = still loading · undefined = no override (using defaults)
+  const [savedMeta, setSavedMeta] = useState(null)
 
   const dirty = useMemo(
     () => JSON.stringify(draft) !== JSON.stringify(baseline),
     [draft, baseline],
   )
 
-  // Warn before leaving with unsaved changes.
+  // Editing again clears the stale validation list.
+  const setDraft = (v) => {
+    setDraftRaw(v)
+    if (errors.length) setErrors([])
+  }
+
+  // Mirror the dirty flag into the shared context so the sidebar can warn
+  // before an in-panel navigation drops the draft.
+  useEffect(() => {
+    setGlobalDirty(dirty)
+    return () => setGlobalDirty(false)
+  }, [dirty, setGlobalDirty])
+
+  // Warn before closing/reloading the tab with unsaved changes.
   useEffect(() => {
     const handler = (e) => {
       if (dirty) {
@@ -79,17 +101,35 @@ function SectionEditor({ sectionKey, section, initial }) {
     return () => window.removeEventListener('beforeunload', handler)
   }, [dirty])
 
+  // Who edited this section last (and whether an override exists at all).
+  useEffect(() => {
+    let active = true
+    fetchSavedMeta()
+      .then((m) => {
+        if (active) setSavedMeta(m[key])
+      })
+      .catch(() => {
+        if (active) setSavedMeta(undefined)
+      })
+    return () => {
+      active = false
+    }
+  }, [key])
+
   const save = async () => {
-    const errors = validateSection(section, draft)
-    if (errors.length) {
-      notify(errors[0], 'error')
+    const found = validateSection(section, draft)
+    if (found.length) {
+      setErrors(found)
+      notify('Revisa los campos marcados antes de guardar.', 'error')
       return
     }
+    setErrors([])
     setSaving(true)
     try {
       await saveSection(key, draft, user?.email)
       await refresh()
       setBaseline(clone(draft))
+      setSavedMeta({ updated_at: new Date().toISOString(), updated_by: user?.email })
       notify('Cambios guardados. Ya están en el sitio.')
     } catch (err) {
       notify('No se pudo guardar: ' + (err?.message || 'error'), 'error')
@@ -98,15 +138,37 @@ function SectionEditor({ sectionKey, section, initial }) {
     }
   }
 
+  // Ctrl+S / Cmd+S saves — everyone tries it anyway.
+  useEffect(() => {
+    const onKey = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
+        e.preventDefault()
+        if (dirty && !saving) save()
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  })
+
+  const hasOverride = !!savedMeta
+
   const restoreDefaults = async () => {
-    if (!window.confirm('¿Restaurar esta sección a su contenido original? Se perderán tus cambios guardados.')) return
+    const ok = await confirm({
+      title: 'Restaurar contenido original',
+      body: 'Esta sección volverá a su contenido de fábrica y se perderá lo que hayas guardado. Esta acción no se puede deshacer.',
+      confirmLabel: 'Restaurar',
+      danger: true,
+    })
+    if (!ok) return
     setResetting(true)
     try {
       await resetSection(key)
       await refresh()
       const original = clone(DEFAULT_CONTENT[key])
-      setDraft(original)
+      setDraftRaw(original)
       setBaseline(original)
+      setSavedMeta(undefined)
+      setErrors([])
       notify('Sección restaurada a los valores originales.')
     } catch (err) {
       notify('No se pudo restaurar: ' + (err?.message || 'error'), 'error')
@@ -115,16 +177,85 @@ function SectionEditor({ sectionKey, section, initial }) {
     }
   }
 
+  const guardedGo = async (to) => {
+    if (dirty) {
+      const ok = await confirm({
+        title: 'Cambios sin guardar',
+        body: 'Si sales ahora perderás los cambios que no has guardado.',
+        confirmLabel: 'Salir sin guardar',
+        danger: true,
+      })
+      if (!ok) return
+      setGlobalDirty(false)
+    }
+    navigate(to)
+  }
+
+  const idx = SECTIONS.findIndex((s) => s.key === key)
+  const prevSection = SECTIONS[idx - 1]
+  const nextSection = SECTIONS[idx + 1]
+
   return (
     <div className="mx-auto max-w-6xl pb-24">
-      <Link to="/admin" className="mb-4 inline-flex items-center gap-2 text-sm text-smoke hover:text-chalk">
-        <FaArrowLeftLong size={13} /> Panel
-      </Link>
+      <div className="mb-4 flex items-center justify-between gap-3">
+        <button
+          onClick={() => guardedGo('/admin')}
+          className="inline-flex items-center gap-2 text-sm text-smoke hover:text-chalk"
+        >
+          <FaArrowLeftLong size={13} /> Panel
+        </button>
+        <div className="flex items-center gap-1">
+          <button
+            onClick={() => prevSection && guardedGo(`/admin/${prevSection.key}`)}
+            disabled={!prevSection}
+            title={prevSection ? `Anterior: ${prevSection.label}` : undefined}
+            className="inline-flex items-center gap-1.5 rounded-lg border border-iron px-2.5 py-1.5 text-xs text-smoke hover:text-chalk disabled:opacity-30"
+          >
+            <FaChevronLeft size={10} />
+            <span className="hidden sm:inline">{prevSection?.label || 'Anterior'}</span>
+          </button>
+          <button
+            onClick={() => nextSection && guardedGo(`/admin/${nextSection.key}`)}
+            disabled={!nextSection}
+            title={nextSection ? `Siguiente: ${nextSection.label}` : undefined}
+            className="inline-flex items-center gap-1.5 rounded-lg border border-iron px-2.5 py-1.5 text-xs text-smoke hover:text-chalk disabled:opacity-30"
+          >
+            <span className="hidden sm:inline">{nextSection?.label || 'Siguiente'}</span>
+            <FaChevronRight size={10} />
+          </button>
+        </div>
+      </div>
 
       <header className="mb-6">
         <h1 className="font-display text-4xl text-chalk">{section.label}</h1>
         <p className="mt-1 text-sm text-fog">{section.description}</p>
+        {savedMeta !== null && (
+          <p className="mt-2 flex items-center gap-1.5 text-xs text-smoke">
+            {hasOverride ? (
+              <>
+                <FaCircleCheck size={11} className="text-battle" />
+                Última edición: {formatDate(savedMeta.updated_at)}
+                {savedMeta.updated_by ? ` · ${savedMeta.updated_by}` : ''}
+              </>
+            ) : (
+              'Mostrando el contenido original — aún no se ha editado.'
+            )}
+          </p>
+        )}
       </header>
+
+      {errors.length > 0 && (
+        <div className="mb-6 rounded-xl border border-alert/40 bg-alert/10 p-4">
+          <div className="flex items-center gap-2 font-head text-xs font-bold uppercase tracking-wider text-alert">
+            <FaTriangleExclamation size={13} /> Faltan datos para poder guardar
+          </div>
+          <ul className="mt-2 list-inside list-disc space-y-1 text-sm text-chalk">
+            {errors.map((e, i) => (
+              <li key={i}>{e}</li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <div className="grid gap-8 lg:grid-cols-2">
         {/* Editor */}
@@ -156,14 +287,22 @@ function SectionEditor({ sectionKey, section, initial }) {
           <div className="ml-auto flex items-center gap-2">
             <button
               onClick={restoreDefaults}
-              disabled={resetting}
-              className="inline-flex items-center gap-2 rounded-lg border border-iron px-3 py-2 font-head text-xs font-semibold uppercase tracking-wider text-smoke hover:text-chalk disabled:opacity-50"
+              disabled={resetting || !hasOverride}
+              title={
+                hasOverride
+                  ? 'Vuelve al contenido de fábrica'
+                  : 'Esta sección ya muestra el contenido original'
+              }
+              className="inline-flex items-center gap-2 rounded-lg border border-iron px-3 py-2 font-head text-xs font-semibold uppercase tracking-wider text-smoke hover:text-chalk disabled:opacity-40"
             >
               {resetting ? <Spinner className="border-iron border-t-chalk" /> : <FaRotateLeft size={12} />}
               <span className="hidden sm:inline">Restaurar original</span>
             </button>
             <button
-              onClick={() => setDraft(clone(baseline))}
+              onClick={() => {
+                setDraftRaw(clone(baseline))
+                setErrors([])
+              }}
               disabled={!dirty}
               className="rounded-lg border border-iron px-3 py-2 font-head text-xs font-semibold uppercase tracking-wider text-smoke hover:text-chalk disabled:opacity-40"
             >
@@ -172,6 +311,7 @@ function SectionEditor({ sectionKey, section, initial }) {
             <button
               onClick={save}
               disabled={saving || !dirty}
+              title="Ctrl+S"
               className="inline-flex items-center gap-2 rounded-lg bg-battle px-5 py-2.5 font-head text-xs font-bold uppercase tracking-widest text-ink transition-transform hover:scale-[1.02] active:scale-95 disabled:opacity-50"
             >
               {saving ? <Spinner /> : <FaFloppyDisk size={13} />}
@@ -211,4 +351,18 @@ function SectionEditorBody({ section, draft, setDraft }) {
     return <ScheduleEditor value={draft} onChange={setDraft} />
   }
   return <p className="text-sm text-smoke">Editor no disponible.</p>
+}
+
+function formatDate(iso) {
+  if (!iso) return ''
+  try {
+    return new Date(iso).toLocaleString('es', {
+      day: '2-digit',
+      month: 'short',
+      hour: '2-digit',
+      minute: '2-digit',
+    })
+  } catch {
+    return iso
+  }
 }
