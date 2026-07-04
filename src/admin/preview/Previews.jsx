@@ -132,19 +132,23 @@ function GalleryPreview({ d }) {
 function TestimonialPreview({ d }) {
   return (
     <Frame>
-      <div className="relative p-6 text-center">
+      <div className="relative p-5">
         {d.image && <img src={d.image} alt="" className="absolute inset-0 h-full w-full object-cover opacity-20" />}
-        <div className="relative">
-          <div className="mb-2 flex justify-center text-battle">
-            {[0, 1, 2, 3, 4].map((i) => (
-              <FaStar key={i} size={13} />
-            ))}
-          </div>
-          <p className="font-head text-base leading-snug text-chalk">
-            “{d.quote} {d.highlight && <span className="text-battle">{d.highlight}</span>}”
-          </p>
-          <div className="mt-3 font-head text-xs font-semibold uppercase text-chalk">{d.author}</div>
-          <div className="text-[10px] uppercase tracking-wider text-smoke">{d.role}</div>
+        <div className="relative space-y-3">
+          {(d.items || []).map((it, i) => (
+            <div key={i} className="rounded-lg border border-iron bg-ink/70 p-3 text-center">
+              <div className="mb-1.5 flex justify-center text-battle">
+                {[0, 1, 2, 3, 4].map((j) => (
+                  <FaStar key={j} size={11} />
+                ))}
+              </div>
+              <p className="font-head text-sm leading-snug text-chalk">
+                “{it.quote} {it.highlight && <span className="text-battle">{it.highlight}</span>}”
+              </p>
+              <div className="mt-2 font-head text-xs font-semibold uppercase text-chalk">{it.author}</div>
+              <div className="text-[10px] uppercase tracking-wider text-smoke">{it.role}</div>
+            </div>
+          ))}
         </div>
       </div>
     </Frame>

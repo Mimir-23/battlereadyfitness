@@ -217,6 +217,13 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Anchor jumps (#programs, #gallery, #contact…) must land below the fixed
+   navbar. Lenis applies its own offset on desktop; this covers native jumps
+   and scrollIntoView on touch devices. */
+[id] {
+  scroll-margin-top: 84px;
+}
+
 body {
   margin: 0;
   background: var(--color-ink);

@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { FaArrowRightLong, FaWhatsapp } from 'react-icons/fa6'
 import { useContent } from '../../content/ContentProvider'
 import { whatsappUrl } from '../../content/defaults'
-import { Reveal } from '../../lib/motion'
+import { Reveal, isDesktopPointer } from '../../lib/motion'
 
 /** Full-bleed yellow "claim your free pass" call-to-action band. */
 export default function CTABand() {
@@ -15,7 +15,8 @@ export default function CTABand() {
         alt=""
         aria-hidden="true"
         className="absolute inset-0 h-full w-full object-cover"
-        style={{ animation: 'var(--animate-kenburns)' }}
+        // The slow full-bleed zoom janks mobile GPUs — desktop-only.
+        style={isDesktopPointer ? { animation: 'var(--animate-kenburns)' } : undefined}
         loading="lazy"
         decoding="async"
       />

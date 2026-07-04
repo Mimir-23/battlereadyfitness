@@ -1,11 +1,8 @@
 import { motion, useScroll, useVelocity, useSpring, useTransform } from 'motion/react'
 import { FaFire } from 'react-icons/fa6'
 import { useContent } from '../../content/ContentProvider'
-
 // Skewing a wide band on every scroll frame is costly on phones — desktop only.
-const isDesktopPointer =
-  typeof window !== 'undefined' &&
-  window.matchMedia('(hover: hover) and (pointer: fine)').matches
+import { isDesktopPointer } from '../../lib/motion'
 
 /** Infinite scrolling word band that skews with scroll velocity (desktop). */
 export default function Marquee({ reverse }) {

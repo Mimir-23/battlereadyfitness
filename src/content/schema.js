@@ -156,19 +156,28 @@ export const SECTIONS = [
     ],
   },
 
-  /* ---------- Testimonio ---------- */
+  /* ---------- Testimonios ---------- */
   {
     key: 'testimonial',
-    label: 'Testimonio',
+    label: 'Testimonios',
     icon: 'FaQuoteLeft',
-    description: 'La reseña destacada de un cliente.',
+    description: 'Las reseñas de clientes. Rotan automáticamente en el inicio.',
     shape: 'object',
     fields: [
       { name: 'image', label: 'Imagen de fondo', type: 'image' },
-      { name: 'quote', label: 'Reseña', type: 'textarea', required: true },
-      { name: 'highlight', label: 'Frase destacada (amarilla)', type: 'text' },
-      { name: 'author', label: 'Nombre del cliente', type: 'text', required: true },
-      { name: 'role', label: 'Detalle / fuente', type: 'text' },
+      {
+        name: 'items',
+        label: 'Reseñas',
+        type: 'list',
+        itemLabel: (it) => it.author || 'Reseña',
+        newItem: () => ({ quote: '', highlight: '', author: '', role: 'Verified via Google' }),
+        item: [
+          { name: 'quote', label: 'Reseña', type: 'textarea', required: true },
+          { name: 'highlight', label: 'Frase destacada (amarilla)', type: 'text' },
+          { name: 'author', label: 'Nombre del cliente', type: 'text', required: true },
+          { name: 'role', label: 'Detalle / fuente', type: 'text' },
+        ],
+      },
     ],
   },
 

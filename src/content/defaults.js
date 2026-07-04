@@ -153,14 +153,32 @@ export const DEFAULT_CONTENT = {
     { src: '/images/g4.webp', label: 'Power', span: '' },
   ],
 
-  /* ---------- Testimonio ---------- */
+  /* ---------- Testimonios ---------- */
   testimonial: {
-    quote:
-      'Professional, motivating, super clean boot-camp gym! Evelyn will kick your behind to get the workout in.',
-    highlight: 'Results guaranteed!',
-    author: 'Ana Machado',
-    role: 'Verified via Google',
     image: '/images/g1.webp',
+    items: [
+      {
+        quote:
+          'Professional, motivating, super clean boot-camp gym! Evelyn will kick your behind to get the workout in.',
+        highlight: 'Results guaranteed!',
+        author: 'Ana Machado',
+        role: 'Verified via Google',
+      },
+      {
+        quote:
+          'Best decision I made this year. The coaches push you past your limits and the community keeps you coming back every single day.',
+        highlight: "We're simply unique!",
+        author: 'Carlos R.',
+        role: 'Verified via Google',
+      },
+      {
+        quote:
+          'Every class is different so you never plateau. High energy, spotless facility and trainers who actually know your name.',
+        highlight: 'Best gym in Hialeah!',
+        author: 'Melissa T.',
+        role: 'Verified via Google',
+      },
+    ],
   },
 
   /* ---------- Banda CTA ---------- */
