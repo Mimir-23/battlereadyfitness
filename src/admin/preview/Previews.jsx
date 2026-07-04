@@ -40,6 +40,14 @@ function HeroPreview({ d }) {
             {d.accent && <div className="text-battle">{d.accent}</div>}
           </div>
           <p className="mt-3 text-xs text-fog">{d.paragraph}</p>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <span className="bg-battle px-3 py-1.5 font-head text-[10px] font-bold uppercase tracking-wider text-ink">
+              Claim Your 3-Day Free Pass
+            </span>
+            <span className="border border-iron bg-ink/40 px-3 py-1.5 font-head text-[10px] font-semibold uppercase tracking-wider text-chalk">
+              <FaWhatsapp className="mr-1 inline" size={10} /> WhatsApp
+            </span>
+          </div>
           {d.ratingText && (
             <div className="mt-3 flex items-center gap-2 text-battle">
               {[0, 1, 2, 3, 4].map((i) => (
@@ -98,7 +106,13 @@ function StatsPreview({ d }) {
 function WhyPreview({ d }) {
   return (
     <div className="grid grid-cols-2 gap-3">
-      <img src={d.image} alt="" className="aspect-[4/5] w-full rounded-xl border border-iron object-cover" />
+      {d.image ? (
+        <img src={d.image} alt="" className="aspect-[4/5] w-full rounded-xl border border-iron object-cover" />
+      ) : (
+        <div className="flex aspect-[4/5] w-full items-center justify-center rounded-xl border border-iron text-xs text-smoke">
+          Sin imagen
+        </div>
+      )}
       <div className="grid gap-2">
         {(d.items || []).map((w, i) => {
           const Icon = getIcon(w.icon)
@@ -160,6 +174,8 @@ function CtaPreview({ d }) {
     <Frame dark={false}>
       <div className="relative p-6 text-center">
         {d.image && <img src={d.image} alt="" className="absolute inset-0 h-full w-full object-cover opacity-25" />}
+        <div className="bg-hazard absolute inset-x-0 top-0 h-1.5" />
+        <div className="bg-hazard absolute inset-x-0 bottom-0 h-1.5" />
         <div className="relative">
           {d.kicker && <div className="text-[10px] font-bold uppercase tracking-widest text-ink/70">{d.kicker}</div>}
           <div className="mt-1 font-display text-2xl leading-[0.9] text-ink">
@@ -167,6 +183,14 @@ function CtaPreview({ d }) {
             {d.titleLine2 && <div>{d.titleLine2}</div>}
           </div>
           <p className="mx-auto mt-2 max-w-xs text-xs font-medium text-ink/80">{d.paragraph}</p>
+          <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
+            <span className="bg-ink px-3 py-1.5 font-head text-[10px] font-bold uppercase tracking-wider text-battle">
+              Claim Yours Now
+            </span>
+            <span className="border border-ink/30 px-3 py-1.5 font-head text-[10px] font-bold uppercase tracking-wider text-ink">
+              <FaWhatsapp className="mr-1 inline" size={10} /> WhatsApp Us
+            </span>
+          </div>
         </div>
       </div>
     </Frame>
@@ -189,13 +213,19 @@ function MarqueePreview({ d }) {
 
 function NavPreview({ d }) {
   return (
-    <div className="flex flex-wrap gap-4 rounded-xl border border-iron bg-coal px-4 py-3">
-      {(d || []).map((n, i) => (
-        <span key={i} className="font-head text-xs font-semibold uppercase tracking-wider text-fog">
-          {n.label}
-          <span className="ml-1 text-[10px] text-smoke">{n.to || n.hash}</span>
-        </span>
-      ))}
+    <div className="flex flex-wrap items-center gap-x-5 gap-y-2 rounded-xl border border-iron bg-coal px-4 py-3">
+      <span className="font-display text-lg leading-none text-chalk">BATTLE READY</span>
+      <div className="flex flex-wrap items-center gap-4">
+        {(d || []).map((n, i) => (
+          <span key={i} className="font-head text-xs font-semibold uppercase tracking-wider text-fog">
+            {n.label}
+            <span className="ml-1 text-[10px] normal-case text-smoke">{n.to || n.hash}</span>
+          </span>
+        ))}
+      </div>
+      <span className="ml-auto bg-battle px-2.5 py-1.5 font-head text-[9px] font-bold uppercase tracking-wider text-ink">
+        Free Pass
+      </span>
     </div>
   )
 }

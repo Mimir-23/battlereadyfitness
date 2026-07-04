@@ -6,6 +6,8 @@ import {
   FaCircleCheck,
   FaMagnifyingGlass,
   FaArrowUpRightFromSquare,
+  FaXmark,
+  FaShieldHalved,
 } from 'react-icons/fa6'
 import { SECTIONS, SECTION_BY_KEY } from '../../content/schema'
 import { sectionIcon } from '../../admin/sectionIcons'
@@ -18,6 +20,14 @@ export default function AdminDashboard() {
   const [history, setHistory] = useState([])
   const [loading, setLoading] = useState(true)
   const [query, setQuery] = useState('')
+  const [showGuide, setShowGuide] = useState(
+    () => localStorage.getItem('br-admin-guide') !== 'off',
+  )
+
+  const dismissGuide = () => {
+    localStorage.setItem('br-admin-guide', 'off')
+    setShowGuide(false)
+  }
 
   useEffect(() => {
     let active = true
@@ -55,6 +65,47 @@ export default function AdminDashboard() {
           sitio apenas los guardas.
         </p>
       </header>
+
+      {/* First-time guide */}
+      {showGuide && (
+        <div className="relative mb-6 rounded-2xl border border-battle/30 bg-battle/5 p-5">
+          <button
+            type="button"
+            onClick={dismissGuide}
+            aria-label="Ocultar la guía"
+            className="absolute right-3 top-3 rounded p-1.5 text-smoke hover:text-chalk"
+          >
+            <FaXmark size={14} />
+          </button>
+          <h2 className="font-head text-sm font-bold uppercase tracking-wider text-battle">
+            ¿Cómo cambio algo del sitio?
+          </h2>
+          <ol className="mt-4 grid gap-4 sm:grid-cols-3">
+            {[
+              ['Elige una sección', 'Pulsa la tarjeta de lo que quieres cambiar: fotos, textos, horarios…'],
+              ['Edita y mira la vista previa', 'Lo que escribas se muestra al momento tal como se verá en el sitio.'],
+              ['Pulsa «Guardar cambios»', 'Recién ahí se publica. Si te arrepientes, puedes descartar o restaurar.'],
+            ].map(([title, desc], i) => (
+              <li key={title} className="flex gap-3">
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-battle font-head text-xs font-bold text-ink">
+                  {i + 1}
+                </span>
+                <div>
+                  <div className="font-head text-xs font-semibold uppercase tracking-wide text-chalk">
+                    {title}
+                  </div>
+                  <p className="mt-1 text-xs leading-relaxed text-fog">{desc}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+          <p className="mt-4 flex items-center gap-2 text-xs text-smoke">
+            <FaShieldHalved size={12} className="text-battle" />
+            Tranquilo: no puedes romper nada. Cada sección tiene un botón para volver al
+            contenido original.
+          </p>
+        </div>
+      )}
 
       {/* Quick stats + search */}
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

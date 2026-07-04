@@ -9,6 +9,9 @@ import {
   FaChevronRight,
   FaEye,
   FaCircleCheck,
+  FaPenToSquare,
+  FaCircleInfo,
+  FaArrowUpRightFromSquare,
 } from 'react-icons/fa6'
 import { SECTIONS, SECTION_BY_KEY, validateSection } from '../../content/schema'
 import { DEFAULT_CONTENT } from '../../content/defaults'
@@ -18,9 +21,27 @@ import { saveSection, resetSection, fetchSavedMeta } from '../../admin/contentAp
 import { FieldInput, ObjectFields, ListField } from '../../admin/fields'
 import ScheduleEditor from '../../admin/ScheduleEditor'
 import SectionPreview from '../../admin/preview/Previews'
+import PreviewShell from '../../admin/preview/PreviewShell'
 import { useToast, useConfirm, useUnsaved, Spinner } from '../../admin/ui'
 
 const clone = (v) => JSON.parse(JSON.stringify(v ?? null))
+
+/** Where each section lives on the public site — for the "see it live" link. */
+const SITE_LINK = {
+  hero: '/#top',
+  nav: '/',
+  marquee: '/',
+  stats: '/',
+  programs: '/#programs',
+  why: '/#welcome',
+  gallery: '/#gallery',
+  testimonial: '/',
+  cta: '/',
+  brand: '/#contact',
+  hours: '/#contact',
+  schedule: '/schedule',
+  plans: '/memberships',
+}
 
 export default function AdminSection() {
   const { key } = useParams()
@@ -70,6 +91,8 @@ function SectionEditor({ sectionKey, section, initial }) {
   const [errors, setErrors] = useState([])
   // null = still loading · undefined = no override (using defaults)
   const [savedMeta, setSavedMeta] = useState(null)
+  // Mobile-only: which pane is on screen (desktop shows both side by side).
+  const [tab, setTab] = useState('edit')
 
   const dirty = useMemo(
     () => JSON.stringify(draft) !== JSON.stringify(baseline),
@@ -227,7 +250,17 @@ function SectionEditor({ sectionKey, section, initial }) {
       </div>
 
       <header className="mb-6">
-        <h1 className="font-display text-4xl text-chalk">{section.label}</h1>
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+          <h1 className="font-display text-4xl text-chalk">{section.label}</h1>
+          <a
+            href={SITE_LINK[key] || '/'}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-iron px-2.5 py-1.5 font-head text-[11px] font-semibold uppercase tracking-wider text-smoke transition-colors hover:border-battle/50 hover:text-battle"
+          >
+            <FaArrowUpRightFromSquare size={10} /> Ver en el sitio
+          </a>
+        </div>
         <p className="mt-1 text-sm text-fog">{section.description}</p>
         {savedMeta !== null && (
           <p className="mt-2 flex items-center gap-1.5 text-xs text-smoke">
@@ -257,20 +290,60 @@ function SectionEditor({ sectionKey, section, initial }) {
         </div>
       )}
 
+      {/* What-you-see hint for first-time editors */}
+      <div className="mb-5 flex items-start gap-2.5 rounded-xl border border-iron bg-coal/60 px-4 py-3 text-sm text-fog">
+        <FaCircleInfo size={14} className="mt-0.5 shrink-0 text-battle" />
+        <p>
+          Escribe y la <strong className="text-chalk">vista previa</strong> se actualiza al
+          instante. Nada cambia en el sitio real hasta que pulses{' '}
+          <strong className="text-chalk">Guardar cambios</strong>.
+        </p>
+      </div>
+
+      {/* Mobile: switch between editing and preview */}
+      <div className="mb-5 grid grid-cols-2 gap-1 rounded-xl border border-iron bg-coal p-1 lg:hidden">
+        <button
+          type="button"
+          onClick={() => setTab('edit')}
+          className={`flex items-center justify-center gap-2 rounded-lg px-3 py-2.5 font-head text-xs font-semibold uppercase tracking-wider transition-colors ${
+            tab === 'edit' ? 'bg-battle text-ink' : 'text-fog'
+          }`}
+        >
+          <FaPenToSquare size={12} /> Editar
+        </button>
+        <button
+          type="button"
+          onClick={() => setTab('preview')}
+          className={`flex items-center justify-center gap-2 rounded-lg px-3 py-2.5 font-head text-xs font-semibold uppercase tracking-wider transition-colors ${
+            tab === 'preview' ? 'bg-battle text-ink' : 'text-fog'
+          }`}
+        >
+          <FaEye size={12} /> Vista previa
+        </button>
+      </div>
+
       <div className="grid gap-8 lg:grid-cols-2">
         {/* Editor */}
-        <div>
+        <div className={tab === 'edit' ? '' : 'hidden lg:block'}>
           <SectionEditorBody section={section} draft={draft} setDraft={setDraft} />
         </div>
 
         {/* Live preview */}
-        <div className="lg:sticky lg:top-8 lg:self-start">
+        <div
+          className={`lg:sticky lg:top-8 lg:self-start ${
+            tab === 'preview' ? '' : 'hidden lg:block'
+          }`}
+        >
           <div className="mb-2 flex items-center gap-2 font-head text-xs font-semibold uppercase tracking-wider text-smoke">
-            <FaEye size={13} /> Vista previa en vivo
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-battle opacity-60" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-battle" />
+            </span>
+            Vista previa en vivo — así se verá en el sitio
           </div>
-          <div className="rounded-2xl border border-iron bg-ink p-4">
+          <PreviewShell draft={draft}>
             <SectionPreview sectionKey={key} draft={draft} />
-          </div>
+          </PreviewShell>
         </div>
       </div>
 
