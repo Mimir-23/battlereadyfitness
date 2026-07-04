@@ -14,8 +14,8 @@ export default function Programs() {
       <div className="mx-auto max-w-7xl px-5 lg:px-8">
         <SectionHeading number="01" kicker="Train Your Way" title="CHOOSE YOUR" accent="BATTLE" />
         <p className="mx-auto mt-4 max-w-xl text-center text-fog">
-          Seven battle-tested programs engineered to build strength, torch fat,
-          and forge discipline. Pick your fight.
+          {PROGRAMS.length} battle-tested programs engineered to build strength,
+          torch fat, and forge discipline. Pick your fight.
         </p>
 
         <motion.div

@@ -34,7 +34,9 @@
       "Bash(curl -s -o bebas-neue.woff2 \"https://fonts.gstatic.com/s/bebasneue/v16/JTUSjIg69CK48gW7PXoo9Wlhyw.woff2\")",
       "Bash(curl -s -o inter-var.woff2 \"https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2\")",
       "Bash(curl -s -o oswald-var.woff2 \"https://fonts.gstatic.com/s/oswald/v57/TK3IWkUHHAIjg75cFRf3bXL8LICs1_Fv40pKlN4NNSeSASz7FmlWHYg.woff2\")",
-      "Bash(file *.woff2)"
+      "Bash(file *.woff2)",
+      "Read(//c/Users/deivi/.claude/skills/ui-ux-pro-max/**)",
+      "Bash(py scripts/search.py \"gym fitness landing page dark industrial bold\" --design-system)"
     ]
   }
 }

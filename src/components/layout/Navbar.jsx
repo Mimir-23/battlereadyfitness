@@ -87,15 +87,26 @@ export default function Navbar() {
           </CTAButton>
         </div>
 
-        <button
-          type="button"
-          onClick={() => setOpen((v) => !v)}
-          aria-label={open ? 'Close menu' : 'Open menu'}
-          aria-expanded={open}
-          className="cursor-pointer p-2 text-chalk lg:hidden"
-        >
-          {open ? <FaXmark size={24} /> : <FaBars size={24} />}
-        </button>
+        <div className="flex items-center gap-1 lg:hidden">
+          <a
+            href={WHATSAPP}
+            target="_blank"
+            rel="noreferrer"
+            aria-label="WhatsApp"
+            className="flex h-11 w-11 items-center justify-center rounded-full text-fog transition-colors hover:text-[#25D366]"
+          >
+            <FaWhatsapp size={20} />
+          </a>
+          <button
+            type="button"
+            onClick={() => setOpen((v) => !v)}
+            aria-label={open ? 'Close menu' : 'Open menu'}
+            aria-expanded={open}
+            className="cursor-pointer p-2 text-chalk"
+          >
+            {open ? <FaXmark size={24} /> : <FaBars size={24} />}
+          </button>
+        </div>
       </nav>
 
       <AnimatePresence>
