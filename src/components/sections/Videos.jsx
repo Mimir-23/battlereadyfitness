@@ -64,7 +64,7 @@ function TapeCard({ item, index, onOpen }) {
       type="button"
       onClick={onOpen}
       aria-label={`Reproducir video: ${item.label || embed.platform}`}
-      className={`group relative w-[calc(50%-0.625rem)] max-w-60 cursor-pointer sm:w-56 ${tilted} ${offset} transition-transform duration-300 hover:z-10 hover:rotate-0 hover:scale-[1.05] focus-visible:rotate-0`}
+      className={`group relative w-[calc(50%-0.5rem)] cursor-pointer sm:w-auto sm:max-w-80 sm:grow sm:basis-52 ${tilted} ${offset} transition-transform duration-300 hover:z-10 hover:rotate-0 hover:scale-[1.05] focus-visible:rotate-0`}
     >
       {/* pieces of tape holding the poster to the wall */}
       <span className="pointer-events-none absolute -left-3 -top-2 z-10 h-4 w-12 -rotate-[38deg] bg-chalk/20 shadow-sm backdrop-blur-[1px]" />
@@ -316,7 +316,7 @@ export default function Videos() {
         )}
 
         {/* the wall */}
-        <div className="relative mt-16 pb-6">
+        <div className="relative mx-auto mt-12 max-w-6xl pb-4">
           {/* hazard-tape band running behind the posters */}
           <div
             aria-hidden="true"
@@ -325,7 +325,7 @@ export default function Videos() {
           <motion.div
             variants={stagger}
             {...reveal}
-            className="relative flex flex-wrap items-start justify-center gap-5 sm:gap-7"
+            className="relative flex flex-wrap items-start justify-center gap-4 sm:gap-6"
           >
             {items.map((it, i) => (
               <TapeCard key={`${it.url}-${i}`} item={it} index={i} onOpen={() => setOpen(i)} />
@@ -333,7 +333,7 @@ export default function Videos() {
           </motion.div>
         </div>
 
-        <p className="mt-8 text-center font-head text-[10px] font-semibold uppercase tracking-[0.35em] text-smoke">
+        <p className="mt-6 text-center font-head text-[10px] font-semibold uppercase tracking-[0.35em] text-smoke">
           — Press play. Feel the battle. —
         </p>
       </div>
