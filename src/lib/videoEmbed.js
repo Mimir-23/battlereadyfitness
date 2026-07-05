@@ -7,11 +7,20 @@
 
 const YT = (id) => ({
   platform: 'YouTube',
+  id,
   src: `https://www.youtube-nocookie.com/embed/${encodeURIComponent(id)}`,
   // Real video thumbnail, so playlist cards show actual footage.
   thumb: `https://i.ytimg.com/vi/${encodeURIComponent(id)}/hqdefault.jpg`,
   vertical: false,
 })
+
+/** Muted, chrome-less, looping in-card preview. Only YouTube allows this
+    reliably across browsers; other platforms return null (static poster). */
+export function buildPreviewSrc(embed) {
+  if (embed?.platform !== 'YouTube') return null
+  const id = encodeURIComponent(embed.id)
+  return `${embed.src}?autoplay=1&mute=1&controls=0&loop=1&playlist=${id}&playsinline=1&rel=0&modestbranding=1&disablekb=1`
+}
 
 export function resolveVideoEmbed(url) {
   let u

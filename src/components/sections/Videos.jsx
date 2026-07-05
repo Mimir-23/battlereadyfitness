@@ -9,9 +9,10 @@ import {
   FaInstagram,
   FaTiktok,
   FaFacebookF,
+  FaVolumeXmark,
 } from 'react-icons/fa6'
 import { useContent } from '../../content/ContentProvider'
-import { resolveVideoEmbed } from '../../lib/videoEmbed'
+import { resolveVideoEmbed, buildPreviewSrc } from '../../lib/videoEmbed'
 import { fadeUp, stagger, reveal, prefersReducedMotion } from '../../lib/motion'
 import SectionHeading from '../ui/SectionHeading'
 
@@ -30,13 +31,32 @@ const PLATFORM = {
   Facebook: { icon: FaFacebookF, tint: 'text-[#4B94F8]', stamp: 'border-[#4B94F8]/70 text-[#6FA9F9]' },
 }
 
-/** One taped-up poster on the wall. */
+/** One taped-up poster on the wall. YouTube posters come alive with a muted,
+    looping preview while they're on screen; the rest show their thumbnail. */
 function TapeCard({ item, index, onOpen }) {
   const { embed } = item
   const p = PLATFORM[embed.platform]
   const Icon = p?.icon || FaPlay
   const tilted = index % 2 === 0 ? '-rotate-[1.75deg]' : 'rotate-[1.75deg]'
   const offset = index % 3 === 1 ? 'sm:translate-y-5' : ''
+
+  // Admin-uploaded cover first; YouTube auto-thumbnail as fallback.
+  const poster = item.thumb || embed.thumb
+  const previewSrc = prefersReducedMotion ? null : buildPreviewSrc(embed)
+  const artRef = useRef(null)
+  const [live, setLive] = useState(false)
+
+  // Only run the muted preview while the poster is near the viewport, so a
+  // long wall never keeps a dozen players running off screen.
+  useEffect(() => {
+    if (!previewSrc || !artRef.current) return
+    const io = new IntersectionObserver(
+      ([entry]) => setLive(entry.isIntersecting),
+      { rootMargin: '80px' },
+    )
+    io.observe(artRef.current)
+    return () => io.disconnect()
+  }, [previewSrc])
 
   return (
     <motion.button
@@ -54,10 +74,10 @@ function TapeCard({ item, index, onOpen }) {
         <div className="bg-hazard h-1.5 opacity-80" />
 
         {/* poster art */}
-        <div className="relative aspect-[4/5] overflow-hidden">
-          {embed.thumb ? (
+        <div ref={artRef} className="relative aspect-[4/5] overflow-hidden">
+          {poster ? (
             <img
-              src={embed.thumb}
+              src={poster}
               alt=""
               loading="lazy"
               decoding="async"
@@ -71,6 +91,21 @@ function TapeCard({ item, index, onOpen }) {
               />
             </div>
           )}
+
+          {/* live muted preview, center-cropped to fill the poster. The
+              poster image stays underneath while the player warms up. */}
+          {live && previewSrc && (
+            <iframe
+              title=""
+              aria-hidden="true"
+              tabIndex={-1}
+              src={previewSrc}
+              className="pointer-events-none absolute left-1/2 top-1/2 h-full w-[222%] -translate-x-1/2 -translate-y-1/2"
+              allow="autoplay; encrypted-media"
+              referrerPolicy="strict-origin-when-cross-origin"
+            />
+          )}
+
           <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-ink/40" />
 
           {/* stencil tape number */}
@@ -92,6 +127,13 @@ function TapeCard({ item, index, onOpen }) {
               <FaPlay size={15} className="relative translate-x-px" />
             </span>
           </span>
+
+          {/* the preview runs muted — sound comes with the big player */}
+          {live && previewSrc && (
+            <span className="absolute bottom-3.5 right-2.5 flex h-6 w-6 items-center justify-center rounded-full bg-ink/70 text-chalk backdrop-blur-sm">
+              <FaVolumeXmark size={10} />
+            </span>
+          )}
         </div>
 
         {/* poster footer */}

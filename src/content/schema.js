@@ -175,7 +175,7 @@ export const SECTIONS = [
         label: 'Videos',
         type: 'list',
         itemLabel: (it) => it.label || it.url || 'Video',
-        newItem: () => ({ url: '', label: '' }),
+        newItem: () => ({ url: '', label: '', thumb: '' }),
         item: [
           {
             name: 'url',
@@ -185,6 +185,12 @@ export const SECTIONS = [
             help: 'Pega el enlace tal como lo copias de YouTube, Instagram, TikTok o Facebook.',
           },
           { name: 'label', label: 'Título del video', type: 'text' },
+          {
+            name: 'thumb',
+            label: 'Miniatura (imagen de portada)',
+            type: 'image',
+            help: 'Para Instagram, TikTok y Facebook sube una captura del video. YouTube la obtiene solo.',
+          },
         ],
       },
     ],

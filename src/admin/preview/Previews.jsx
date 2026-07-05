@@ -340,24 +340,31 @@ function VideosPreview({ d }) {
           <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3">
             {items.map((it, i) => {
               const embed = resolveVideoEmbed(it.url)
+              const thumb = it.thumb || embed?.thumb
               return (
                 <div
                   key={i}
-                  className={`flex flex-col items-center justify-center gap-1.5 rounded-lg border p-3 ${
+                  className={`relative flex flex-col items-center justify-center gap-1.5 overflow-hidden rounded-lg border p-3 ${
                     embed ? 'border-iron bg-coal' : 'border-alert/50 bg-alert/10'
                   }`}
                 >
+                  {embed && thumb && (
+                    <>
+                      <img src={thumb} alt="" className="absolute inset-0 h-full w-full object-cover opacity-40" />
+                      <span className="absolute inset-0 bg-gradient-to-t from-ink/80 to-transparent" />
+                    </>
+                  )}
                   {embed ? (
-                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-battle text-ink">
+                    <span className="relative flex h-8 w-8 items-center justify-center rounded-full bg-battle text-ink">
                       <FaPlay size={10} />
                     </span>
                   ) : (
                     <FaTriangleExclamation className="text-alert" size={16} />
                   )}
-                  <span className="line-clamp-1 font-head text-[10px] font-semibold uppercase text-chalk">
+                  <span className="relative line-clamp-1 font-head text-[10px] font-semibold uppercase text-chalk">
                     {it.label || `Video ${i + 1}`}
                   </span>
-                  <span className={`text-[9px] uppercase tracking-wider ${embed ? 'text-smoke' : 'text-alert'}`}>
+                  <span className={`relative text-[9px] uppercase tracking-wider ${embed ? 'text-fog' : 'text-alert'}`}>
                     {embed ? embed.platform : 'Enlace no reconocido'}
                   </span>
                 </div>
