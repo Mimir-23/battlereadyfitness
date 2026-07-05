@@ -35,6 +35,7 @@ const SITE_LINK = {
   programs: '/#programs',
   why: '/#welcome',
   gallery: '/#gallery',
+  videos: '/#videos',
   testimonial: '/',
   cta: '/',
   brand: '/#contact',

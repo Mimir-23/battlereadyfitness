@@ -42,7 +42,7 @@ export default function Schedule() {
   return (
     <>
       <PageBanner
-        kicker="6 Days a Week · Hialeah"
+        kicker={`${SCHEDULE_DAYS.length} Days a Week · Hialeah`}
         title="CLASS"
         accent="SCHEDULE"
         subtitle="Lock in your battle. Every slot below is a coached, high-intensity session — just show up ready to work."

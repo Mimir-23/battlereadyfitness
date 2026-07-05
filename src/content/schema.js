@@ -35,6 +35,8 @@ export const SECTIONS = [
       { name: 'city', label: 'Ciudad / Estado / Código', type: 'text', required: true },
       { name: 'mapsEmbed', label: 'Enlace del mapa (Google Maps embed)', type: 'textarea' },
       { name: 'recessUrl', label: 'Enlace de membresías (Recess)', type: 'textarea', help: 'El checkout que se muestra en la página de Membresías.' },
+      { name: 'instagram', label: 'Instagram (enlace del perfil)', type: 'text', help: 'Ej: https://instagram.com/battle_readyfit' },
+      { name: 'facebook', label: 'Facebook (enlace de la página)', type: 'text', help: 'Ej: https://facebook.com/battlereadyfit' },
     ],
   },
 
@@ -153,6 +155,38 @@ export const SECTIONS = [
       { name: 'src', label: 'Imagen', type: 'image', required: true },
       { name: 'label', label: 'Título', type: 'text', required: true },
       { name: 'span', label: 'Tamaño en el mosaico', type: 'select', options: SPAN_OPTIONS },
+    ],
+  },
+
+  /* ---------- Videos ---------- */
+  {
+    key: 'videos',
+    label: 'Videos',
+    icon: 'FaVideo',
+    description: 'Videos de YouTube, Instagram, TikTok o Facebook en el inicio.',
+    shape: 'object',
+    fields: [
+      { name: 'kicker', label: 'Texto pequeño superior', type: 'text' },
+      { name: 'titleLine1', label: 'Título', type: 'text', required: true },
+      { name: 'accent', label: 'Título — parte destacada (amarilla)', type: 'text' },
+      { name: 'paragraph', label: 'Párrafo', type: 'textarea' },
+      {
+        name: 'items',
+        label: 'Videos',
+        type: 'list',
+        itemLabel: (it) => it.label || it.url || 'Video',
+        newItem: () => ({ url: '', label: '' }),
+        item: [
+          {
+            name: 'url',
+            label: 'Enlace del video',
+            type: 'text',
+            required: true,
+            help: 'Pega el enlace tal como lo copias de YouTube, Instagram, TikTok o Facebook.',
+          },
+          { name: 'label', label: 'Título del video', type: 'text' },
+        ],
+      },
     ],
   },
 

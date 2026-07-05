@@ -60,7 +60,7 @@ export default function Contact() {
   return (
     <section id="contact" className="bg-coal py-24">
       <div className="mx-auto max-w-7xl px-5 lg:px-8">
-        <SectionHeading number="04" kicker="Get In Touch" title="FIND THE" accent="GYM" />
+        <SectionHeading number="05" kicker="Get In Touch" title="FIND THE" accent="GYM" />
         <motion.div
           variants={stagger}
           {...reveal}

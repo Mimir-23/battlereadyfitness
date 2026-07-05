@@ -21,6 +21,8 @@ export const DEFAULT_CONTENT = {
       'https://www.google.com/maps?q=18600+NW+87th+Avenue+Suite+116+Hialeah+FL+33015&output=embed',
     recessUrl:
       'https://battle-ready.recess.tv/embed/checkout/explore/packages?hideMenu=true',
+    instagram: 'https://instagram.com/battle_readyfit',
+    facebook: 'https://facebook.com/battlereadyfit',
   },
 
   /* ---------- Navegación ---------- */
@@ -153,6 +155,18 @@ export const DEFAULT_CONTENT = {
     { src: '/images/g4.webp', label: 'Power', span: '' },
   ],
 
+  /* ---------- Videos ---------- */
+  videos: {
+    kicker: 'On Camera',
+    titleLine1: 'WATCH THE',
+    accent: 'BATTLE',
+    paragraph:
+      'Real sessions, real sweat. See what training at Battle Ready looks like before you walk in.',
+    /* Pega enlaces de YouTube, Instagram, TikTok o Facebook desde el panel.
+       Mientras la lista esté vacía, la sección no se muestra en el sitio. */
+    items: [],
+  },
+
   /* ---------- Testimonios ---------- */
   testimonial: {
     image: '/images/g1.webp',
@@ -200,31 +214,31 @@ export const DEFAULT_CONTENT = {
 
   /* ---------- Horario de clases ---------- */
   schedule: {
-    days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+    days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
     rows: [
       {
         time: '5:30 AM',
-        classes: { Mon: 'Bootcamp', Tue: 'HIIT by Javi', Wed: 'Bootcamp', Thu: 'HIIT by Javi', Fri: 'Bootcamp', Sat: '' },
+        classes: { Mon: 'Bootcamp', Tue: 'HIIT by Javi', Wed: 'Bootcamp', Thu: 'HIIT by Javi', Fri: 'Bootcamp', Sat: '', Sun: '' },
       },
       {
         time: '6:30 AM',
-        classes: { Mon: 'Step Circuit', Tue: 'Full Body', Wed: 'Kickboxing', Thu: 'Full Body', Fri: 'Step Circuit', Sat: '' },
+        classes: { Mon: 'Step Circuit', Tue: 'Full Body', Wed: 'Kickboxing', Thu: 'Full Body', Fri: 'Step Circuit', Sat: '', Sun: '' },
       },
       {
         time: '9:00 AM',
-        classes: { Mon: 'Full Body', Tue: 'Bootcamp', Wed: 'Full Body', Thu: 'Bootcamp', Fri: 'Full Body', Sat: 'Bootcamp' },
+        classes: { Mon: 'Full Body', Tue: 'Bootcamp', Wed: 'Full Body', Thu: 'Bootcamp', Fri: 'Full Body', Sat: 'Bootcamp', Sun: '' },
       },
       {
         time: '10:30 AM',
-        classes: { Mon: '', Tue: '', Wed: '', Thu: '', Fri: '', Sat: 'Kickboxing' },
+        classes: { Mon: '', Tue: '', Wed: '', Thu: '', Fri: '', Sat: 'Kickboxing', Sun: '' },
       },
       {
         time: '6:00 PM',
-        classes: { Mon: 'Kickboxing', Tue: 'Zumba', Wed: 'HIIT by Javi', Thu: 'Zumba', Fri: 'Kickboxing', Sat: '' },
+        classes: { Mon: 'Kickboxing', Tue: 'Zumba', Wed: 'HIIT by Javi', Thu: 'Zumba', Fri: 'Kickboxing', Sat: '', Sun: '' },
       },
       {
         time: '7:00 PM',
-        classes: { Mon: 'HIIT by Javi', Tue: 'Step Circuit', Wed: 'Zumba', Thu: 'Step Circuit', Fri: 'HIIT by Javi', Sat: '' },
+        classes: { Mon: 'HIIT by Javi', Tue: 'Step Circuit', Wed: 'Zumba', Thu: 'Step Circuit', Fri: 'HIIT by Javi', Sat: '', Sun: '' },
       },
     ],
   },

@@ -5,6 +5,7 @@ import Stats from '../components/sections/Stats'
 import Programs from '../components/sections/Programs'
 import WhyUs from '../components/sections/WhyUs'
 import Gallery from '../components/sections/Gallery'
+import Videos from '../components/sections/Videos'
 import Testimonial from '../components/sections/Testimonial'
 import CTABand from '../components/sections/CTABand'
 import Contact from '../components/sections/Contact'
@@ -20,6 +21,7 @@ export default function Home() {
       <Programs />
       <WhyUs />
       <Gallery />
+      <Videos />
       <Marquee reverse />
       <Testimonial />
       <CTABand />

@@ -6,7 +6,10 @@ import {
   FaLocationDot,
   FaStar,
   FaFire,
+  FaPlay,
+  FaTriangleExclamation,
 } from 'react-icons/fa6'
+import { resolveVideoEmbed } from '../../lib/videoEmbed'
 
 /* ------------------------------------------------------------------ */
 /*  Live previews — compact, brand-styled mirrors of each section that  */
@@ -316,8 +319,60 @@ function PlansPreview({ d }) {
   )
 }
 
+function VideosPreview({ d }) {
+  const items = d?.items || []
+  return (
+    <Frame>
+      <div className="p-5 text-center">
+        {d.kicker && (
+          <div className="text-[10px] font-bold uppercase tracking-widest text-battle">{d.kicker}</div>
+        )}
+        <div className="mt-1 font-display text-2xl leading-none text-chalk">
+          {d.titleLine1} {d.accent && <span className="text-battle">{d.accent}</span>}
+        </div>
+        {d.paragraph && <p className="mx-auto mt-2 max-w-xs text-xs text-fog">{d.paragraph}</p>}
+
+        {items.length === 0 ? (
+          <p className="mt-4 rounded-lg border border-dashed border-iron px-3 py-4 text-xs text-smoke">
+            Sin videos todavía — la sección no se muestra en el sitio hasta que agregues uno.
+          </p>
+        ) : (
+          <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3">
+            {items.map((it, i) => {
+              const embed = resolveVideoEmbed(it.url)
+              return (
+                <div
+                  key={i}
+                  className={`flex flex-col items-center justify-center gap-1.5 rounded-lg border p-3 ${
+                    embed ? 'border-iron bg-coal' : 'border-alert/50 bg-alert/10'
+                  }`}
+                >
+                  {embed ? (
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-battle text-ink">
+                      <FaPlay size={10} />
+                    </span>
+                  ) : (
+                    <FaTriangleExclamation className="text-alert" size={16} />
+                  )}
+                  <span className="line-clamp-1 font-head text-[10px] font-semibold uppercase text-chalk">
+                    {it.label || `Video ${i + 1}`}
+                  </span>
+                  <span className={`text-[9px] uppercase tracking-wider ${embed ? 'text-smoke' : 'text-alert'}`}>
+                    {embed ? embed.platform : 'Enlace no reconocido'}
+                  </span>
+                </div>
+              )
+            })}
+          </div>
+        )}
+      </div>
+    </Frame>
+  )
+}
+
 const MAP = {
   hero: HeroPreview,
+  videos: VideosPreview,
   programs: ProgramsPreview,
   stats: StatsPreview,
   why: WhyPreview,

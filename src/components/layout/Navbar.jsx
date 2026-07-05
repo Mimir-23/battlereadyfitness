@@ -60,8 +60,12 @@ export default function Navbar() {
       }`}
     >
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-5 py-3 lg:px-8">
-        <Link to="/" className="flex items-center gap-2 py-1" aria-label="Battle Ready Fitness — home">
-          <img src={logo} alt="Battle Ready Fitness" className="h-9 w-auto sm:h-10" />
+        <Link to="/" className="group flex items-center gap-2 py-1" aria-label="Battle Ready Fitness — home">
+          <img
+            src={logo}
+            alt="Battle Ready Fitness"
+            className="h-11 w-auto drop-shadow-[0_2px_12px_rgba(255,210,0,0.35)] transition-all duration-300 group-hover:drop-shadow-[0_2px_16px_rgba(255,210,0,0.6)] sm:h-12"
+          />
         </Link>
 
         <ul className="hidden items-center gap-8 lg:flex">

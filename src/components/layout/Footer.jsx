@@ -36,11 +36,11 @@ export default function Footer() {
   const { nav: NAV, programs: PROGRAMS, hours: HOURS, brand } = useContent()
   const WHATSAPP = whatsappUrl(brand)
   const SOCIALS = [
-    { icon: FaFacebookF, href: 'https://facebook.com/battlereadyfit', label: 'Facebook' },
-    { icon: FaInstagram, href: 'https://instagram.com/battle_readyfit', label: 'Instagram' },
+    { icon: FaFacebookF, href: brand.facebook, label: 'Facebook' },
+    { icon: FaInstagram, href: brand.instagram, label: 'Instagram' },
     { icon: FaXTwitter, href: 'https://twitter.com/Battle_ReadyFit', label: 'Twitter' },
     { icon: FaWhatsapp, href: WHATSAPP, label: 'WhatsApp' },
-  ]
+  ].filter((s) => s.href)
   return (
     <footer className="border-t border-iron bg-ink">
       {/* top CTA strip */}

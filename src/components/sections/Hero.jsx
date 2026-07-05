@@ -7,6 +7,7 @@ import { fadeUp, stagger, isDesktopPointer } from '../../lib/motion'
 import CTAButton from '../ui/CTAButton'
 import RopeLoader from '../ui/RopeLoader'
 import EmberField from '../ui/EmberField'
+import logo from '/logo.webp'
 
 export default function Hero() {
   const { hero, brand } = useContent()
@@ -103,6 +104,14 @@ export default function Hero() {
           className="max-w-3xl"
         >
           <motion.div variants={fadeUp}>
+            <img
+              src={logo}
+              alt="Battle Ready Fitness Bootcamp"
+              className="h-16 w-auto drop-shadow-[0_4px_18px_rgba(255,210,0,0.35)] sm:h-20"
+            />
+          </motion.div>
+
+          <motion.div variants={fadeUp} className="mt-5">
             <span className="inline-flex items-center gap-2 rounded-full border border-battle/40 bg-battle/10 px-4 py-1.5 font-head text-xs font-medium uppercase tracking-[0.2em] text-battle backdrop-blur-sm">
               <FaLocationDot size={12} /> {hero.badge}
             </span>
