@@ -12,8 +12,24 @@ import { whatsappUrl } from '../../content/defaults'
 import { fadeUp, stagger, Reveal, reveal } from '../../lib/motion'
 import SectionHeading from '../ui/SectionHeading'
 
+/* El enlace del mapa se edita como texto libre en el admin: solo incrustamos
+   el iframe si de verdad apunta a Google Maps por https. */
+function trustedMapSrc(url) {
+  try {
+    const u = new URL(url)
+    const host = u.hostname
+    const ok =
+      u.protocol === 'https:' &&
+      (host === 'google.com' || host.endsWith('.google.com') || host === 'maps.app.goo.gl')
+    return ok ? url : null
+  } catch {
+    return null
+  }
+}
+
 export default function Contact() {
   const { brand, hours: HOURS } = useContent()
+  const mapSrc = trustedMapSrc(brand.mapsEmbed)
   const mapsSearch = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
     `${brand.address} ${brand.city}`,
   )}`
@@ -122,11 +138,11 @@ export default function Contact() {
           </Reveal>
         )}
 
-        {brand.mapsEmbed && (
+        {mapSrc && (
           <Reveal className="group mt-6 overflow-hidden rounded-2xl border border-iron transition-colors duration-300 hover:border-battle/40">
             <iframe
               title="Battle Ready Fitness location"
-              src={brand.mapsEmbed}
+              src={mapSrc}
               className="h-72 w-full grayscale transition-all duration-500 group-hover:grayscale-0"
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"

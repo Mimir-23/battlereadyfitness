@@ -46,15 +46,26 @@ export async function fetchHistory(limit = 30) {
   return data || []
 }
 
+/* Solo formatos raster: un SVG puede llevar <script> y serviría XSS desde la
+   URL pública del bucket, así que queda fuera a propósito. */
+const IMAGE_TYPES = {
+  'image/jpeg': 'jpg',
+  'image/png': 'png',
+  'image/webp': 'webp',
+  'image/gif': 'gif',
+  'image/avif': 'avif',
+}
+
 /** Upload an image to storage and return its public URL. */
 export async function uploadImage(file) {
-  const ext = (file.name.split('.').pop() || 'jpg').toLowerCase()
+  const ext = IMAGE_TYPES[file.type]
+  if (!ext) throw new Error('Formato no permitido. Usa JPG, PNG, WebP, GIF o AVIF.')
   const safe = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`
   const path = `uploads/${safe}`
 
   const { error } = await supabase.storage
     .from(IMAGE_BUCKET)
-    .upload(path, file, { cacheControl: '3600', upsert: false })
+    .upload(path, file, { cacheControl: '3600', upsert: false, contentType: file.type })
   if (error) throw error
 
   const { data } = supabase.storage.from(IMAGE_BUCKET).getPublicUrl(path)

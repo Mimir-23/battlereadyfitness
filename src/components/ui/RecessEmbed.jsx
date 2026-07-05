@@ -12,18 +12,29 @@ export default function RecessEmbed({ src, title = 'Recess Embed', minHeight = 7
   const [loaded, setLoaded] = useState(false)
 
   useEffect(() => {
+    // Only trust messages coming from the embedded portal itself — other
+    // frames on the page (maps, extensions) also post to this window.
+    let allowedOrigin = null
+    try {
+      allowedOrigin = new URL(src).origin
+    } catch {
+      /* src no es una URL absoluta; no aceptamos mensajes */
+    }
+
     const onMessage = (e) => {
+      if (!allowedOrigin || e.origin !== allowedOrigin) return
       // Recess sends an array: [command, value]
       if (!Array.isArray(e.data)) return
       const [command, value] = e.data
-      if (command === 'setHeight' && ref.current && value) {
-        ref.current.style.height = `${value}px`
+      const px = Number(value)
+      if (command === 'setHeight' && ref.current && px > 0 && Number.isFinite(px)) {
+        ref.current.style.height = `${Math.min(px, 20000)}px`
         setLoaded(true)
       }
     }
     window.addEventListener('message', onMessage, false)
     return () => window.removeEventListener('message', onMessage, false)
-  }, [])
+  }, [src])
 
   return (
     <div className="relative" style={{ minHeight }}>

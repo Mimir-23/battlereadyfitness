@@ -20,12 +20,22 @@ export default function AdminDashboard() {
   const [history, setHistory] = useState([])
   const [loading, setLoading] = useState(true)
   const [query, setQuery] = useState('')
-  const [showGuide, setShowGuide] = useState(
-    () => localStorage.getItem('br-admin-guide') !== 'off',
-  )
+  // localStorage lanza en contextos con almacenamiento bloqueado — nunca
+  // debe tumbar el dashboard, solo perder la persistencia de la guía.
+  const [showGuide, setShowGuide] = useState(() => {
+    try {
+      return localStorage.getItem('br-admin-guide') !== 'off'
+    } catch {
+      return true
+    }
+  })
 
   const dismissGuide = () => {
-    localStorage.setItem('br-admin-guide', 'off')
+    try {
+      localStorage.setItem('br-admin-guide', 'off')
+    } catch {
+      /* sin persistencia; se oculta solo en esta visita */
+    }
     setShowGuide(false)
   }
 
