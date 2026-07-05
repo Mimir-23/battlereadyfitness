@@ -71,68 +71,105 @@ export default function FloatingActions() {
         )}
       </AnimatePresence>
 
-      {/* Fan-out contact options */}
-      <AnimatePresence>
-        {open &&
-          links.map((l, i) => {
-            const Icon = l.icon
-            return (
-              <motion.a
-                key={l.label}
-                href={l.href}
-                target="_blank"
-                rel="noreferrer"
-                aria-label={l.label}
-                onClick={() => setOpen(false)}
-                initial={{ opacity: 0, y: 14, scale: 0.5 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 14, scale: 0.5 }}
-                transition={{ delay: (links.length - 1 - i) * 0.05 }}
-                className="group relative flex items-center"
-              >
-                <span className="pointer-events-none absolute right-14 whitespace-nowrap rounded-full bg-coal px-3.5 py-1.5 font-head text-xs font-semibold uppercase tracking-wider text-chalk opacity-0 shadow-lg transition-opacity duration-200 group-hover:opacity-100">
-                  {l.label}
-                </span>
-                <span
-                  className={`flex h-12 w-12 items-center justify-center rounded-full text-white transition-transform duration-200 group-hover:scale-110 ${l.cls}`}
-                >
-                  <Icon size={22} />
-                </span>
-              </motion.a>
-            )
-          })}
-      </AnimatePresence>
+      {/* Invisible backdrop: tapping anywhere outside closes the fan. */}
+      {open && (
+        <button
+          type="button"
+          tabIndex={-1}
+          aria-hidden="true"
+          onClick={() => setOpen(false)}
+          className="fixed inset-0 cursor-default"
+        />
+      )}
 
-      {/* Main contact toggle */}
-      <button
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        aria-label={open ? 'Cerrar contacto' : 'Contáctanos'}
-        aria-expanded={open}
-        className="group relative flex cursor-pointer items-center"
-      >
-        {!open && (
-          <span className="pointer-events-none absolute right-16 whitespace-nowrap rounded-full bg-coal px-4 py-2 font-head text-xs font-semibold uppercase tracking-wider text-chalk opacity-0 shadow-lg transition-all duration-300 group-hover:opacity-100">
-            Contáctanos
-          </span>
-        )}
-        <span
-          className={`relative flex h-14 w-14 items-center justify-center rounded-full shadow-[0_8px_30px_-6px_rgba(255,210,0,0.7)] transition-colors duration-300 ${
-            open ? 'bg-coal text-chalk' : 'bg-battle text-ink'
-          }`}
+      {/* Contact hub: the options fan out in a quarter-circle arc that opens
+          toward the free space (up and to the left of the corner button). */}
+      <div className="relative">
+        <AnimatePresence>
+          {open &&
+            links.map((l, i) => {
+              const Icon = l.icon
+              // First link points straight up (90°), last straight left (180°).
+              const angle =
+                links.length === 1 ? 135 : 90 + (90 * i) / (links.length - 1)
+              const rad = (angle * Math.PI) / 180
+              const radius = 92
+              const x = Math.round(Math.cos(rad) * radius)
+              const y = -Math.round(Math.sin(rad) * radius)
+              return (
+                <motion.a
+                  key={l.label}
+                  href={l.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={l.label}
+                  onClick={() => setOpen(false)}
+                  initial={{ x: 0, y: 0, opacity: 0, scale: 0.3 }}
+                  animate={{
+                    x,
+                    y,
+                    opacity: 1,
+                    scale: 1,
+                    transition: {
+                      delay: i * 0.05,
+                      type: 'spring',
+                      stiffness: 320,
+                      damping: 20,
+                    },
+                  }}
+                  exit={{
+                    x: 0,
+                    y: 0,
+                    opacity: 0,
+                    scale: 0.3,
+                    transition: { delay: (links.length - 1 - i) * 0.03, duration: 0.18 },
+                  }}
+                  className="group absolute left-1/2 top-1/2 -ml-6 -mt-6 flex items-center"
+                >
+                  <span className="pointer-events-none absolute right-full mr-2.5 whitespace-nowrap rounded-full bg-coal px-3 py-1.5 font-head text-[11px] font-semibold uppercase tracking-wider text-chalk opacity-0 shadow-lg transition-opacity duration-200 group-hover:opacity-100">
+                    {l.label}
+                  </span>
+                  <span
+                    className={`flex h-12 w-12 items-center justify-center rounded-full text-white transition-transform duration-200 group-hover:scale-110 ${l.cls}`}
+                  >
+                    <Icon size={22} />
+                  </span>
+                </motion.a>
+              )
+            })}
+        </AnimatePresence>
+
+        {/* Main contact toggle */}
+        <button
+          type="button"
+          onClick={() => setOpen((v) => !v)}
+          aria-label={open ? 'Cerrar contacto' : 'Contáctanos'}
+          aria-expanded={open}
+          className="group relative flex cursor-pointer items-center"
         >
           {!open && (
-            <span className="absolute inset-0 animate-ping rounded-full bg-battle opacity-40" />
+            <span className="pointer-events-none absolute right-16 whitespace-nowrap rounded-full bg-coal px-4 py-2 font-head text-xs font-semibold uppercase tracking-wider text-chalk opacity-0 shadow-lg transition-all duration-300 group-hover:opacity-100">
+              Contáctanos
+            </span>
           )}
-          <motion.span
-            animate={{ rotate: open ? 90 : 0 }}
-            transition={{ duration: 0.2 }}
-            className="relative"
+          <span
+            className={`relative flex h-14 w-14 items-center justify-center rounded-full shadow-[0_8px_30px_-6px_rgba(255,210,0,0.7)] transition-colors duration-300 ${
+              open ? 'bg-coal text-chalk' : 'bg-battle text-ink'
+            }`}
           >
-            {open ? <FaXmark size={24} /> : <FaCommentDots size={24} />}
-          </motion.span>
-        </span>
-      </button>
+            {!open && (
+              <span className="absolute inset-0 animate-ping rounded-full bg-battle opacity-40" />
+            )}
+            <motion.span
+              animate={{ rotate: open ? 90 : 0 }}
+              transition={{ duration: 0.2 }}
+              className="relative"
+            >
+              {open ? <FaXmark size={24} /> : <FaCommentDots size={24} />}
+            </motion.span>
+          </span>
+        </button>
+      </div>
     </div>
   )
 }
