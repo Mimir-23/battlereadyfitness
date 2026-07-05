@@ -8,6 +8,8 @@
 const YT = (id) => ({
   platform: 'YouTube',
   src: `https://www.youtube-nocookie.com/embed/${encodeURIComponent(id)}`,
+  // Real video thumbnail, so playlist cards show actual footage.
+  thumb: `https://i.ytimg.com/vi/${encodeURIComponent(id)}/hqdefault.jpg`,
   vertical: false,
 })
 
