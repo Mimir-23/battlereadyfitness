@@ -10,16 +10,23 @@ export default function Gallery() {
   // -1 = lightbox closed; otherwise the index of the open photo.
   const [open, setOpen] = useState(-1)
 
-  // The wall wakes up: photos start in grayscale and light up in color one by
-  // one every 2s while the section is on screen, then reset and loop.
+  // "Scanner" reveal: while the wall is on screen, a targeting frame roams
+  // the photos one by one — the locked photo lights up in color (brackets +
+  // scan sweep) while the rest hold grayscale. Hovering a photo steals the
+  // lock and pauses the sweep so the user is always in control.
   const gridRef = useRef(null)
   const [inView, setInView] = useState(false)
-  const [lit, setLit] = useState(0) // how many photos are in color
+  const [active, setActive] = useState(-1) // index the scanner is locked on
+  const [paused, setPaused] = useState(false)
 
   useEffect(() => {
     if (prefersReducedMotion || !gridRef.current) return
     const io = new IntersectionObserver(
-      ([entry]) => setInView(entry.isIntersecting),
+      ([entry]) => {
+        setInView(entry.isIntersecting)
+        // Primer lock inmediato al entrar en pantalla (sin esperar al primer tick).
+        if (entry.isIntersecting) setActive((v) => (v === -1 ? 0 : v))
+      },
       { threshold: 0.2 },
     )
     io.observe(gridRef.current)
@@ -27,12 +34,12 @@ export default function Gallery() {
   }, [])
 
   useEffect(() => {
-    if (!inView || prefersReducedMotion) return
+    if (!inView || prefersReducedMotion || paused) return
     const t = setInterval(() => {
-      setLit((v) => (v >= GALLERY.length ? 0 : v + 1))
-    }, 2000)
+      setActive((v) => (v + 1) % GALLERY.length)
+    }, 2400)
     return () => clearInterval(t)
-  }, [inView, GALLERY.length])
+  }, [inView, paused, GALLERY.length])
 
   return (
     <section id="gallery" className="bg-ink py-24">
@@ -48,40 +55,76 @@ export default function Gallery() {
           {...reveal}
           className="mt-14 grid auto-rows-[200px] grid-cols-2 gap-4 sm:grid-cols-4"
         >
-          {GALLERY.map((g, i) => (
-            <motion.figure
-              key={g.src}
-              data-cursor
-              variants={fadeUp}
-              className={`group relative overflow-hidden rounded-2xl border border-iron ${
-                g.span || ''
-              }`}
-            >
-              <img
-                src={g.src}
-                alt={g.label}
-                loading="lazy"
-                decoding="async"
-                className={`h-full w-full object-cover transition-all duration-700 group-hover:scale-110 group-hover:grayscale-0 ${
-                  prefersReducedMotion || i < lit ? 'grayscale-0' : 'grayscale'
-                }`}
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-ink/90 via-transparent to-transparent" />
-              <figcaption className="absolute bottom-0 left-0 flex items-center gap-2 p-5 transition-all duration-500 lg:translate-y-2 lg:opacity-0 lg:group-hover:translate-y-0 lg:group-hover:opacity-100">
-                <span className="h-px w-6 bg-battle" />
-                <span className="font-head text-sm font-semibold uppercase tracking-widest text-chalk">
-                  {g.label}
-                </span>
-              </figcaption>
-              {/* Full-card hit area that opens the lightbox. */}
-              <button
-                type="button"
-                onClick={() => setOpen(i)}
-                aria-label={`View photo: ${g.label}`}
-                className="absolute inset-0 z-10 cursor-zoom-in"
-              />
-            </motion.figure>
-          ))}
+          {GALLERY.map((g, i) => {
+            const locked = i === active && !prefersReducedMotion
+            return (
+              <motion.figure
+                key={g.src}
+                data-cursor
+                variants={fadeUp}
+                onMouseEnter={() => {
+                  setPaused(true)
+                  setActive(i)
+                }}
+                onMouseLeave={() => setPaused(false)}
+                className={`group relative overflow-hidden rounded-2xl border transition-colors duration-500 ${
+                  locked ? 'border-battle/60' : 'border-iron'
+                } ${g.span || ''}`}
+              >
+                <img
+                  src={g.src}
+                  alt={g.label}
+                  loading="lazy"
+                  decoding="async"
+                  className={`h-full w-full object-cover transition-all duration-700 group-hover:scale-110 group-hover:grayscale-0 ${
+                    prefersReducedMotion
+                      ? 'grayscale-0'
+                      : locked
+                        ? 'grayscale-0 scale-105'
+                        : 'grayscale brightness-[.85]'
+                  }`}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-ink/90 via-transparent to-transparent" />
+
+                {/* Targeting frame: HUD brackets + scan sweep on the locked photo. */}
+                <div
+                  aria-hidden="true"
+                  className={`pointer-events-none absolute inset-0 transition-opacity duration-500 ${
+                    locked ? 'opacity-100' : 'opacity-0'
+                  }`}
+                >
+                  <span className="absolute left-2.5 top-2.5 h-5 w-5 border-l-2 border-t-2 border-battle" />
+                  <span className="absolute right-2.5 top-2.5 h-5 w-5 border-r-2 border-t-2 border-battle" />
+                  <span className="absolute bottom-2.5 left-2.5 h-5 w-5 border-b-2 border-l-2 border-battle" />
+                  <span className="absolute bottom-2.5 right-2.5 h-5 w-5 border-b-2 border-r-2 border-battle" />
+                  {/* Full-height wrapper so translateY(±100%) sweeps the whole card. */}
+                  {locked && (
+                    <span className="absolute inset-0" style={{ animation: 'var(--animate-scan)' }}>
+                      <span className="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-transparent via-battle/70 to-transparent" />
+                    </span>
+                  )}
+                </div>
+
+                <figcaption
+                  className={`absolute bottom-0 left-0 flex items-center gap-2 p-5 transition-all duration-500 lg:group-hover:translate-y-0 lg:group-hover:opacity-100 ${
+                    locked ? 'lg:translate-y-0 lg:opacity-100' : 'lg:translate-y-2 lg:opacity-0'
+                  }`}
+                >
+                  <span className="h-px w-6 bg-battle" />
+                  <span className="font-head text-sm font-semibold uppercase tracking-widest text-chalk">
+                    {g.label}
+                  </span>
+                </figcaption>
+                {/* Full-card hit area that opens the lightbox. */}
+                <button
+                  type="button"
+                  onClick={() => setOpen(i)}
+                  aria-label={`View photo: ${g.label}`}
+                  className="absolute inset-0 z-10 cursor-zoom-in"
+                />
+              </motion.figure>
+            )
+          })}
         </motion.div>
       </div>
 

@@ -32,10 +32,11 @@ export default function PageBanner({ kicker, title, accent, subtitle, image = '/
       <div className="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-ink/60" />
       <div className="absolute inset-0 bg-grid opacity-40" />
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div
-          className="absolute inset-x-0 h-px bg-gradient-to-r from-transparent via-battle/70 to-transparent"
-          style={{ animation: 'var(--animate-scan)' }}
-        />
+        {/* Animación sobre un wrapper de altura completa: translateY(±100%)
+            recorre así todo el banner (sobre la línea de 1px no se movería). */}
+        <div className="absolute inset-0" style={{ animation: 'var(--animate-scan)' }}>
+          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-battle/70 to-transparent" />
+        </div>
       </div>
 
       <div className="relative mx-auto w-full max-w-7xl px-5 lg:px-8">

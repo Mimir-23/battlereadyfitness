@@ -66,10 +66,11 @@ export default function Hero() {
 
       {/* scanline */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div
-          className="absolute inset-x-0 h-px bg-gradient-to-r from-transparent via-battle/70 to-transparent"
-          style={{ animation: 'var(--animate-scan)' }}
-        />
+        {/* Animación sobre un wrapper de altura completa: translateY(±100%)
+            recorre así toda la pantalla (sobre la línea de 1px no se movería). */}
+        <div className="absolute inset-0" style={{ animation: 'var(--animate-scan)' }}>
+          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-battle/70 to-transparent" />
+        </div>
       </div>
 
       {/* HUD corner brackets */}

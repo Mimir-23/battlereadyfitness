@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { getIcon } from '../../content/icons'
 import {
   FaPhone,
@@ -141,16 +142,49 @@ function WhyPreview({ d }) {
 }
 
 function GalleryPreview({ d }) {
+  const items = d || []
+  // Mini versión del "escáner" de la sección real: una foto a la vez en color.
+  const [active, setActive] = useState(0)
+  useEffect(() => {
+    if (items.length < 2) return
+    const t = setInterval(() => setActive((v) => (v + 1) % items.length), 1600)
+    return () => clearInterval(t)
+  }, [items.length])
+
   return (
     <div className="grid auto-rows-[70px] grid-cols-4 gap-2">
-      {(d || []).map((g, i) => (
-        <figure key={i} className={`relative overflow-hidden rounded-lg border border-iron ${g.span || ''}`}>
-          <img src={g.src} alt="" className="h-full w-full object-cover" />
-          <figcaption className="absolute bottom-0 left-0 p-1.5 text-[9px] font-semibold uppercase text-chalk">
-            {g.label}
-          </figcaption>
-        </figure>
-      ))}
+      {items.map((g, i) => {
+        const locked = i === active
+        return (
+          <figure
+            key={i}
+            className={`relative overflow-hidden rounded-lg border transition-colors duration-500 ${
+              locked ? 'border-battle/60' : 'border-iron'
+            } ${g.span || ''}`}
+          >
+            <img
+              src={g.src}
+              alt=""
+              className={`h-full w-full object-cover transition-all duration-700 ${
+                locked ? '' : 'grayscale brightness-[.85]'
+              }`}
+            />
+            <div
+              className={`pointer-events-none absolute inset-0 transition-opacity duration-500 ${
+                locked ? 'opacity-100' : 'opacity-0'
+              }`}
+            >
+              <span className="absolute left-1 top-1 h-2.5 w-2.5 border-l border-t border-battle" />
+              <span className="absolute right-1 top-1 h-2.5 w-2.5 border-r border-t border-battle" />
+              <span className="absolute bottom-1 left-1 h-2.5 w-2.5 border-b border-l border-battle" />
+              <span className="absolute bottom-1 right-1 h-2.5 w-2.5 border-b border-r border-battle" />
+            </div>
+            <figcaption className="absolute bottom-0 left-0 p-1.5 text-[9px] font-semibold uppercase text-chalk">
+              {g.label}
+            </figcaption>
+          </figure>
+        )
+      })}
     </div>
   )
 }
