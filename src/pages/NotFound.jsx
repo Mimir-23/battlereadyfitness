@@ -5,7 +5,7 @@ import CTAButton from '../components/ui/CTAButton'
 export default function NotFound() {
   usePageTitle('Page Not Found')
   return (
-    <section className="relative flex min-h-screen items-center justify-center overflow-hidden bg-ink bg-grid px-5 text-center">
+    <section className="relative flex min-h-svh items-center justify-center overflow-hidden bg-ink bg-grid px-5 text-center">
       <span className="pointer-events-none absolute select-none font-display text-[40vw] leading-none text-stroke-chalk opacity-20">
         404
       </span>

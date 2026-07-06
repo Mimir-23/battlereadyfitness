@@ -306,7 +306,6 @@ export default function Videos() {
 
       <div className="relative mx-auto max-w-7xl px-5 lg:px-8">
         <SectionHeading
-          number="04"
           kicker={videos.kicker}
           title={videos.titleLine1}
           accent={videos.accent}

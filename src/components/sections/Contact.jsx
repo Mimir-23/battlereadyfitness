@@ -73,7 +73,7 @@ export default function Contact() {
       <div className="pointer-events-none absolute -left-40 bottom-0 h-[420px] w-[420px] rounded-full bg-battle/10 blur-[140px]" />
 
       <div className="relative mx-auto max-w-7xl px-5 lg:px-8">
-        <SectionHeading number="05" kicker="Get In Touch" title="FIND THE" accent="GYM" />
+        <SectionHeading number="04" kicker="Get In Touch" title="FIND THE" accent="GYM" />
 
         <motion.div
           variants={stagger}
