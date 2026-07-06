@@ -1,5 +1,13 @@
 import { motion } from 'motion/react'
-import { FaCheck, FaWhatsapp, FaArrowRightLong } from 'react-icons/fa6'
+import {
+  FaCheck,
+  FaWhatsapp,
+  FaArrowRightLong,
+  FaLock,
+  FaShieldHalved,
+  FaBoltLightning,
+  FaCircleXmark,
+} from 'react-icons/fa6'
 import { useContent } from '../content/ContentProvider'
 import { whatsappUrl } from '../content/defaults'
 import { fadeUp, stagger, Reveal, reveal, isTouch } from '../lib/motion'
@@ -103,8 +111,10 @@ export default function Memberships() {
       </section>
 
       {/* Recess checkout embed */}
-      <section id="join" className="border-y border-iron bg-coal py-24">
-        <div className="mx-auto max-w-5xl px-5 lg:px-8">
+      <section id="join" className="relative overflow-hidden border-y border-iron bg-coal py-24">
+        <div className="pointer-events-none absolute -right-40 top-1/4 h-[440px] w-[440px] rounded-full bg-battle/10 blur-[140px]" />
+
+        <div className="relative mx-auto max-w-5xl px-5 lg:px-8">
           <SectionHeading
             number="02"
             kicker="Secure Checkout"
@@ -116,13 +126,59 @@ export default function Memberships() {
             our Recess member portal.
           </p>
 
-          <Reveal className="mt-12 overflow-hidden rounded-2xl border border-iron bg-ink">
+          {/* Secure checkout terminal */}
+          <Reveal className="mt-12 overflow-hidden rounded-2xl border border-iron bg-ink shadow-2xl">
+            <div className="bg-hazard h-1.5" />
+
+            {/* terminal top bar */}
+            <div className="flex items-center justify-between gap-3 border-b border-iron bg-coal/60 px-4 py-3.5 sm:px-5">
+              <div className="flex items-center gap-3">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-battle/10 text-battle">
+                  <FaLock size={15} />
+                </span>
+                <div className="leading-tight">
+                  <div className="font-head text-xs font-bold uppercase tracking-[0.2em] text-chalk">
+                    Secure Checkout
+                  </div>
+                  <div className="mt-0.5 font-head text-[10px] uppercase tracking-wider text-smoke">
+                    256-bit SSL · Powered by Recess
+                  </div>
+                </div>
+              </div>
+              <span className="flex items-center gap-2 rounded-full border border-battle/40 bg-battle/10 px-3 py-1.5 font-head text-[10px] font-semibold uppercase tracking-wider text-battle">
+                <FaShieldHalved size={11} /> <span className="hidden sm:inline">Encrypted</span>
+              </span>
+            </div>
+
             <RecessEmbed
               src={RECESS_MEMBERSHIPS}
               title="Battle Ready — Explore Packages"
               minHeight={760}
             />
           </Reveal>
+
+          {/* trust badges */}
+          <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+            {[
+              { icon: FaLock, label: 'SSL Seguro' },
+              { icon: FaShieldHalved, label: 'Pago Protegido' },
+              { icon: FaBoltLightning, label: 'Acceso Inmediato' },
+              { icon: FaCircleXmark, label: 'Cancela Cuando Quieras' },
+            ].map((b) => {
+              const Icon = b.icon
+              return (
+                <div
+                  key={b.label}
+                  className="flex items-center gap-2.5 rounded-xl border border-iron bg-ink px-4 py-3"
+                >
+                  <Icon size={15} className="shrink-0 text-battle" />
+                  <span className="font-head text-[11px] font-semibold uppercase tracking-wider text-fog">
+                    {b.label}
+                  </span>
+                </div>
+              )
+            })}
+          </div>
 
           <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <p className="text-sm text-smoke">Prefer to talk it through first?</p>
