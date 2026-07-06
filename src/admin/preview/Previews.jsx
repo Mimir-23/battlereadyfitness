@@ -116,13 +116,19 @@ function WhyPreview({ d }) {
           Sin imagen
         </div>
       )}
-      <div className="grid gap-2">
+      <div className="grid content-start gap-2">
         {(d.items || []).map((w, i) => {
           const Icon = getIcon(w.icon)
           return (
-            <div key={i} className="rounded-lg border border-iron bg-coal p-2.5">
-              <Icon className="text-battle" size={15} />
-              <div className="mt-1 font-head text-xs font-semibold uppercase text-chalk">{w.title}</div>
+            <div key={i} className="relative flex items-center gap-2.5 overflow-hidden rounded-lg border border-iron bg-coal p-2.5">
+              <span className="absolute inset-y-0 left-0 w-0.5 bg-battle/60" />
+              <Icon className="shrink-0 text-battle" size={14} />
+              <div className="min-w-0 flex-1 font-head text-xs font-semibold uppercase text-chalk">
+                {w.title}
+              </div>
+              <span className="font-display text-lg leading-none text-smoke/50">
+                {String(i + 1).padStart(2, '0')}
+              </span>
             </div>
           )
         })}
