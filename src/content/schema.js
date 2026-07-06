@@ -35,6 +35,7 @@ export const SECTIONS = [
       { name: 'city', label: 'Ciudad / Estado / Código', type: 'text', required: true },
       { name: 'mapsEmbed', label: 'Enlace del mapa (Google Maps embed)', type: 'textarea' },
       { name: 'recessUrl', label: 'Enlace de membresías (Recess)', type: 'textarea', help: 'El checkout que se muestra en la página de Membresías.' },
+      { name: 'recessSyncPaused', label: 'Pausar la sincronización diaria de planes desde Recess', type: 'boolean' },
       { name: 'instagram', label: 'Instagram (enlace del perfil)', type: 'text', help: 'Ej: https://instagram.com/battle_readyfit' },
       { name: 'facebook', label: 'Facebook (enlace de la página)', type: 'text', help: 'Ej: https://facebook.com/battlereadyfit' },
     ],
@@ -269,7 +270,7 @@ export const SECTIONS = [
     label: 'Planes de membresía',
     icon: 'FaTags',
     description:
-      'Las tarjetas de planes sobre el checkout de membresías. Nombre, precio, periodo y descripción se sincronizan cada día desde Recess (edítalos allá); beneficios, destacado y botón se editan aquí.',
+      'Las tarjetas de planes sobre el checkout de membresías. Nombre, precio, periodo, descripción y los beneficios de Recess (p. ej. «3 Guest Passes») se sincronizan cada día desde Recess — edítalos allá. Aquí puedes añadir beneficios extra, destacar un plan y cambiar el texto del botón.',
     shape: 'list',
     itemLabel: (it) => it.name || 'Plan',
     newItem: () => ({ name: '', price: '', period: '', desc: '', perks: [], featured: false, cta: '' }),

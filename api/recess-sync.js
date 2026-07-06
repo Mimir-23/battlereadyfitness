@@ -23,6 +23,8 @@
 /*                                 como Bearer en cada invocación cron   */
 /* ------------------------------------------------------------------ */
 
+import { DEFAULT_CONTENT } from '../src/content/defaults.js'
+
 const DEFAULT_RECESS_URL =
   'https://battle-ready.recess.tv/embed/checkout/explore/packages?hideMenu=true'
 
@@ -48,6 +50,36 @@ function boolField(block, field) {
   return m ? m[1] === 'true' : false
 }
 
+function numField(block, field) {
+  const m = block.match(new RegExp(`[,{]${field}:(\\d+(?:\\.\\d+)?)`))
+  return m ? Number(m[1]) : null
+}
+
+/** Beneficios visibles en el portal de Recess (créditos, guest passes…). */
+function buildAutoPerks(block, repeat, desc) {
+  const per = repeat === 'monthly' ? ' per month' : ''
+  const perks = []
+
+  // La nota corta de Recess ("6 Month commitment") va como beneficio, salvo
+  // cuando es solo la descripción recortada (no aportaría nada nuevo).
+  const shortDesc = strField(block, 'short_description').replace(/[\s,;.]+$/, '')
+  if (shortDesc && !desc.toLowerCase().startsWith(shortDesc.toLowerCase())) {
+    perks.push(shortDesc)
+  }
+
+  const classes = numField(block, 'max_class')
+  if (classes) perks.push(`${classes} Classes${per}`)
+  const sessions = numField(block, 'max_appointment')
+  if (sessions) perks.push(`${sessions} Sessions${per}`)
+  const visits = numField(block, 'max_any')
+  if (visits) perks.push(`${visits} Visits${per}`)
+  const guests = numField(block, 'max_guest_pass')
+  if (guests) perks.push(`${guests} Guest Pass${guests === 1 ? '' : 'es'}`)
+  if (boolField(block, 'grants_gym_access')) perks.push('Gym access included')
+
+  return perks
+}
+
 /** Extrae las membresías del HTML del embed de Recess. */
 export function parseMemberships(html) {
   // Cada membresía es un objeto `{id:"<uuid>",auto_enroll:...}` que termina
@@ -70,11 +102,13 @@ export function parseMemberships(html) {
     const key = name.toLowerCase().replace(/\s+/g, ' ')
     if (seen.has(key)) continue
     seen.add(key)
+    const desc = strField(block, 'description') || strField(block, 'short_description')
     items.push({
       name,
       price: price.replace(/\.00$/, ''), // "$25.00" → "$25"
       period: repeat === 'monthly' ? 'per month' : '',
-      desc: strField(block, 'description') || strField(block, 'short_description'),
+      desc,
+      autoPerks: buildAutoPerks(block, repeat, desc),
     })
   }
   return items
@@ -96,10 +130,22 @@ export function mergePlans(recess, existing) {
 
   const synced = recess.map((r) => {
     const prev = byName.get(norm(r.name))
+    // Beneficios: los de Recess (autoPerks) se refrescan en cada corrida; los
+    // que el admin añadió a mano (los que no vinieron de Recess la vez
+    // anterior) se conservan detrás, sin duplicados.
+    const auto = r.autoPerks || []
+    const prevAuto = new Set((prev?.autoPerks || []).map(norm))
+    const autoNow = new Set(auto.map(norm))
+    const custom = (prev?.perks || []).filter(
+      (p) => !prevAuto.has(norm(p)) && !autoNow.has(norm(p)),
+    )
     return {
-      ...r,
+      name: r.name,
+      price: r.price,
+      period: r.period,
       desc: r.desc || prev?.desc || '',
-      perks: prev?.perks || [],
+      perks: [...auto, ...custom],
+      autoPerks: auto,
       featured: prev?.featured || false,
       cta: prev?.cta || 'Join Now',
     }
@@ -167,6 +213,16 @@ export default async function handler(req, res) {
     const brand = await readContent(env, 'brand').catch(() => null)
     const recessUrl = brand?.recessUrl || DEFAULT_RECESS_URL
 
+    // Pausa desde el panel (Datos de contacto → "Pausar sincronización").
+    // ?force=1 permite forzar una corrida manual aunque esté pausada.
+    if (brand?.recessSyncPaused && req.query?.force !== '1') {
+      return res.status(200).json({
+        ok: true,
+        skipped: true,
+        reason: 'Sincronización pausada desde el panel de administración',
+      })
+    }
+
     const page = await fetch(recessUrl, {
       headers: { 'User-Agent': 'BattleReadyFitness-sync/1.0' },
     })
@@ -181,7 +237,9 @@ export default async function handler(req, res) {
       })
     }
 
-    const existing = await readContent(env, 'plans')
+    // Primera corrida (sin planes guardados aún): partimos de los planes por
+    // defecto del sitio para conservar el free pass y demás tarjetas curadas.
+    const existing = (await readContent(env, 'plans')) ?? DEFAULT_CONTENT.plans
     const merged = mergePlans(memberships, existing)
 
     if (JSON.stringify(merged) === JSON.stringify(existing)) {
