@@ -54,7 +54,12 @@
       "Bash(curl -s \"https://battle-ready.recess.tv/embed/checkout/package/dfafcd83-faf7-40b0-bb96-688219f8c1ab?hideMenu=true\" -o /tmp/pkg.html -w \"%{http_code} %{size_download}\\\\n\")",
       "Bash(curl -s \"https://battle-ready.recess.tv/embed/checkout/explore?displayClassIrl=list&hideMenu=true&class_type=IRL&displayDays=7\" -o /tmp/week.html -w \"%{http_code} %{size_download}\\\\n\")",
       "Bash(grep -oE 'timezone[^,]{0,60}|time_zone[^,]{0,60}|tz[\":][^,]{0,40}' /tmp/week.html)",
-      "Bash(curl -s \"https://battle-ready.recess.tv/embed/checkout/explore?displayClassIrl=list&hideMenu=true&class_type=IRL&displayDays=8\" -o \"C:\\\\Users\\\\deivi\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-deivi-Downloads-battlereadyfitness\\\\416318d4-03fb-43f2-8ab0-f2b2def9be38\\\\scratchpad\\\\week8.html\" -w \"%{http_code} %{size_download}\\\\n\")"
+      "Bash(curl -s \"https://battle-ready.recess.tv/embed/checkout/explore?displayClassIrl=list&hideMenu=true&class_type=IRL&displayDays=8\" -o \"C:\\\\Users\\\\deivi\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-deivi-Downloads-battlereadyfitness\\\\416318d4-03fb-43f2-8ab0-f2b2def9be38\\\\scratchpad\\\\week8.html\" -w \"%{http_code} %{size_download}\\\\n\")",
+      "Bash(grep -oE 'timezone_locked[^;]{0,200}' /tmp/rapp.js)",
+      "Bash(grep -oE '\\(dayjs|luxon|date-fns|toLocale[a-zA-Z]*|Intl\\\\.DateTimeFormat\\)[^;]{0,80}' /tmp/rapp.js)",
+      "Bash(curl -s \"https://battle-ready.recess.tv/embed/checkout/explore?hideMenu=true\")",
+      "Bash(curl -s \"https://battle-ready.recess.tv/_app/immutable/chunks/format.E1nZfMJTE7_TuLeaSpFq.js\" -o /tmp/fmt.js -w \"%{http_code} %{size_download}\\\\n\")",
+      "Bash(grep -oE 'timezone[A-Za-z_]*|timeZone[^,;]{0,60}|guess\\\\\\(\\\\\\)|tz\\\\\\([^\\)]{0,40}\\\\\\)' /tmp/fmt.js)"
     ]
   }
 }

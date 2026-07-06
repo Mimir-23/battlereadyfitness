@@ -225,8 +225,11 @@ export default function Schedule() {
               style={{ gridTemplateColumns: `120px repeat(${SCHEDULE_DAYS.length}, minmax(0, 1fr))` }}
             >
               {/* header row */}
-              <div className="flex items-center border-b border-iron bg-coal px-4 py-4 font-head text-xs font-semibold uppercase tracking-[0.2em] text-smoke">
+              <div className="flex flex-col justify-center border-b border-iron bg-coal px-4 py-4 font-head text-xs font-semibold uppercase tracking-[0.2em] text-smoke">
                 Time
+                <span className="mt-0.5 text-[9px] font-medium tracking-[0.15em] text-battle">
+                  Miami · ET
+                </span>
               </div>
               {SCHEDULE_DAYS.map((d) => {
                 const isActive = d === effectiveDay
@@ -391,8 +394,9 @@ export default function Schedule() {
           </div>
 
           <p className="mx-auto mt-8 max-w-2xl text-center text-sm text-smoke">
-            Schedule may vary on holidays. Tap any class — or the button below —
-            to reserve your spot right here.
+            All times are gym local time — Miami, Eastern Time. Schedule may vary
+            on holidays. Tap any class — or the button below — to reserve your
+            spot right here.
           </p>
 
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
