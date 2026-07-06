@@ -30,8 +30,9 @@ const DEFAULT_RECESS_URL =
 const DEFAULT_BOOKING_URL =
   'https://battle-ready.recess.tv/embed/checkout/explore?displayClassIrl=list&hideMenu=true&class_type=IRL&displayDays=3'
 
-// El gym está en Hialeah, FL: el horario público se pinta en hora del este.
-const TIME_ZONE = 'America/New_York'
+// Zona horaria por defecto (Hialeah, FL). La corrida real usa la que Recess
+// declara en su configuración, para que las horas coincidan 1:1 con su portal.
+const DEFAULT_TIME_ZONE = 'America/New_York'
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
 /* ---------- parsing ---------- */
@@ -147,17 +148,29 @@ export function parseClasses(html) {
   return items
 }
 
+/** La zona horaria que el propio portal declara en su configuración. */
+export function parseTimeZone(html) {
+  const m = html.match(/"timezone",value:"([A-Za-z_/+-]+)"/)
+  try {
+    // Valida el identificador construyendo un formateador con él.
+    new Intl.DateTimeFormat('en-US', { timeZone: m?.[1] })
+    return m[1]
+  } catch {
+    return DEFAULT_TIME_ZONE
+  }
+}
+
 /** Convierte las clases de una semana en la grilla { days, rows } del sitio. */
-export function buildScheduleGrid(classes) {
+export function buildScheduleGrid(classes, timeZone = DEFAULT_TIME_ZONE) {
   const labelFmt = new Intl.DateTimeFormat('en-US', {
-    timeZone: TIME_ZONE,
+    timeZone,
     weekday: 'short',
     hour: 'numeric',
     minute: '2-digit',
     hour12: true,
   })
   const sortFmt = new Intl.DateTimeFormat('en-US', {
-    timeZone: TIME_ZONE,
+    timeZone,
     hour: '2-digit',
     minute: '2-digit',
     hourCycle: 'h23',
@@ -333,15 +346,17 @@ export default async function handler(req, res) {
     if (cfg?.paused && !force) {
       schedule = { skipped: true, reason: 'Pausada desde el panel' }
     } else {
-      // Pedimos la semana completa aunque el embed de la página muestre menos días.
+      // 8 días y no 7: la ventana empieza hoy y las clases de hoy que ya
+      // pasaron no vienen — el mismo día de la próxima semana las completa.
       const u = new URL(brand?.recessBookingUrl || DEFAULT_BOOKING_URL)
-      u.searchParams.set('displayDays', '7')
+      u.searchParams.set('displayDays', '8')
       const page = await fetch(u, UA)
       if (!page.ok) throw new Error(`Recess: HTTP ${page.status}`)
-      const classes = parseClasses(await page.text())
+      const html = await page.text()
+      const classes = parseClasses(html)
       if (classes.length === 0) throw new Error('0 clases en el calendario de Recess')
 
-      const grid = buildScheduleGrid(classes)
+      const grid = buildScheduleGrid(classes, parseTimeZone(html))
       const existing = await readContent(env, 'schedule')
       if (JSON.stringify(grid) === JSON.stringify(existing)) {
         schedule = { changed: false, classes: classes.length, rows: grid.rows.length }
