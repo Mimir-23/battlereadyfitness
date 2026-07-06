@@ -1,6 +1,15 @@
 import { createElement, useMemo, useState } from 'react'
 import { motion } from 'motion/react'
-import { FaArrowRightLong, FaClock, FaWhatsapp, FaBoltLightning, FaLayerGroup, FaMoon } from 'react-icons/fa6'
+import {
+  FaArrowRightLong,
+  FaClock,
+  FaWhatsapp,
+  FaBoltLightning,
+  FaLayerGroup,
+  FaMoon,
+  FaLock,
+  FaShieldHalved,
+} from 'react-icons/fa6'
 import { useContent } from '../content/ContentProvider'
 import { getIcon } from '../content/icons'
 import { whatsappUrl } from '../content/defaults'
@@ -9,12 +18,23 @@ import { usePageTitle } from '../lib/usePageTitle'
 import PageBanner from '../components/ui/PageBanner'
 import SectionHeading from '../components/ui/SectionHeading'
 import CTAButton from '../components/ui/CTAButton'
+import RecessEmbed from '../components/ui/RecessEmbed'
 import Spotlight from '../components/ui/Spotlight'
+
+/** "Bootcamp upper strength" ↔ "Bootcamp": coincidencia flexible en ambos
+    sentidos, para que los nombres largos de Recess hereden icono y resaltado. */
+const matches = (a, b) => {
+  if (!a || !b) return false
+  const x = a.toLowerCase()
+  const y = b.toLowerCase()
+  return x.includes(y) || y.includes(x)
+}
 
 /** Today's three-letter label (Sun–Sat). */
 const TODAY = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][new Date().getDay()]
 
-/** A single class in the grid. Highlights when it matches the hovered legend. */
+/** A single class in the grid. Highlights when it matches the hovered legend.
+    Filled cells link down to the booking portal (#book). */
 function ClassCell({ name, iconName, highlight }) {
   if (!name) {
     return (
@@ -24,8 +44,10 @@ function ClassCell({ name, iconName, highlight }) {
     )
   }
   return (
-    <div
-      className={`group flex h-full min-h-[58px] flex-col justify-center gap-1 rounded-lg border p-2.5 transition-all duration-300 ${
+    <a
+      href="#book"
+      aria-label={`Book ${name}`}
+      className={`group flex h-full min-h-[58px] cursor-pointer flex-col justify-center gap-1 rounded-lg border p-2.5 transition-all duration-300 ${
         highlight
           ? 'border-battle bg-battle/10'
           : 'border-iron bg-ink hover:border-battle/60 hover:bg-battle/5'
@@ -39,7 +61,7 @@ function ClassCell({ name, iconName, highlight }) {
           {name}
         </span>
       </div>
-    </div>
+    </a>
   )
 }
 
@@ -99,7 +121,7 @@ export default function Schedule() {
   const SCHEDULE = schedule.rows
   const SCHEDULE_DAYS = schedule.days
   const WHATSAPP = whatsappUrl(brand)
-  const ICON_BY_NAME = Object.fromEntries(PROGRAMS.map((p) => [p.name, p.icon]))
+  const iconFor = (name) => PROGRAMS.find((p) => matches(name, p.name))?.icon
 
   const [activeDay, setActiveDay] = useState('all')
   const [hoverClass, setHoverClass] = useState(null)
@@ -259,8 +281,8 @@ export default function Schedule() {
                       >
                         <ClassCell
                           name={name}
-                          iconName={ICON_BY_NAME[name]}
-                          highlight={!!name && name === hoverClass}
+                          iconName={iconFor(name)}
+                          highlight={matches(name, hoverClass)}
                         />
                       </div>
                     )
@@ -277,7 +299,7 @@ export default function Schedule() {
                 <motion.div variants={stagger} {...reveal} className="space-y-3">
                   {agendaRows.map((row) => {
                     const name = row.classes[effectiveDay]
-                    const Icon = getIcon(ICON_BY_NAME[name])
+                    const Icon = getIcon(iconFor(name))
                     return (
                       <motion.div
                         key={row.time}
@@ -349,7 +371,7 @@ export default function Schedule() {
           <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
             {PROGRAMS.map((p) => {
               const Icon = getIcon(p.icon)
-              const on = hoverClass === p.name
+              const on = matches(hoverClass, p.name)
               return (
                 <button
                   key={p.name}
@@ -369,13 +391,13 @@ export default function Schedule() {
           </div>
 
           <p className="mx-auto mt-8 max-w-2xl text-center text-sm text-smoke">
-            Schedule may vary on holidays. Booking is handled through our Recess
-            portal — grab a membership to reserve your spot.
+            Schedule may vary on holidays. Tap any class — or the button below —
+            to reserve your spot right here.
           </p>
 
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <CTAButton to="/memberships">
-              Book Through Memberships <FaArrowRightLong />
+            <CTAButton href="#book">
+              Book a Class <FaArrowRightLong />
             </CTAButton>
             <CTAButton href={WHATSAPP} target="_blank" variant="ghost">
               <FaWhatsapp size={16} /> Ask About Times
@@ -383,6 +405,51 @@ export default function Schedule() {
           </div>
         </div>
       </section>
+
+      {/* Recess booking embed */}
+      {brand.recessBookingUrl && (
+        <section id="book" className="relative overflow-hidden border-t border-iron bg-coal py-24">
+          <div className="pointer-events-none absolute -left-40 top-1/4 h-[440px] w-[440px] rounded-full bg-battle/10 blur-[140px]" />
+
+          <div className="relative mx-auto max-w-5xl px-5 lg:px-8">
+            <SectionHeading number="02" kicker="Reserve Your Spot" title="BOOK A" accent="CLASS" />
+            <p className="mx-auto mt-4 max-w-xl text-center text-fog">
+              Pick a day, pick a class and lock it in — bookings run right here
+              through our Recess member portal.
+            </p>
+
+            <Reveal className="mt-12 overflow-hidden rounded-2xl border border-iron bg-ink shadow-2xl">
+              <div className="bg-hazard h-1.5" />
+
+              {/* terminal top bar */}
+              <div className="flex items-center justify-between gap-3 border-b border-iron bg-coal/60 px-4 py-3.5 sm:px-5">
+                <div className="flex items-center gap-3">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-battle/10 text-battle">
+                    <FaLock size={15} />
+                  </span>
+                  <div className="leading-tight">
+                    <div className="font-head text-xs font-bold uppercase tracking-[0.2em] text-chalk">
+                      Class Booking
+                    </div>
+                    <div className="mt-0.5 font-head text-[10px] uppercase tracking-wider text-smoke">
+                      256-bit SSL · Powered by Recess
+                    </div>
+                  </div>
+                </div>
+                <span className="flex items-center gap-2 rounded-full border border-battle/40 bg-battle/10 px-3 py-1.5 font-head text-[10px] font-semibold uppercase tracking-wider text-battle">
+                  <FaShieldHalved size={11} /> <span className="hidden sm:inline">Encrypted</span>
+                </span>
+              </div>
+
+              <RecessEmbed
+                src={brand.recessBookingUrl}
+                title="Battle Ready — Book a Class"
+                minHeight={720}
+              />
+            </Reveal>
+          </div>
+        </section>
+      )}
 
       {/* Opening hours strip */}
       <section className="border-y border-iron bg-coal py-16">

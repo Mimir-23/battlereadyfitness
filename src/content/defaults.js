@@ -21,6 +21,8 @@ export const DEFAULT_CONTENT = {
       'https://www.google.com/maps?q=18600+NW+87th+Avenue+Suite+116+Hialeah+FL+33015&output=embed',
     recessUrl:
       'https://battle-ready.recess.tv/embed/checkout/explore/packages?hideMenu=true',
+    recessBookingUrl:
+      'https://battle-ready.recess.tv/embed/checkout/explore?displayClassIrl=list&hideMenu=true&class_type=IRL&displayDays=3',
     instagram: 'https://instagram.com/battle_readyfit',
     facebook: 'https://facebook.com/battlereadyfit',
   },

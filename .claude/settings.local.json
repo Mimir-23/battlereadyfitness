@@ -51,7 +51,8 @@
       "Bash(curl -s \"https://battle-ready.recess.tv/_app/immutable/entry/app.wh3DqWWDvUNRyuYD895K.js\" -o /tmp/rapp.js -w \"%{http_code} %{size_download}\\\\n\")",
       "Bash(grep -oE 'checkout[^\"]{0,60}' /tmp/rapp.js)",
       "Bash(grep -oE 'checkout/[^\"]{0,50}' /tmp/rapp.js)",
-      "Bash(curl -s \"https://battle-ready.recess.tv/embed/checkout/package/dfafcd83-faf7-40b0-bb96-688219f8c1ab?hideMenu=true\" -o /tmp/pkg.html -w \"%{http_code} %{size_download}\\\\n\")"
+      "Bash(curl -s \"https://battle-ready.recess.tv/embed/checkout/package/dfafcd83-faf7-40b0-bb96-688219f8c1ab?hideMenu=true\" -o /tmp/pkg.html -w \"%{http_code} %{size_download}\\\\n\")",
+      "Bash(curl -s \"https://battle-ready.recess.tv/embed/checkout/explore?displayClassIrl=list&hideMenu=true&class_type=IRL&displayDays=7\" -o /tmp/week.html -w \"%{http_code} %{size_download}\\\\n\")"
     ]
   }
 }

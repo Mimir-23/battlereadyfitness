@@ -327,7 +327,7 @@ function SectionEditor({ sectionKey, section, initial }) {
       <div className="grid gap-8 lg:grid-cols-2">
         {/* Editor */}
         <div className={tab === 'edit' ? '' : 'hidden lg:block'}>
-          {key === 'plans' && <PlansSyncPanel />}
+          {SYNC_PANELS[key] && <RecessSyncPanel {...SYNC_PANELS[key]} />}
           <SectionEditorBody section={section} draft={draft} setDraft={setDraft} />
         </div>
 
@@ -400,28 +400,48 @@ function SectionEditor({ sectionKey, section, initial }) {
   )
 }
 
+/** Qué módulos tienen sincronización con Recess y con qué textos/clave. */
+const SYNC_PANELS = {
+  plans: {
+    settingKey: 'plansSync',
+    what: 'los planes',
+    activeText:
+      'Activa — cada día a las 12 pm los planes se actualizan con los paquetes y precios de Recess.',
+    pausedText:
+      'Pausada — los planes quedan como están y puedes editarlos sin que se sobrescriban.',
+  },
+  schedule: {
+    settingKey: 'scheduleSync',
+    what: 'el horario',
+    activeText:
+      'Activa — cada día a las 12 pm el horario se actualiza con el calendario de clases de Recess.',
+    pausedText:
+      'Pausada — el horario queda como está y puedes editarlo sin que se sobrescriba.',
+  },
+}
+
 /**
  * Interruptor de la sincronización automática con Recess. Es un ajuste, no
- * contenido: se guarda al instante en su propia clave (`plansSync`) sin pasar
- * por el borrador/Guardar de la sección, para no mezclarse con los planes.
+ * contenido: se guarda al instante en su propia clave (plansSync /
+ * scheduleSync) sin pasar por el borrador/Guardar de la sección.
  */
-function PlansSyncPanel() {
+function RecessSyncPanel({ settingKey, what, activeText, pausedText }) {
   const { content, refresh } = useContentMeta()
   const { user } = useAuth()
   const notify = useToast()
   const [busy, setBusy] = useState(false)
-  const paused = !!content.plansSync?.paused
+  const paused = !!content[settingKey]?.paused
   const active = !paused
 
   const toggle = async () => {
     setBusy(true)
     try {
-      await saveSection('plansSync', { paused: active }, user?.email)
+      await saveSection(settingKey, { paused: active }, user?.email)
       await refresh()
       notify(
         active
-          ? 'Sincronización pausada. Los planes no se tocarán hasta que la actives de nuevo.'
-          : 'Sincronización activada. Los planes se actualizarán desde Recess cada día a las 12 pm.',
+          ? `Sincronización pausada. No se tocará ${what} hasta que la actives de nuevo.`
+          : `Sincronización activada. Recess actualizará ${what} cada día a las 12 pm.`,
       )
     } catch (err) {
       notify('No se pudo cambiar: ' + (err?.message || 'error'), 'error')
@@ -444,11 +464,7 @@ function PlansSyncPanel() {
           <div className="font-head text-xs font-bold uppercase tracking-wider text-chalk">
             Sincronización automática con Recess
           </div>
-          <div className="mt-0.5 text-xs text-smoke">
-            {active
-              ? 'Activa — cada día a las 12 pm los planes se actualizan con los paquetes y precios de Recess.'
-              : 'Pausada — los planes quedan como están y puedes editarlos sin que se sobrescriban.'}
-          </div>
+          <div className="mt-0.5 text-xs text-smoke">{active ? activeText : pausedText}</div>
         </div>
         <button
           type="button"

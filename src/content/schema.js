@@ -35,6 +35,7 @@ export const SECTIONS = [
       { name: 'city', label: 'Ciudad / Estado / Código', type: 'text', required: true },
       { name: 'mapsEmbed', label: 'Enlace del mapa (Google Maps embed)', type: 'textarea' },
       { name: 'recessUrl', label: 'Enlace de membresías (Recess)', type: 'textarea', help: 'El checkout que se muestra en la página de Membresías.' },
+      { name: 'recessBookingUrl', label: 'Enlace de reserva de clases (Recess)', type: 'textarea', help: 'El calendario de reservas que se muestra en la página de Horario.' },
       { name: 'instagram', label: 'Instagram (enlace del perfil)', type: 'text', help: 'Ej: https://instagram.com/battle_readyfit' },
       { name: 'facebook', label: 'Facebook (enlace de la página)', type: 'text', help: 'Ej: https://facebook.com/battlereadyfit' },
     ],
@@ -257,7 +258,8 @@ export const SECTIONS = [
     key: 'schedule',
     label: 'Horario de clases',
     icon: 'FaCalendarDays',
-    description: 'La tabla semanal de clases por día y hora.',
+    description:
+      'La tabla semanal de clases por día y hora. Se sincroniza cada día desde el calendario de Recess — crea o mueve clases allá y aquí se reflejan solas.',
     shape: 'custom',
     custom: 'schedule',
     dayOptions: DAY_OPTIONS,

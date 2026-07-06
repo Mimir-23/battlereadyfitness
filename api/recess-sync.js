@@ -27,6 +27,12 @@ import { DEFAULT_CONTENT } from '../src/content/defaults.js'
 
 const DEFAULT_RECESS_URL =
   'https://battle-ready.recess.tv/embed/checkout/explore/packages?hideMenu=true'
+const DEFAULT_BOOKING_URL =
+  'https://battle-ready.recess.tv/embed/checkout/explore?displayClassIrl=list&hideMenu=true&class_type=IRL&displayDays=3'
+
+// El gym está en Hialeah, FL: el horario público se pinta en hora del este.
+const TIME_ZONE = 'America/New_York'
+const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
 /* ---------- parsing ---------- */
 
@@ -117,6 +123,69 @@ export function parseMemberships(html) {
     })
   }
   return items
+}
+
+/** Extrae las clases (instancias con fecha/hora) del HTML del calendario. */
+export function parseClasses(html) {
+  const blocks = html.match(
+    /\{id:"[a-f0-9-]{36}",end_date:[\s\S]*?__typename:"class"/g,
+  )
+  if (!blocks) return []
+
+  const seen = new Set()
+  const items = []
+  for (const block of blocks) {
+    const id = block.slice(5, 41)
+    if (seen.has(id)) continue
+    seen.add(id)
+    const name = strField(block, 'name')
+    const start = strField(block, 'start_date')
+    if (!name || !start) continue
+    if (boolField(block, 'is_cancelled') || boolField(block, 'is_private')) continue
+    items.push({ name, start })
+  }
+  return items
+}
+
+/** Convierte las clases de una semana en la grilla { days, rows } del sitio. */
+export function buildScheduleGrid(classes) {
+  const labelFmt = new Intl.DateTimeFormat('en-US', {
+    timeZone: TIME_ZONE,
+    weekday: 'short',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  })
+  const sortFmt = new Intl.DateTimeFormat('en-US', {
+    timeZone: TIME_ZONE,
+    hour: '2-digit',
+    minute: '2-digit',
+    hourCycle: 'h23',
+  })
+
+  const slots = new Map() // "5:30 PM" → { key: minutos del día, byDay }
+  for (const c of classes) {
+    const date = new Date(c.start)
+    if (Number.isNaN(date.getTime())) continue
+    const p = Object.fromEntries(labelFmt.formatToParts(date).map((x) => [x.type, x.value]))
+    if (!DAYS.includes(p.weekday)) continue
+    const label = `${p.hour}:${p.minute} ${p.dayPeriod}`
+    if (!slots.has(label)) {
+      const s = Object.fromEntries(sortFmt.formatToParts(date).map((x) => [x.type, x.value]))
+      slots.set(label, { key: Number(s.hour) * 60 + Number(s.minute), byDay: {} })
+    }
+    const list = (slots.get(label).byDay[p.weekday] ??= [])
+    if (!list.includes(c.name)) list.push(c.name)
+  }
+
+  const rows = [...slots.entries()]
+    .sort((a, b) => a[1].key - b[1].key)
+    .map(([time, slot]) => ({
+      time,
+      classes: Object.fromEntries(DAYS.map((d) => [d, (slot.byDay[d] || []).join(' / ')])),
+    }))
+
+  return { days: [...DAYS], rows }
 }
 
 /* ---------- merge ---------- */
@@ -214,53 +283,77 @@ export default async function handler(req, res) {
     })
   }
 
+  const force = req.query?.force === '1'
+  const UA = { headers: { 'User-Agent': 'BattleReadyFitness-sync/1.0' } }
+
+  // La URL de cada portal es editable en el admin (brand.recessUrl /
+  // brand.recessBookingUrl). Cada bloque tiene su propio interruptor de pausa
+  // y sus errores no tumban al otro.
+  const brand = await readContent(env, 'brand').catch(() => null)
+
+  /* ----- Planes de membresía ----- */
+  let plans
   try {
-    // La URL del portal es editable en el admin (brand.recessUrl).
-    const brand = await readContent(env, 'brand').catch(() => null)
-    const recessUrl = brand?.recessUrl || DEFAULT_RECESS_URL
+    const cfg = await readContent(env, 'plansSync').catch(() => null)
+    if (cfg?.paused && !force) {
+      plans = { skipped: true, reason: 'Pausada desde el panel' }
+    } else {
+      const page = await fetch(brand?.recessUrl || DEFAULT_RECESS_URL, UA)
+      if (!page.ok) throw new Error(`Recess: HTTP ${page.status}`)
+      const memberships = parseMemberships(await page.text())
 
-    // Pausa desde el panel (Planes de membresía → interruptor de
-    // sincronización). ?force=1 permite forzar una corrida manual.
-    const syncCfg = await readContent(env, 'plansSync').catch(() => null)
-    if (syncCfg?.paused && req.query?.force !== '1') {
-      return res.status(200).json({
-        ok: true,
-        skipped: true,
-        reason: 'Sincronización pausada desde el panel de administración',
-      })
+      // Si el parseo no encuentra nada (Recess cambió su formato, portal
+      // caído…) no tocamos el contenido: el sitio sigue con lo último válido.
+      if (memberships.length === 0) throw new Error('0 membresías en la página de Recess')
+
+      // Primera corrida (sin planes guardados aún): partimos de los planes por
+      // defecto del sitio para conservar el free pass y demás tarjetas curadas.
+      const existing = (await readContent(env, 'plans')) ?? DEFAULT_CONTENT.plans
+      const merged = mergePlans(memberships, existing)
+
+      if (JSON.stringify(merged) === JSON.stringify(existing)) {
+        plans = { changed: false, count: merged.length }
+      } else {
+        await writeContent(env, 'plans', merged)
+        plans = {
+          changed: true,
+          count: merged.length,
+          items: merged.map((p) => `${p.name} — ${p.price}${p.period ? ' ' + p.period : ''}`),
+        }
+      }
     }
-
-    const page = await fetch(recessUrl, {
-      headers: { 'User-Agent': 'BattleReadyFitness-sync/1.0' },
-    })
-    if (!page.ok) throw new Error(`Recess: HTTP ${page.status}`)
-    const memberships = parseMemberships(await page.text())
-
-    // Si el parseo no encuentra nada (Recess cambió su formato, portal caído…)
-    // no tocamos el contenido: la página sigue mostrando lo último válido.
-    if (memberships.length === 0) {
-      return res.status(502).json({
-        error: 'No se encontraron membresías en la página de Recess; no se escribió nada.',
-      })
-    }
-
-    // Primera corrida (sin planes guardados aún): partimos de los planes por
-    // defecto del sitio para conservar el free pass y demás tarjetas curadas.
-    const existing = (await readContent(env, 'plans')) ?? DEFAULT_CONTENT.plans
-    const merged = mergePlans(memberships, existing)
-
-    if (JSON.stringify(merged) === JSON.stringify(existing)) {
-      return res.status(200).json({ ok: true, changed: false, count: merged.length })
-    }
-
-    await writeContent(env, 'plans', merged)
-    return res.status(200).json({
-      ok: true,
-      changed: true,
-      count: merged.length,
-      plans: merged.map((p) => `${p.name} — ${p.price}${p.period ? ' ' + p.period : ''}`),
-    })
   } catch (err) {
-    return res.status(500).json({ error: String(err?.message || err) })
+    plans = { error: String(err?.message || err) }
   }
+
+  /* ----- Horario de clases ----- */
+  let schedule
+  try {
+    const cfg = await readContent(env, 'scheduleSync').catch(() => null)
+    if (cfg?.paused && !force) {
+      schedule = { skipped: true, reason: 'Pausada desde el panel' }
+    } else {
+      // Pedimos la semana completa aunque el embed de la página muestre menos días.
+      const u = new URL(brand?.recessBookingUrl || DEFAULT_BOOKING_URL)
+      u.searchParams.set('displayDays', '7')
+      const page = await fetch(u, UA)
+      if (!page.ok) throw new Error(`Recess: HTTP ${page.status}`)
+      const classes = parseClasses(await page.text())
+      if (classes.length === 0) throw new Error('0 clases en el calendario de Recess')
+
+      const grid = buildScheduleGrid(classes)
+      const existing = await readContent(env, 'schedule')
+      if (JSON.stringify(grid) === JSON.stringify(existing)) {
+        schedule = { changed: false, classes: classes.length, rows: grid.rows.length }
+      } else {
+        await writeContent(env, 'schedule', grid)
+        schedule = { changed: true, classes: classes.length, rows: grid.rows.length }
+      }
+    }
+  } catch (err) {
+    schedule = { error: String(err?.message || err) }
+  }
+
+  const ok = !plans.error && !schedule.error
+  return res.status(ok ? 200 : 502).json({ ok, plans, schedule })
 }
