@@ -292,21 +292,29 @@ async function writeContent(env, key, value) {
 /* ---------- handler ---------- */
 
 export default async function handler(req, res) {
-  // Vercel manda `Authorization: Bearer <CRON_SECRET>` en las invocaciones
-  // del cron; para disparos manuales aceptamos ?token=.
-  const secret = (process.env.CRON_SECRET || '').trim()
-  if (secret) {
-    const auth = req.headers.authorization || ''
-    const ok = auth === `Bearer ${secret}` || req.query?.token === secret
-    if (!ok) return res.status(401).json({ error: 'Unauthorized' })
-  }
-
   const env = supabaseEnv()
   if (!env.url || !env.key) {
     return res.status(500).json({
       error: 'Faltan VITE_SUPABASE_URL o SUPABASE_SERVICE_ROLE_KEY en Vercel',
     })
   }
+
+  // Tres credenciales válidas:
+  //  1. El cron de Vercel: `Authorization: Bearer <CRON_SECRET>`.
+  //  2. Disparo manual por URL: ?token=<CRON_SECRET>.
+  //  3. El botón "Sincronizar ahora" del panel: la sesión de Supabase de un
+  //     admin logueado, que validamos contra el servidor de auth.
+  const secret = (process.env.CRON_SECRET || '').trim()
+  const auth = req.headers.authorization || ''
+  const bearer = auth.startsWith('Bearer ') ? auth.slice(7) : ''
+  let allowed = !secret || bearer === secret || req.query?.token === secret
+  if (!allowed && bearer) {
+    const r = await fetch(`${env.url}/auth/v1/user`, {
+      headers: { apikey: env.key, Authorization: `Bearer ${bearer}` },
+    }).catch(() => null)
+    allowed = !!r?.ok
+  }
+  if (!allowed) return res.status(401).json({ error: 'Unauthorized' })
 
   const force = req.query?.force === '1'
   const UA = { headers: { 'User-Agent': 'BattleReadyFitness-sync/1.0' } }

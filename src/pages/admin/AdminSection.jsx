@@ -18,7 +18,7 @@ import { SECTIONS, SECTION_BY_KEY, validateSection } from '../../content/schema'
 import { DEFAULT_CONTENT } from '../../content/defaults'
 import { useContentMeta } from '../../content/ContentProvider'
 import { useAuth } from '../../admin/AuthProvider'
-import { saveSection, resetSection, fetchSavedMeta } from '../../admin/contentApi'
+import { saveSection, resetSection, fetchSavedMeta, fetchSectionValue } from '../../admin/contentApi'
 import { FieldInput, ObjectFields, ListField } from '../../admin/fields'
 import ScheduleEditor from '../../admin/ScheduleEditor'
 import SectionPreview from '../../admin/preview/Previews'
@@ -327,7 +327,19 @@ function SectionEditor({ sectionKey, section, initial }) {
       <div className="grid gap-8 lg:grid-cols-2">
         {/* Editor */}
         <div className={tab === 'edit' ? '' : 'hidden lg:block'}>
-          {SYNC_PANELS[key] && <RecessSyncPanel {...SYNC_PANELS[key]} />}
+          {SYNC_PANELS[key] && (
+            <RecessSyncPanel
+              {...SYNC_PANELS[key]}
+              sectionKey={key}
+              onSynced={(fresh) => {
+                // Refleja lo sincronizado en el editor — salvo que haya edición
+                // en curso, que no queremos pisar.
+                if (fresh == null || dirty) return
+                setDraftRaw(clone(fresh))
+                setBaseline(clone(fresh))
+              }}
+            />
+          )}
           <SectionEditorBody section={section} draft={draft} setDraft={setDraft} />
         </div>
 
@@ -425,11 +437,12 @@ const SYNC_PANELS = {
  * contenido: se guarda al instante en su propia clave (plansSync /
  * scheduleSync) sin pasar por el borrador/Guardar de la sección.
  */
-function RecessSyncPanel({ settingKey, what, activeText, pausedText }) {
+function RecessSyncPanel({ settingKey, what, activeText, pausedText, sectionKey, onSynced }) {
   const { content, refresh } = useContentMeta()
-  const { user } = useAuth()
+  const { user, session } = useAuth()
   const notify = useToast()
   const [busy, setBusy] = useState(false)
+  const [syncing, setSyncing] = useState(false)
   const paused = !!content[settingKey]?.paused
   const active = !paused
 
@@ -447,6 +460,47 @@ function RecessSyncPanel({ settingKey, what, activeText, pausedText }) {
       notify('No se pudo cambiar: ' + (err?.message || 'error'), 'error')
     } finally {
       setBusy(false)
+    }
+  }
+
+  // Corrida manual inmediata: llama a la función de sincronización con la
+  // sesión del admin como credencial. force=1 para que corra aunque la
+  // sincronización diaria esté pausada (es una acción explícita).
+  const syncNow = async () => {
+    setSyncing(true)
+    try {
+      const res = await fetch('/api/recess-sync?force=1', {
+        headers: { Authorization: `Bearer ${session?.access_token || ''}` },
+      })
+      let body = null
+      try {
+        body = await res.json()
+      } catch {
+        /* respuesta no-JSON (p. ej. entorno local sin /api) */
+      }
+      if (!res.ok || !body) {
+        throw new Error(
+          body?.error ||
+            (res.status === 404
+              ? 'La función /api/recess-sync no está disponible aquí (solo en el sitio publicado).'
+              : `HTTP ${res.status}`),
+        )
+      }
+
+      const r = settingKey === 'plansSync' ? body.plans : body.schedule
+      if (r?.error) throw new Error(r.error)
+      notify(
+        r?.changed
+          ? `Sincronizado desde Recess: ${what} al día.`
+          : `Todo al día — ${what} ya coincidía con Recess.`,
+      )
+
+      await refresh()
+      onSynced?.(await fetchSectionValue(sectionKey))
+    } catch (err) {
+      notify('No se pudo sincronizar: ' + (err?.message || 'error'), 'error')
+    } finally {
+      setSyncing(false)
     }
   }
 
@@ -482,6 +536,25 @@ function RecessSyncPanel({ settingKey, what, activeText, pausedText }) {
               active ? 'translate-x-5' : 'translate-x-0.5'
             }`}
           />
+        </button>
+      </div>
+
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-3 border-t border-iron pt-3">
+        <span className="text-[11px] text-smoke">
+          Corre sola cada día a las 12 pm (hora de Miami).
+        </span>
+        <button
+          type="button"
+          onClick={syncNow}
+          disabled={syncing}
+          className="inline-flex items-center gap-2 rounded-lg border border-battle/50 bg-battle/10 px-3 py-2 font-head text-[11px] font-bold uppercase tracking-wider text-battle transition-colors hover:bg-battle hover:text-ink disabled:opacity-50"
+        >
+          {syncing ? (
+            <Spinner className="h-3.5 w-3.5 border-battle/40 border-t-battle" />
+          ) : (
+            <FaArrowsRotate size={12} />
+          )}
+          {syncing ? 'Sincronizando…' : 'Sincronizar ahora'}
         </button>
       </div>
     </div>

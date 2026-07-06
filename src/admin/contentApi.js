@@ -18,6 +18,17 @@ export async function saveSection(key, value, email) {
   if (error) throw error
 }
 
+/** Read one section's currently saved value (null = no override). */
+export async function fetchSectionValue(key) {
+  const { data, error } = await supabase
+    .from('site_content')
+    .select('value')
+    .eq('key', key)
+    .maybeSingle()
+  if (error) throw error
+  return data?.value ?? null
+}
+
 /** Revert a section to its built-in default by deleting its override row. */
 export async function resetSection(key) {
   const { error } = await supabase.from('site_content').delete().eq('key', key)
