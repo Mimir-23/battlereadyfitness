@@ -47,7 +47,11 @@
       "Bash(openssl rand *)",
       "Bash(curl -s \"https://battle-ready.recess.tv/embed/checkout/explore/packages?hideMenu=true\" -o /tmp/recess2.html -w \"%{http_code} %{size_download}\\\\n\")",
       "Bash(curl -s \"https://battle-ready.recess.tv/embed/checkout/explore?hideMenu=true\" -o /tmp/explore.html)",
-      "Bash(grep -oE '\\\\{id:\"[a-f0-9-]{36}\",\\(auto_enroll|name\\)[^,]*,[^,]*' /tmp/explore.html)"
+      "Bash(grep -oE '\\\\{id:\"[a-f0-9-]{36}\",\\(auto_enroll|name\\)[^,]*,[^,]*' /tmp/explore.html)",
+      "Bash(curl -s \"https://battle-ready.recess.tv/_app/immutable/entry/app.wh3DqWWDvUNRyuYD895K.js\" -o /tmp/rapp.js -w \"%{http_code} %{size_download}\\\\n\")",
+      "Bash(grep -oE 'checkout[^\"]{0,60}' /tmp/rapp.js)",
+      "Bash(grep -oE 'checkout/[^\"]{0,50}' /tmp/rapp.js)",
+      "Bash(curl -s \"https://battle-ready.recess.tv/embed/checkout/package/dfafcd83-faf7-40b0-bb96-688219f8c1ab?hideMenu=true\" -o /tmp/pkg.html -w \"%{http_code} %{size_download}\\\\n\")"
     ]
   }
 }

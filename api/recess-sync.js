@@ -111,6 +111,9 @@ export function parseMemberships(html) {
       period: repeat === 'monthly' ? 'per month' : '',
       desc,
       autoPerks: buildAutoPerks(block, repeat, desc),
+      // Permite en la página el enlace directo al checkout de este paquete
+      // (…/embed/checkout/package/<id>).
+      recessId: id,
     })
   }
   return items
@@ -148,6 +151,7 @@ export function mergePlans(recess, existing) {
       desc: r.desc || prev?.desc || '',
       perks: [...auto, ...custom],
       autoPerks: auto,
+      recessId: r.recessId,
       featured: prev?.featured || false,
       cta: prev?.cta || 'Join Now',
     }

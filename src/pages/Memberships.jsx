@@ -1,8 +1,10 @@
+import { useMemo, useState } from 'react'
 import { motion } from 'motion/react'
 import {
   FaCheck,
   FaWhatsapp,
   FaArrowRightLong,
+  FaArrowLeftLong,
   FaLock,
   FaShieldHalved,
   FaBoltLightning,
@@ -23,6 +25,20 @@ export default function Memberships() {
   const { plans: PLANS, brand } = useContent()
   const RECESS_MEMBERSHIPS = brand.recessUrl
   const WHATSAPP = whatsappUrl(brand)
+
+  // Plan elegido en las tarjetas: el checkout de abajo carga ese paquete
+  // exacto de Recess (…/embed/checkout/package/<id>) en vez de la lista.
+  const [selected, setSelected] = useState(null) // { id, name } | null
+  const embedSrc = useMemo(() => {
+    if (!selected) return RECESS_MEMBERSHIPS
+    try {
+      const origin = new URL(RECESS_MEMBERSHIPS).origin
+      return `${origin}/embed/checkout/package/${encodeURIComponent(selected.id)}?hideMenu=true`
+    } catch {
+      return RECESS_MEMBERSHIPS
+    }
+  }, [selected, RECESS_MEMBERSHIPS])
+
   return (
     <>
       <PageBanner
@@ -97,6 +113,11 @@ export default function Memberships() {
                 <div className="mt-8 pt-2">
                   <CTAButton
                     href="#join"
+                    onClick={
+                      plan.recessId
+                        ? () => setSelected({ id: plan.recessId, name: plan.name })
+                        : () => setSelected(null)
+                    }
                     full
                     variant={plan.featured ? 'primary' : 'ghost'}
                     magnetic={false}
@@ -150,9 +171,31 @@ export default function Memberships() {
               </span>
             </div>
 
+            {/* deep-link bar: which package the terminal is showing */}
+            {selected && (
+              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-iron bg-battle/5 px-4 py-3 sm:px-5">
+                <span className="min-w-0 truncate font-head text-xs font-semibold uppercase tracking-wider text-chalk">
+                  Checkout: <span className="text-battle">{selected.name}</span>
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setSelected(null)}
+                  className="inline-flex shrink-0 cursor-pointer items-center gap-2 font-head text-[11px] font-semibold uppercase tracking-wider text-smoke transition-colors hover:text-battle"
+                >
+                  <FaArrowLeftLong size={11} /> View all packages
+                </button>
+              </div>
+            )}
+
+            {/* key remonta el iframe al cambiar de paquete (resetea el loader) */}
             <RecessEmbed
-              src={RECESS_MEMBERSHIPS}
-              title="Battle Ready — Explore Packages"
+              key={embedSrc}
+              src={embedSrc}
+              title={
+                selected
+                  ? `Battle Ready — ${selected.name} checkout`
+                  : 'Battle Ready — Explore Packages'
+              }
               minHeight={760}
             />
           </Reveal>
