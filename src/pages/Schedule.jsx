@@ -34,8 +34,9 @@ const matches = (a, b) => {
 const TODAY = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][new Date().getDay()]
 
 /** A single class in the grid. Highlights when it matches the hovered legend.
-    Filled cells link down to the booking portal (#book). */
-function ClassCell({ name, iconName, highlight }) {
+    Filled cells link down to the booking portal (#book), loading that exact
+    class when `onBook` selects it. */
+function ClassCell({ name, iconName, highlight, onBook }) {
   if (!name) {
     return (
       <div className="flex h-full min-h-[58px] items-center justify-center rounded-lg border border-dashed border-iron/50">
@@ -46,6 +47,7 @@ function ClassCell({ name, iconName, highlight }) {
   return (
     <a
       href="#book"
+      onClick={onBook}
       aria-label={`Book ${name}`}
       className={`group flex h-full min-h-[58px] cursor-pointer flex-col justify-center gap-1 rounded-lg border p-2.5 transition-all duration-300 ${
         highlight
@@ -125,6 +127,27 @@ export default function Schedule() {
 
   const [activeDay, setActiveDay] = useState('all')
   const [hoverClass, setHoverClass] = useState(null)
+
+  // Clase elegida en la tabla: el terminal de reservas carga esa clase exacta
+  // (…/embed/checkout/class/<id>) en vez del calendario completo.
+  const [selected, setSelected] = useState(null) // { id, name } | null
+  const bookingSrc = useMemo(() => {
+    if (!selected || !brand.recessBookingUrl) return brand.recessBookingUrl
+    try {
+      const origin = new URL(brand.recessBookingUrl).origin
+      return `${origin}/embed/checkout/class/${encodeURIComponent(selected.id)}?hideMenu=true`
+    } catch {
+      return brand.recessBookingUrl
+    }
+  }, [selected, brand.recessBookingUrl])
+
+  // Ids sincronizados desde Recess (si el horario se editó a mano no hay ids
+  // y el clic simplemente baja al calendario completo).
+  const bookTarget = (row, day) => {
+    const ids = row.ids?.[day] || []
+    const name = row.classes[day]
+    return ids.length === 1 ? { id: ids[0], name } : null
+  }
 
   // Guard against a custom day list that doesn't contain the current selection.
   const effectiveDay =
@@ -286,6 +309,7 @@ export default function Schedule() {
                           name={name}
                           iconName={iconFor(name)}
                           highlight={matches(name, hoverClass)}
+                          onBook={() => setSelected(bookTarget(row, d))}
                         />
                       </div>
                     )
@@ -304,10 +328,13 @@ export default function Schedule() {
                     const name = row.classes[effectiveDay]
                     const Icon = getIcon(iconFor(name))
                     return (
-                      <motion.div
+                      <motion.a
                         key={row.time}
+                        href="#book"
+                        onClick={() => setSelected(bookTarget(row, effectiveDay))}
+                        aria-label={`Book ${name}`}
                         variants={fadeUp}
-                        className="flex items-center gap-4 rounded-2xl border border-iron bg-coal p-4"
+                        className="flex items-center gap-4 rounded-2xl border border-iron bg-coal p-4 transition-colors hover:border-battle/50"
                       >
                         <div className="flex w-20 shrink-0 flex-col">
                           <span className="font-head text-sm font-bold text-chalk">
@@ -326,7 +353,7 @@ export default function Schedule() {
                             {name}
                           </span>
                         </div>
-                      </motion.div>
+                      </motion.a>
                     )
                   })}
                 </motion.div>
@@ -354,14 +381,20 @@ export default function Schedule() {
                     </div>
                     <div className="mt-3 grid grid-cols-2 gap-2">
                       {SCHEDULE_DAYS.filter((d) => row.classes[d]).map((d) => (
-                        <div key={d} className="rounded-lg border border-iron bg-ink p-2.5">
+                        <a
+                          key={d}
+                          href="#book"
+                          onClick={() => setSelected(bookTarget(row, d))}
+                          aria-label={`Book ${row.classes[d]}`}
+                          className="rounded-lg border border-iron bg-ink p-2.5 transition-colors hover:border-battle/50"
+                        >
                           <div className="font-head text-[10px] uppercase tracking-[0.2em] text-smoke">
                             {d}
                           </div>
                           <div className="mt-0.5 font-head text-xs font-semibold uppercase text-chalk">
                             {row.classes[d]}
                           </div>
-                        </div>
+                        </a>
                       ))}
                     </div>
                   </motion.div>
@@ -445,9 +478,31 @@ export default function Schedule() {
                 </span>
               </div>
 
+              {/* deep-link bar: which class the terminal is showing */}
+              {selected && (
+                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-iron bg-battle/5 px-4 py-3 sm:px-5">
+                  <span className="min-w-0 truncate font-head text-xs font-semibold uppercase tracking-wider text-chalk">
+                    Booking: <span className="text-battle">{selected.name}</span>
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setSelected(null)}
+                    className="inline-flex shrink-0 cursor-pointer items-center gap-2 font-head text-[11px] font-semibold uppercase tracking-wider text-smoke transition-colors hover:text-battle"
+                  >
+                    <FaArrowRightLong size={11} className="rotate-180" /> View full calendar
+                  </button>
+                </div>
+              )}
+
+              {/* key remonta el iframe al cambiar de clase (resetea el loader) */}
               <RecessEmbed
-                src={brand.recessBookingUrl}
-                title="Battle Ready — Book a Class"
+                key={bookingSrc}
+                src={bookingSrc}
+                title={
+                  selected
+                    ? `Battle Ready — Book ${selected.name}`
+                    : 'Battle Ready — Book a Class'
+                }
                 minHeight={720}
               />
             </Reveal>

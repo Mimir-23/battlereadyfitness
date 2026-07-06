@@ -143,7 +143,7 @@ export function parseClasses(html) {
     const start = strField(block, 'start_date')
     if (!name || !start) continue
     if (boolField(block, 'is_cancelled') || boolField(block, 'is_private')) continue
-    items.push({ name, start })
+    items.push({ id, name, start })
   }
   return items
 }
@@ -176,8 +176,13 @@ export function buildScheduleGrid(classes, timeZone = DEFAULT_TIME_ZONE) {
     hourCycle: 'h23',
   })
 
+  // Orden cronológico: si una clase se repite (la ventana de 8 días trae dos
+  // lunes), la celda se queda con el id de la instancia más próxima — que es
+  // la que el visitante puede reservar ya.
+  const sorted = [...classes].sort((a, b) => new Date(a.start) - new Date(b.start))
+
   const slots = new Map() // "5:30 PM" → { key: minutos del día, byDay }
-  for (const c of classes) {
+  for (const c of sorted) {
     const date = new Date(c.start)
     if (Number.isNaN(date.getTime())) continue
     const p = Object.fromEntries(labelFmt.formatToParts(date).map((x) => [x.type, x.value]))
@@ -188,14 +193,21 @@ export function buildScheduleGrid(classes, timeZone = DEFAULT_TIME_ZONE) {
       slots.set(label, { key: Number(s.hour) * 60 + Number(s.minute), byDay: {} })
     }
     const list = (slots.get(label).byDay[p.weekday] ??= [])
-    if (!list.includes(c.name)) list.push(c.name)
+    if (!list.some((x) => x.name === c.name)) list.push({ name: c.name, id: c.id })
   }
 
   const rows = [...slots.entries()]
     .sort((a, b) => a[1].key - b[1].key)
     .map(([time, slot]) => ({
       time,
-      classes: Object.fromEntries(DAYS.map((d) => [d, (slot.byDay[d] || []).join(' / ')])),
+      classes: Object.fromEntries(
+        DAYS.map((d) => [d, (slot.byDay[d] || []).map((x) => x.name).join(' / ')]),
+      ),
+      // Ids de Recess por día (mismo orden que los nombres): habilitan el
+      // enlace directo a la reserva de esa clase en la página.
+      ids: Object.fromEntries(
+        DAYS.map((d) => [d, (slot.byDay[d] || []).map((x) => x.id)]),
+      ),
     }))
 
   return { days: [...DAYS], rows }
