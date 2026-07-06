@@ -56,7 +56,7 @@ function DayChips({ days, dayStats, active, onSelect }) {
             : 'border-iron bg-coal text-fog hover:border-battle/50 hover:text-chalk'
         }`}
       >
-        Toda la semana
+        All week
       </button>
       {days.map((d) => {
         const isActive = active === d
@@ -131,9 +131,9 @@ export default function Schedule() {
 
   const trainingDays = SCHEDULE_DAYS.filter((d) => dayStats[d] > 0).length
   const stats = [
-    { icon: FaBoltLightning, value: totalClasses, label: 'Sesiones / semana' },
-    { icon: FaLayerGroup, value: classTypes, label: 'Tipos de clase' },
-    { icon: FaClock, value: trainingDays, label: 'Días de entreno' },
+    { icon: FaBoltLightning, value: totalClasses, label: 'Sessions / week' },
+    { icon: FaLayerGroup, value: classTypes, label: 'Class types' },
+    { icon: FaClock, value: trainingDays, label: 'Training days' },
   ]
 
   // Mobile agenda rows for the focused day.
@@ -228,7 +228,7 @@ export default function Schedule() {
                         isActive ? 'text-ink/70' : 'text-smoke'
                       }`}
                     >
-                      {dayStats[d] ? `${dayStats[d]} clases` : 'Descanso'}
+                      {dayStats[d] ? `${dayStats[d]} classes` : 'Rest'}
                     </span>
                     {d === TODAY && !isActive && (
                       <span className="absolute inset-x-0 bottom-0 mx-auto block h-0.5 w-10 bg-battle" />
@@ -312,7 +312,7 @@ export default function Schedule() {
                     Rest &amp; Recover
                   </div>
                   <p className="max-w-xs text-sm text-smoke">
-                    No hay clases el {effectiveDay}. Recarga para la batalla de mañana.
+                    No classes on {effectiveDay}. Recharge for tomorrow&apos;s battle.
                   </p>
                 </div>
               )

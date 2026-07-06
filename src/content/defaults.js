@@ -13,7 +13,7 @@ export const DEFAULT_CONTENT = {
     phoneHref: 'tel:3059742079',
     whatsappNumber: '786-234-5399',
     whatsappHref: 'https://wa.me/17862345399',
-    whatsappText: '¡Hola! Quiero reclamar mi 3-Day Free Pass 💪',
+    whatsappText: 'Hi! I want to claim my 3-Day Free Pass 💪',
     email: 'contact@battlereadyfitness.com',
     address: '18600 NW 87th Avenue, Suite 116',
     city: 'Hialeah, Florida 33015',
@@ -71,7 +71,7 @@ export const DEFAULT_CONTENT = {
     {
       icon: 'FaDumbbell',
       name: 'Personal Training',
-      desc: 'Libera tu máximo potencial con sesiones de entrenamiento personalizadas.',
+      desc: 'Unlock your full potential with personalized one-on-one training sessions.',
       tag: '1-on-1',
       img: '/images/g1.webp',
     },

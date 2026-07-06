@@ -63,7 +63,7 @@ function TapeCard({ item, index, onOpen }) {
       variants={fadeUp}
       type="button"
       onClick={onOpen}
-      aria-label={`Reproducir video: ${item.label || embed.platform}`}
+      aria-label={`Play video: ${item.label || embed.platform}`}
       className={`group relative w-[calc(50%-0.5rem)] cursor-pointer sm:w-auto sm:max-w-80 sm:grow sm:basis-52 ${tilted} ${offset} transition-transform duration-300 hover:z-10 hover:rotate-0 hover:scale-[1.05] focus-visible:rotate-0`}
     >
       {/* pieces of tape holding the poster to the wall */}
@@ -212,7 +212,7 @@ function Player({ items, index, onChange }) {
           <button
             type="button"
             onClick={close}
-            aria-label="Cerrar"
+            aria-label="Close"
             className="absolute right-4 top-4 z-10 flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-iron bg-coal/80 text-chalk transition-colors hover:border-battle hover:text-battle"
           >
             <FaXmark size={18} />
@@ -226,7 +226,7 @@ function Player({ items, index, onChange }) {
                   e.stopPropagation()
                   step(-1)
                 }}
-                aria-label="Video anterior"
+                aria-label="Previous video"
                 className="absolute left-2 z-10 flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-iron bg-coal/80 text-chalk transition-colors hover:border-battle hover:text-battle sm:left-5"
               >
                 <FaChevronLeft size={16} />
@@ -237,7 +237,7 @@ function Player({ items, index, onChange }) {
                   e.stopPropagation()
                   step(1)
                 }}
-                aria-label="Video siguiente"
+                aria-label="Next video"
                 className="absolute right-2 z-10 flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-iron bg-coal/80 text-chalk transition-colors hover:border-battle hover:text-battle sm:right-5"
               >
                 <FaChevronRight size={16} />

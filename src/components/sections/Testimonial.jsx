@@ -137,7 +137,7 @@ export default function Testimonial() {
               <button
                 type="button"
                 onClick={prev}
-                aria-label="Reseña anterior"
+                aria-label="Previous review"
                 className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-iron text-fog transition-colors hover:border-battle/60 hover:text-battle"
               >
                 <FaChevronLeft size={14} />
@@ -148,7 +148,7 @@ export default function Testimonial() {
                     key={i}
                     type="button"
                     onClick={() => goTo(i, i > safeIndex ? 1 : -1)}
-                    aria-label={`Ir a la reseña ${i + 1}`}
+                    aria-label={`Go to review ${i + 1}`}
                     aria-current={i === safeIndex}
                     className={`h-1.5 cursor-pointer rounded-full transition-all duration-300 ${
                       i === safeIndex ? 'w-7 bg-battle' : 'w-1.5 bg-iron hover:bg-smoke'
@@ -159,7 +159,7 @@ export default function Testimonial() {
               <button
                 type="button"
                 onClick={next}
-                aria-label="Siguiente reseña"
+                aria-label="Next review"
                 className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-iron text-fog transition-colors hover:border-battle/60 hover:text-battle"
               >
                 <FaChevronRight size={14} />

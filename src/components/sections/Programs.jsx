@@ -89,7 +89,7 @@ export default function Programs() {
             className="relative flex min-h-[340px] flex-col justify-center overflow-hidden rounded-2xl bg-battle p-8"
           >
             <div className="bg-hazard absolute inset-x-0 top-0 h-2.5 opacity-80" />
-            <h3 className="font-display text-5xl leading-none text-ink">NO ESPERES MÁS</h3>
+            <h3 className="font-display text-5xl leading-none text-ink">STOP WAITING</h3>
             <p className="mt-4 text-sm font-medium text-ink/80">
               Your first 3 days are on us. Walk in. Get to work. Transform.
             </p>

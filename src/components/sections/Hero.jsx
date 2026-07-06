@@ -155,7 +155,7 @@ export default function Hero() {
               Claim Your 3-Day Free Pass <FaArrowRightLong />
             </CTAButton>
             <CTAButton href={WHATSAPP} target="_blank" variant="ghost">
-              <FaWhatsapp size={16} /> Reserva por WhatsApp
+              <FaWhatsapp size={16} /> Book via WhatsApp
             </CTAButton>
           </motion.div>
 

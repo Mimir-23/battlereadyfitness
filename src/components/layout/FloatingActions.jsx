@@ -143,13 +143,13 @@ export default function FloatingActions() {
         <button
           type="button"
           onClick={() => setOpen((v) => !v)}
-          aria-label={open ? 'Cerrar contacto' : 'Contáctanos'}
+          aria-label={open ? 'Close contact' : 'Contact us'}
           aria-expanded={open}
           className="group relative flex cursor-pointer items-center"
         >
           {!open && (
             <span className="pointer-events-none absolute right-16 whitespace-nowrap rounded-full bg-coal px-4 py-2 font-head text-xs font-semibold uppercase tracking-wider text-chalk opacity-0 shadow-lg transition-all duration-300 group-hover:opacity-100">
-              Contáctanos
+              Contact us
             </span>
           )}
           <span

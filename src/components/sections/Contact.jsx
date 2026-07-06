@@ -199,7 +199,7 @@ export default function Contact() {
                   rel="noreferrer"
                   className="inline-flex shrink-0 cursor-pointer items-center gap-2 border border-battle/60 bg-battle/10 px-4 py-2.5 font-head text-[11px] font-bold uppercase tracking-widest text-battle transition-colors duration-200 hover:bg-battle hover:text-ink"
                 >
-                  Cómo llegar <FaArrowUpRightFromSquare size={10} />
+                  Get Directions <FaArrowUpRightFromSquare size={10} />
                 </a>
               </div>
             </motion.div>

@@ -77,7 +77,7 @@ export default function Gallery() {
               <button
                 type="button"
                 onClick={() => setOpen(i)}
-                aria-label={`Ver foto: ${g.label}`}
+                aria-label={`View photo: ${g.label}`}
                 className="absolute inset-0 z-10 cursor-zoom-in"
               />
             </motion.figure>
@@ -143,7 +143,7 @@ function Lightbox({ items, index, onChange }) {
           <button
             type="button"
             onClick={close}
-            aria-label="Cerrar"
+            aria-label="Close"
             className="absolute right-4 top-4 z-10 flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-iron bg-coal/80 text-chalk transition-colors hover:border-battle hover:text-battle"
           >
             <FaXmark size={18} />
@@ -157,7 +157,7 @@ function Lightbox({ items, index, onChange }) {
                   e.stopPropagation()
                   step(-1)
                 }}
-                aria-label="Foto anterior"
+                aria-label="Previous photo"
                 className="absolute left-2 z-10 flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-iron bg-coal/80 text-chalk transition-colors hover:border-battle hover:text-battle sm:left-5"
               >
                 <FaChevronLeft size={16} />
@@ -168,7 +168,7 @@ function Lightbox({ items, index, onChange }) {
                   e.stopPropagation()
                   step(1)
                 }}
-                aria-label="Foto siguiente"
+                aria-label="Next photo"
                 className="absolute right-2 z-10 flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-iron bg-coal/80 text-chalk transition-colors hover:border-battle hover:text-battle sm:right-5"
               >
                 <FaChevronRight size={16} />

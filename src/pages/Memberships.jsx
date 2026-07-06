@@ -160,10 +160,10 @@ export default function Memberships() {
           {/* trust badges */}
           <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
             {[
-              { icon: FaLock, label: 'SSL Seguro' },
-              { icon: FaShieldHalved, label: 'Pago Protegido' },
-              { icon: FaBoltLightning, label: 'Acceso Inmediato' },
-              { icon: FaCircleXmark, label: 'Cancela Cuando Quieras' },
+              { icon: FaLock, label: 'SSL Secure' },
+              { icon: FaShieldHalved, label: 'Secure Payment' },
+              { icon: FaBoltLightning, label: 'Instant Access' },
+              { icon: FaCircleXmark, label: 'Cancel Anytime' },
             ].map((b) => {
               const Icon = b.icon
               return (

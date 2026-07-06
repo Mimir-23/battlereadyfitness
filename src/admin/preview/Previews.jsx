@@ -8,6 +8,9 @@ import {
   FaFire,
   FaPlay,
   FaTriangleExclamation,
+  FaArrowRightLong,
+  FaInstagram,
+  FaFacebookF,
 } from 'react-icons/fa6'
 import { resolveVideoEmbed } from '../../lib/videoEmbed'
 
@@ -240,17 +243,68 @@ function NavPreview({ d }) {
 }
 
 function BrandPreview({ d }) {
-  const row = (Icon, text) => (
-    <div className="flex items-center gap-2 text-sm text-chalk">
-      <Icon className="text-battle" size={13} /> {text}
-    </div>
-  )
+  const rows = [
+    { icon: FaLocationDot, label: 'Visit HQ', value: `${d.address}, ${d.city}` },
+    { icon: FaPhone, label: 'Call us', value: d.phone },
+    { icon: FaWhatsapp, label: 'WhatsApp', value: d.whatsappNumber },
+    { icon: FaEnvelope, label: 'Email', value: d.email },
+  ]
+  const socials = [
+    { icon: FaInstagram, href: d.instagram },
+    { icon: FaFacebookF, href: d.facebook },
+  ].filter((s) => s.href)
+
   return (
-    <div className="space-y-2 rounded-xl border border-iron bg-coal p-4">
-      {row(FaLocationDot, `${d.address}, ${d.city}`)}
-      {row(FaPhone, d.phone)}
-      {row(FaWhatsapp, d.whatsappNumber)}
-      {row(FaEnvelope, d.email)}
+    <div className="mx-auto max-w-sm overflow-hidden rounded-xl border border-iron bg-ink">
+      <div className="bg-hazard h-1.5" />
+      {/* header */}
+      <div className="flex items-center justify-between gap-3 border-b border-iron px-4 py-3">
+        <div>
+          <div className="font-display text-2xl leading-none text-chalk">
+            BATTLE <span className="text-battle">HQ</span>
+          </div>
+          <div className="mt-1 font-head text-[9px] font-semibold uppercase tracking-[0.2em] text-smoke">
+            {d.city}
+          </div>
+        </div>
+        <span className="flex items-center gap-1.5 rounded-full border border-iron bg-coal px-2.5 py-1 font-head text-[9px] font-semibold uppercase tracking-wider text-fog">
+          <span className="h-1.5 w-1.5 rounded-full bg-battle" /> Ready
+        </span>
+      </div>
+      {/* rows */}
+      <div className="divide-y divide-iron">
+        {rows.map((r, i) => {
+          const Icon = r.icon
+          return (
+            <div key={i} className="flex items-center gap-3 px-4 py-2.5">
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-battle/10 text-battle">
+                <Icon size={13} />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block font-head text-[9px] font-semibold uppercase tracking-[0.2em] text-smoke">
+                  {r.label}
+                </span>
+                <span className="block truncate text-xs text-chalk">{r.value}</span>
+              </span>
+              <FaArrowRightLong size={11} className="shrink-0 text-smoke" />
+            </div>
+          )
+        })}
+      </div>
+      {/* action + socials */}
+      <div className="flex items-center gap-2 border-t border-iron p-3">
+        <span className="flex flex-1 items-center justify-center gap-1.5 bg-battle px-3 py-2 font-head text-[10px] font-bold uppercase tracking-wider text-ink">
+          <FaWhatsapp size={12} /> Chat on WhatsApp
+        </span>
+        {socials.map((s, i) => {
+          const Icon = s.icon
+          return (
+            <span key={i} className="flex h-8 w-8 items-center justify-center rounded-full border border-iron text-fog">
+              <Icon size={12} />
+            </span>
+          )
+        })}
+      </div>
     </div>
   )
 }
@@ -271,15 +325,28 @@ function HoursPreview({ d }) {
 function SchedulePreview({ d }) {
   const days = d?.days || []
   const rows = d?.rows || []
+  const today = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][new Date().getDay()]
+  const count = (day) => rows.filter((r) => r.classes?.[day]).length
+
   return (
     <div className="overflow-x-auto rounded-xl border border-iron">
       <table className="w-full border-collapse text-[11px]">
         <thead>
-          <tr className="bg-coal">
-            <th className="border border-iron p-1.5 text-left uppercase text-smoke">Hora</th>
+          <tr>
+            <th className="border border-iron bg-coal p-1.5 text-left font-head uppercase tracking-wider text-smoke">
+              Time
+            </th>
             {days.map((day) => (
-              <th key={day} className="border border-iron p-1.5 text-left uppercase text-smoke">
+              <th
+                key={day}
+                className={`border border-iron p-1.5 text-center font-head uppercase tracking-wider ${
+                  day === today ? 'bg-battle/15 text-battle' : 'bg-coal text-battle'
+                }`}
+              >
                 {day}
+                <span className="mt-0.5 block text-[8px] font-medium tracking-normal text-smoke">
+                  {count(day) ? `${count(day)} clases` : 'Descanso'}
+                </span>
               </th>
             ))}
           </tr>
@@ -287,12 +354,26 @@ function SchedulePreview({ d }) {
         <tbody>
           {rows.map((r, i) => (
             <tr key={i}>
-              <td className="border border-iron p-1.5 font-semibold text-battle">{r.time}</td>
-              {days.map((day) => (
-                <td key={day} className="border border-iron p-1.5 text-fog">
-                  {r.classes?.[day] || '—'}
-                </td>
-              ))}
+              <td className="border border-iron bg-coal/60 p-1.5 font-semibold text-chalk">{r.time}</td>
+              {days.map((day) => {
+                const name = r.classes?.[day]
+                return (
+                  <td
+                    key={day}
+                    className={`border border-iron p-1.5 text-center ${
+                      day === today ? 'bg-battle/5' : ''
+                    }`}
+                  >
+                    {name ? (
+                      <span className="font-head text-[10px] font-semibold uppercase text-chalk">
+                        {name}
+                      </span>
+                    ) : (
+                      <span className="text-smoke/40">·</span>
+                    )}
+                  </td>
+                )
+              })}
             </tr>
           ))}
         </tbody>
@@ -343,39 +424,63 @@ function VideosPreview({ d }) {
             Sin videos todavía — la sección no se muestra en el sitio hasta que agregues uno.
           </p>
         ) : (
-          <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3">
-            {items.map((it, i) => {
-              const embed = resolveVideoEmbed(it.url)
-              const thumb = it.thumb || embed?.thumb
-              return (
-                <div
-                  key={i}
-                  className={`relative flex flex-col items-center justify-center gap-1.5 overflow-hidden rounded-lg border p-3 ${
-                    embed ? 'border-iron bg-coal' : 'border-alert/50 bg-alert/10'
-                  }`}
-                >
-                  {embed && thumb && (
-                    <>
-                      <img src={thumb} alt="" className="absolute inset-0 h-full w-full object-cover opacity-40" />
-                      <span className="absolute inset-0 bg-gradient-to-t from-ink/80 to-transparent" />
-                    </>
-                  )}
-                  {embed ? (
-                    <span className="relative flex h-8 w-8 items-center justify-center rounded-full bg-battle text-ink">
-                      <FaPlay size={10} />
-                    </span>
-                  ) : (
-                    <FaTriangleExclamation className="text-alert" size={16} />
-                  )}
-                  <span className="relative line-clamp-1 font-head text-[10px] font-semibold uppercase text-chalk">
-                    {it.label || `Video ${i + 1}`}
-                  </span>
-                  <span className={`relative text-[9px] uppercase tracking-wider ${embed ? 'text-fog' : 'text-alert'}`}>
-                    {embed ? embed.platform : 'Enlace no reconocido'}
-                  </span>
-                </div>
-              )
-            })}
+          <div className="relative mt-5 pb-1">
+            {/* hazard band behind the taped posters */}
+            <div
+              aria-hidden="true"
+              className="bg-hazard pointer-events-none absolute left-1/2 top-1/2 h-6 w-[130%] -translate-x-1/2 -translate-y-1/2 -rotate-2 opacity-50"
+            />
+            <div className="relative flex flex-wrap items-start justify-center gap-3">
+              {items.map((it, i) => {
+                const embed = resolveVideoEmbed(it.url)
+                const thumb = it.thumb || embed?.thumb
+                const tilt = i % 2 === 0 ? '-rotate-2' : 'rotate-2'
+                if (!embed) {
+                  return (
+                    <div
+                      key={i}
+                      className={`w-24 rounded-sm border-2 border-alert/50 bg-alert/10 p-2 text-center ${tilt}`}
+                    >
+                      <FaTriangleExclamation className="mx-auto text-alert" size={14} />
+                      <div className="mt-1 text-[8px] uppercase tracking-wider text-alert">
+                        Enlace no reconocido
+                      </div>
+                    </div>
+                  )
+                }
+                return (
+                  <div key={i} className={`relative w-24 ${tilt}`}>
+                    {/* tape pieces */}
+                    <span className="absolute -left-1.5 -top-1 z-10 h-2.5 w-7 -rotate-[38deg] bg-chalk/20" />
+                    <span className="absolute -right-1.5 -top-1 z-10 h-2.5 w-7 rotate-[38deg] bg-chalk/20" />
+                    <div className="overflow-hidden rounded-sm border-2 border-iron bg-ink">
+                      <div className="bg-hazard h-1 opacity-80" />
+                      <div className="relative aspect-[4/5]">
+                        {thumb ? (
+                          <img src={thumb} alt="" className="h-full w-full object-cover" />
+                        ) : (
+                          <div className="h-full w-full bg-gradient-to-br from-coal via-ink to-coal" />
+                        )}
+                        <div className="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-transparent" />
+                        <span className="absolute left-1 top-1 border border-battle/70 px-1 font-head text-[7px] font-bold uppercase tracking-wider text-battle">
+                          {embed.platform}
+                        </span>
+                        <span className="absolute inset-x-0 bottom-1.5 flex justify-center">
+                          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-battle text-ink">
+                            <FaPlay size={9} className="translate-x-px" />
+                          </span>
+                        </span>
+                      </div>
+                      <div className="border-t border-iron bg-coal px-1.5 py-1">
+                        <div className="line-clamp-1 font-head text-[8px] font-semibold uppercase text-chalk">
+                          {it.label || `Round ${i + 1}`}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
           </div>
         )}
       </div>
