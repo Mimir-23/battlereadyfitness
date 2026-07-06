@@ -99,9 +99,11 @@ export function parseMemberships(html) {
     const repeat = strField(block, 'repeat')
     if (!name || !price || type !== 'membership') continue
     if (!boolField(block, 'is_visible') || !boolField(block, 'is_enabled')) continue
-    const key = name.toLowerCase().replace(/\s+/g, ' ')
-    if (seen.has(key)) continue
-    seen.add(key)
+    // Dedupe por id (como Recess): dos paquetes distintos pueden compartir
+    // nombre (p. ej. mensual vs. con permanencia) y ambos deben salir.
+    const id = block.slice(5, 41)
+    if (seen.has(id)) continue
+    seen.add(id)
     const desc = strField(block, 'description') || strField(block, 'short_description')
     items.push({
       name,

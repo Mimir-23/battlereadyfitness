@@ -43,9 +43,9 @@ export default function Memberships() {
             {...reveal}
             className="mt-14 grid gap-5 lg:grid-cols-3"
           >
-            {PLANS.map((plan) => (
+            {PLANS.map((plan, i) => (
               <Spotlight
-                key={plan.name}
+                key={`${plan.name}-${i}`}
                 variants={fadeUp}
                 tilt={false}
                 whileHover={{ y: -6 }}

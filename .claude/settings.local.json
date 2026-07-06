@@ -44,7 +44,10 @@
       "Bash(grep -oE '\"?trial[^,]{0,80}' /tmp/recess.html)",
       "Bash(cp /tmp/recess.html \"C:\\\\Users\\\\deivi\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-deivi-Downloads-battlereadyfitness\\\\416318d4-03fb-43f2-8ab0-f2b2def9be38\\\\scratchpad\\\\recess.html\")",
       "Bash(sed -i \"s|'/tmp/recess.html'|'./recess.html'|\" test-parse.mjs)",
-      "Bash(openssl rand *)"
+      "Bash(openssl rand *)",
+      "Bash(curl -s \"https://battle-ready.recess.tv/embed/checkout/explore/packages?hideMenu=true\" -o /tmp/recess2.html -w \"%{http_code} %{size_download}\\\\n\")",
+      "Bash(curl -s \"https://battle-ready.recess.tv/embed/checkout/explore?hideMenu=true\" -o /tmp/explore.html)",
+      "Bash(grep -oE '\\\\{id:\"[a-f0-9-]{36}\",\\(auto_enroll|name\\)[^,]*,[^,]*' /tmp/explore.html)"
     ]
   }
 }
