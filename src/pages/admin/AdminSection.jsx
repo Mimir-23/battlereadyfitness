@@ -12,6 +12,7 @@ import {
   FaPenToSquare,
   FaCircleInfo,
   FaArrowUpRightFromSquare,
+  FaArrowsRotate,
 } from 'react-icons/fa6'
 import { SECTIONS, SECTION_BY_KEY, validateSection } from '../../content/schema'
 import { DEFAULT_CONTENT } from '../../content/defaults'
@@ -326,6 +327,7 @@ function SectionEditor({ sectionKey, section, initial }) {
       <div className="grid gap-8 lg:grid-cols-2">
         {/* Editor */}
         <div className={tab === 'edit' ? '' : 'hidden lg:block'}>
+          {key === 'plans' && <PlansSyncPanel />}
           <SectionEditorBody section={section} draft={draft} setDraft={setDraft} />
         </div>
 
@@ -393,6 +395,78 @@ function SectionEditor({ sectionKey, section, initial }) {
             </button>
           </div>
         </div>
+      </div>
+    </div>
+  )
+}
+
+/**
+ * Interruptor de la sincronización automática con Recess. Es un ajuste, no
+ * contenido: se guarda al instante en su propia clave (`plansSync`) sin pasar
+ * por el borrador/Guardar de la sección, para no mezclarse con los planes.
+ */
+function PlansSyncPanel() {
+  const { content, refresh } = useContentMeta()
+  const { user } = useAuth()
+  const notify = useToast()
+  const [busy, setBusy] = useState(false)
+  const paused = !!content.plansSync?.paused
+  const active = !paused
+
+  const toggle = async () => {
+    setBusy(true)
+    try {
+      await saveSection('plansSync', { paused: active }, user?.email)
+      await refresh()
+      notify(
+        active
+          ? 'Sincronización pausada. Los planes no se tocarán hasta que la actives de nuevo.'
+          : 'Sincronización activada. Los planes se actualizarán desde Recess cada día a las 12 pm.',
+      )
+    } catch (err) {
+      notify('No se pudo cambiar: ' + (err?.message || 'error'), 'error')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  return (
+    <div className="mb-5 rounded-xl border border-iron bg-coal p-4">
+      <div className="flex items-center gap-3">
+        <span
+          className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${
+            active ? 'bg-battle/10 text-battle' : 'bg-iron/40 text-smoke'
+          }`}
+        >
+          <FaArrowsRotate size={16} />
+        </span>
+        <div className="min-w-0 flex-1">
+          <div className="font-head text-xs font-bold uppercase tracking-wider text-chalk">
+            Sincronización automática con Recess
+          </div>
+          <div className="mt-0.5 text-xs text-smoke">
+            {active
+              ? 'Activa — cada día a las 12 pm los planes se actualizan con los paquetes y precios de Recess.'
+              : 'Pausada — los planes quedan como están y puedes editarlos sin que se sobrescriban.'}
+          </div>
+        </div>
+        <button
+          type="button"
+          onClick={toggle}
+          disabled={busy}
+          role="switch"
+          aria-checked={active}
+          aria-label="Sincronización automática con Recess"
+          className={`relative h-6 w-11 shrink-0 rounded-full transition-colors disabled:opacity-50 ${
+            active ? 'bg-battle' : 'bg-iron'
+          }`}
+        >
+          <span
+            className={`absolute top-0.5 h-5 w-5 rounded-full bg-ink transition-transform ${
+              active ? 'translate-x-5' : 'translate-x-0.5'
+            }`}
+          />
+        </button>
       </div>
     </div>
   )

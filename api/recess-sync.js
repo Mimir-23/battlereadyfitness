@@ -213,9 +213,10 @@ export default async function handler(req, res) {
     const brand = await readContent(env, 'brand').catch(() => null)
     const recessUrl = brand?.recessUrl || DEFAULT_RECESS_URL
 
-    // Pausa desde el panel (Datos de contacto → "Pausar sincronización").
-    // ?force=1 permite forzar una corrida manual aunque esté pausada.
-    if (brand?.recessSyncPaused && req.query?.force !== '1') {
+    // Pausa desde el panel (Planes de membresía → interruptor de
+    // sincronización). ?force=1 permite forzar una corrida manual.
+    const syncCfg = await readContent(env, 'plansSync').catch(() => null)
+    if (syncCfg?.paused && req.query?.force !== '1') {
       return res.status(200).json({
         ok: true,
         skipped: true,

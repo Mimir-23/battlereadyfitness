@@ -35,7 +35,6 @@ export const SECTIONS = [
       { name: 'city', label: 'Ciudad / Estado / Código', type: 'text', required: true },
       { name: 'mapsEmbed', label: 'Enlace del mapa (Google Maps embed)', type: 'textarea' },
       { name: 'recessUrl', label: 'Enlace de membresías (Recess)', type: 'textarea', help: 'El checkout que se muestra en la página de Membresías.' },
-      { name: 'recessSyncPaused', label: 'Pausar la sincronización diaria de planes desde Recess', type: 'boolean' },
       { name: 'instagram', label: 'Instagram (enlace del perfil)', type: 'text', help: 'Ej: https://instagram.com/battle_readyfit' },
       { name: 'facebook', label: 'Facebook (enlace de la página)', type: 'text', help: 'Ej: https://facebook.com/battlereadyfit' },
     ],
