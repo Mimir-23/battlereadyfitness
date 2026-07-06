@@ -37,7 +37,14 @@
       "Bash(file *.woff2)",
       "Read(//c/Users/deivi/.claude/skills/ui-ux-pro-max/**)",
       "Bash(py scripts/search.py \"gym fitness landing page dark industrial bold\" --design-system)",
-      "Bash(npm audit *)"
+      "Bash(npm audit *)",
+      "Bash(curl -s \"https://battle-ready.recess.tv/embed/checkout/explore/packages?hideMenu=true\" -o /tmp/recess.html -w \"%{http_code} %{size_download}\\\\n\")",
+      "Read(//tmp/**)",
+      "Bash(python -)",
+      "Bash(grep -oE '\"?trial[^,]{0,80}' /tmp/recess.html)",
+      "Bash(cp /tmp/recess.html \"C:\\\\Users\\\\deivi\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-deivi-Downloads-battlereadyfitness\\\\416318d4-03fb-43f2-8ab0-f2b2def9be38\\\\scratchpad\\\\recess.html\")",
+      "Bash(sed -i \"s|'/tmp/recess.html'|'./recess.html'|\" test-parse.mjs)",
+      "Bash(openssl rand *)"
     ]
   }
 }

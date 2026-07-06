@@ -268,7 +268,8 @@ export const SECTIONS = [
     key: 'plans',
     label: 'Planes de membresía',
     icon: 'FaTags',
-    description: 'Las tarjetas de planes sobre el checkout de membresías.',
+    description:
+      'Las tarjetas de planes sobre el checkout de membresías. Nombre, precio, periodo y descripción se sincronizan cada día desde Recess (edítalos allá); beneficios, destacado y botón se editan aquí.',
     shape: 'list',
     itemLabel: (it) => it.name || 'Plan',
     newItem: () => ({ name: '', price: '', period: '', desc: '', perks: [], featured: false, cta: '' }),
