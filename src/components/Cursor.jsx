@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react'
-import { motion, useMotionValue, useSpring } from 'motion/react'
+import { motion, useMotionValue, useSpring, useTransform } from 'motion/react'
 
 /**
- * Tactical targeting-reticle cursor. A small dot tracks the pointer 1:1 while an
- * outlined ring follows with spring lag and expands over interactive elements —
- * a "lock-on" feel that fits the Battle Ready brand. Disabled on touch devices
- * and when reduced motion is requested.
+ * Weight-plate cursor. A small dot tracks the pointer 1:1 while an olympic
+ * plate (rim, grip notches, center hole) follows with spring lag — and rolls
+ * like a real plate as the pointer moves horizontally. It grows over
+ * interactive elements and squashes on press, like gripping the weight.
+ * Disabled on touch devices and when reduced motion is requested.
  */
 export default function Cursor() {
   const [enabled] = useState(() => {
@@ -22,6 +23,8 @@ export default function Cursor() {
   const y = useMotionValue(-100)
   const ringX = useSpring(x, { stiffness: 350, damping: 28, mass: 0.4 })
   const ringY = useSpring(y, { stiffness: 350, damping: 28, mass: 0.4 })
+  // The plate rolls with horizontal travel, like a wheel on the gym floor.
+  const roll = useTransform(ringX, (v) => v * 0.6)
 
   useEffect(() => {
     if (!enabled) return
@@ -71,20 +74,41 @@ export default function Cursor() {
         <span className="block h-1.5 w-1.5 rounded-full bg-white" />
       </motion.div>
 
-      {/* reticle ring with crosshair ticks */}
+      {/* olympic weight plate: rim, inner face, grip notches, center hole */}
       <motion.div
         className="cursor-ring"
         style={{ x: ringX, y: ringY, translateX: '-50%', translateY: '-50%' }}
-        animate={{ scale: hovering ? 1.9 : down ? 0.8 : 1 }}
+        animate={{ scale: hovering ? 1.7 : down ? 0.8 : 1 }}
         transition={{ type: 'spring', stiffness: 300, damping: 20 }}
       >
-        <span className="relative block h-9 w-9 rounded-full border border-white">
-          {/* ticks */}
-          <span className="absolute left-1/2 top-0 h-1.5 w-px -translate-x-1/2 -translate-y-1/2 bg-white" />
-          <span className="absolute bottom-0 left-1/2 h-1.5 w-px -translate-x-1/2 translate-y-1/2 bg-white" />
-          <span className="absolute left-0 top-1/2 h-px w-1.5 -translate-x-1/2 -translate-y-1/2 bg-white" />
-          <span className="absolute right-0 top-1/2 h-px w-1.5 translate-x-1/2 -translate-y-1/2 bg-white" />
-        </span>
+        <motion.svg
+          viewBox="0 0 40 40"
+          className="block h-9 w-9"
+          style={{ rotate: roll }}
+          aria-hidden="true"
+        >
+          <g stroke="white" fill="none">
+            {/* plate rim */}
+            <circle cx="20" cy="20" r="17.5" strokeWidth="3" />
+            {/* inner face edge */}
+            <circle cx="20" cy="20" r="10.5" strokeWidth="1" opacity="0.65" />
+            {/* barbell sleeve hole */}
+            <circle cx="20" cy="20" r="3.75" strokeWidth="1.5" />
+            {/* grip notches (rotate with the roll so the plate reads as spinning) */}
+            {[0, 120, 240].map((a) => (
+              <line
+                key={a}
+                x1="20"
+                y1="6.5"
+                x2="20"
+                y2="12.5"
+                strokeWidth="1.5"
+                opacity="0.8"
+                transform={`rotate(${a} 20 20)`}
+              />
+            ))}
+          </g>
+        </motion.svg>
       </motion.div>
     </>
   )
