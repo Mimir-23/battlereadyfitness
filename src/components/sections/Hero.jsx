@@ -1,5 +1,5 @@
 import { useRef } from 'react'
-import { motion, useScroll, useTransform } from 'motion/react'
+import { motion, useScroll, useTransform, useMotionValue, useSpring } from 'motion/react'
 import { FaStar, FaLocationDot, FaArrowRightLong, FaWhatsapp } from 'react-icons/fa6'
 import { useContent } from '../../content/ContentProvider'
 import { whatsappUrl } from '../../content/defaults'
@@ -27,16 +27,37 @@ export default function Hero() {
   const opacity = useTransform(scrollYProgress, [0, 0.85], [1, 0])
   const imgScale = useTransform(scrollYProgress, [0, 1], [1, 1.18])
 
+  // Pointer parallax: the photo drifts a few px against the cursor and the
+  // glow orb drifts with it, so the hero reads as layered planes. Springed so
+  // it glides instead of snapping; desktop-only like every showpiece effect.
+  const pmx = useMotionValue(0)
+  const pmy = useMotionValue(0)
+  const smx = useSpring(pmx, { stiffness: 55, damping: 18 })
+  const smy = useSpring(pmy, { stiffness: 55, damping: 18 })
+  const bgX = useTransform(smx, [-0.5, 0.5], [14, -14])
+  const bgY = useTransform(smy, [-0.5, 0.5], [10, -10])
+  const orbX = useTransform(smx, [-0.5, 0.5], [-40, 40])
+  const orbY = useTransform(smy, [-0.5, 0.5], [-30, 30])
+  const onMouseMove = (e) => {
+    if (!isDesktopPointer) return
+    pmx.set(e.clientX / window.innerWidth - 0.5)
+    pmy.set(e.clientY / window.innerHeight - 0.5)
+  }
+
   return (
     <section
       id="top"
       ref={ref}
+      onMouseMove={onMouseMove}
       className="relative flex min-h-svh items-center overflow-hidden bg-ink"
     >
       {/* Parallax intro: on desktop the hero image opens with a slow zoom-out +
           settle and then tracks scroll. On touch, animating a full-screen image
           transform janks/freezes mobile Safari, so we only do a light fade. */}
-      <motion.div style={isDesktopPointer ? { scale: imgScale } : undefined} className="absolute inset-0">
+      <motion.div
+        style={isDesktopPointer ? { scale: imgScale, x: bgX, y: bgY } : undefined}
+        className="absolute inset-0"
+      >
         <motion.img
           src={hero.image}
           srcSet={heroSrcSet}
@@ -58,8 +79,11 @@ export default function Hero() {
       <div className="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-ink/60" />
       <div className="absolute inset-0 bg-grid opacity-40" />
 
-      {/* ambient yellow glow orb */}
-      <div className="pointer-events-none absolute -right-32 top-1/3 h-[520px] w-[520px] rounded-full bg-battle/15 blur-[160px]" />
+      {/* ambient yellow glow orb — drifts with the pointer (deeper plane) */}
+      <motion.div
+        style={isDesktopPointer ? { x: orbX, y: orbY } : undefined}
+        className="pointer-events-none absolute -right-32 top-1/3 h-[520px] w-[520px] rounded-full bg-battle/15 blur-[160px]"
+      />
 
       {/* rising embers */}
       <EmberField count={20} />

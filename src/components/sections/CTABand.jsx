@@ -1,25 +1,43 @@
+import { useRef } from 'react'
+import { motion, useScroll, useTransform } from 'motion/react'
 import { Link } from 'react-router-dom'
 import { FaArrowRightLong, FaWhatsapp } from 'react-icons/fa6'
 import { useContent } from '../../content/ContentProvider'
 import { whatsappUrl } from '../../content/defaults'
 import { Reveal, isDesktopPointer } from '../../lib/motion'
+import Magnetic from '../Magnetic'
 
 /** Full-bleed yellow "claim your free pass" call-to-action band. */
 export default function CTABand() {
   const { cta, brand } = useContent()
   const WHATSAPP = whatsappUrl(brand)
+
+  // Photo drifts slower than the page (desktop); the kenburns zoom keeps
+  // running on the img itself. Wrapper overshoots ±48px so no gap can show.
+  const ref = useRef(null)
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ['start end', 'end start'],
+  })
+  const bgY = useTransform(scrollYProgress, [0, 1], [-44, 44])
+
   return (
-    <section className="relative overflow-hidden py-28">
-      <img
-        src={cta.image}
-        alt=""
-        aria-hidden="true"
-        className="absolute inset-0 h-full w-full object-cover"
-        // The slow full-bleed zoom janks mobile GPUs — desktop-only.
-        style={isDesktopPointer ? { animation: 'var(--animate-kenburns)' } : undefined}
-        loading="lazy"
-        decoding="async"
-      />
+    <section ref={ref} className="relative overflow-hidden py-28">
+      <motion.div
+        style={isDesktopPointer ? { y: bgY } : undefined}
+        className="absolute inset-x-0 -inset-y-12"
+      >
+        <img
+          src={cta.image}
+          alt=""
+          aria-hidden="true"
+          className="h-full w-full object-cover"
+          // The slow full-bleed zoom janks mobile GPUs — desktop-only.
+          style={isDesktopPointer ? { animation: 'var(--animate-kenburns)' } : undefined}
+          loading="lazy"
+          decoding="async"
+        />
+      </motion.div>
       <div className="absolute inset-0 bg-battle/85" />
       <div className="bg-hazard absolute inset-x-0 top-0 h-2.5" />
       <div className="bg-hazard absolute inset-x-0 bottom-0 h-2.5" />
@@ -42,14 +60,16 @@ export default function CTABand() {
             {cta.paragraph}
           </p>
           <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Link
-              to="/memberships"
-              className="group inline-flex cursor-pointer items-center justify-center gap-2 bg-ink px-8 py-4 font-head text-sm font-bold uppercase tracking-widest text-battle transition-transform duration-200 hover:scale-[1.03] active:scale-95"
-              style={{ animation: 'var(--animate-pulse-ring)' }}
-            >
-              Claim Yours Now
-              <FaArrowRightLong className="transition-transform group-hover:translate-x-1" />
-            </Link>
+            <Magnetic>
+              <Link
+                to="/memberships"
+                className="group inline-flex cursor-pointer items-center justify-center gap-2 bg-ink px-8 py-4 font-head text-sm font-bold uppercase tracking-widest text-battle transition-transform duration-200 hover:scale-[1.03] active:scale-95"
+                style={{ animation: 'var(--animate-pulse-ring)' }}
+              >
+                Claim Yours Now
+                <FaArrowRightLong className="transition-transform group-hover:translate-x-1" />
+              </Link>
+            </Magnetic>
             <a
               href={WHATSAPP}
               target="_blank"

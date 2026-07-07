@@ -15,6 +15,7 @@ import { useContent } from '../../content/ContentProvider'
 import { resolveVideoEmbed, buildPreviewSrc } from '../../lib/videoEmbed'
 import { fadeUp, stagger, reveal, prefersReducedMotion } from '../../lib/motion'
 import SectionHeading from '../ui/SectionHeading'
+import Parallax from '../ui/Parallax'
 
 /* ------------------------------------------------------------------ */
 /*  Videos — "FIGHT TAPES": every video is a poster taped to the gym    */
@@ -301,8 +302,10 @@ export default function Videos() {
 
   return (
     <section id="videos" className="relative overflow-hidden border-t border-iron bg-coal py-24">
-      {/* ambient glow */}
-      <div className="pointer-events-none absolute -right-40 top-1/3 h-[440px] w-[440px] rounded-full bg-battle/10 blur-[140px]" />
+      {/* ambient glow — drifts slower than the page (deeper plane) */}
+      <Parallax speed={70} className="pointer-events-none absolute -right-40 top-1/3">
+        <div className="h-[440px] w-[440px] rounded-full bg-battle/10 blur-[140px]" />
+      </Parallax>
 
       <div className="relative mx-auto max-w-7xl px-5 lg:px-8">
         <SectionHeading

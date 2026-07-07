@@ -6,6 +6,7 @@ import { whatsappUrl } from '../../content/defaults'
 import { fadeUp, stagger, Reveal, reveal } from '../../lib/motion'
 import SectionHeading from '../ui/SectionHeading'
 import ParallaxImage from '../ui/ParallaxImage'
+import Parallax from '../ui/Parallax'
 import CTAButton from '../ui/CTAButton'
 
 /* ------------------------------------------------------------------ */
@@ -20,8 +21,10 @@ export default function WhyUs() {
 
   return (
     <section id="welcome" className="relative overflow-hidden border-y border-iron bg-coal py-24">
-      {/* ambient glow */}
-      <div className="pointer-events-none absolute -left-40 top-1/4 h-[420px] w-[420px] rounded-full bg-battle/10 blur-[140px]" />
+      {/* ambient glow — drifts slower than the page (deeper plane) */}
+      <Parallax speed={70} className="pointer-events-none absolute -left-40 top-1/4">
+        <div className="h-[420px] w-[420px] rounded-full bg-battle/10 blur-[140px]" />
+      </Parallax>
 
       <div className="relative mx-auto grid max-w-7xl items-center gap-14 px-5 lg:grid-cols-2 lg:px-8">
         <Reveal>
@@ -47,8 +50,11 @@ export default function WhyUs() {
             {/* HUD corner */}
             <span className="pointer-events-none absolute bottom-4 left-4 z-10 h-7 w-7 border-b-2 border-l-2 border-battle/60" />
 
-            {/* proof badge */}
-            <div className="absolute -bottom-6 -right-4 z-10 overflow-hidden rounded-xl border border-iron bg-ink/95 shadow-2xl backdrop-blur">
+            {/* proof badge — gentle float so it reads as pinned on top */}
+            <div
+              className="absolute -bottom-6 -right-4 z-10 overflow-hidden rounded-xl border border-iron bg-ink/95 shadow-2xl backdrop-blur"
+              style={{ animation: 'var(--animate-float)' }}
+            >
               <div className="bg-hazard h-1 opacity-80" />
               <div className="flex items-center gap-3 px-5 py-4">
                 <div className="font-display text-4xl text-battle">100%</div>

@@ -1,4 +1,5 @@
-import { motion } from 'motion/react'
+import { useRef } from 'react'
+import { motion, useScroll, useTransform } from 'motion/react'
 import { Link } from 'react-router-dom'
 import { FaLocationDot } from 'react-icons/fa6'
 import { EASE, isDesktopPointer, prefersReducedMotion } from '../../lib/motion'
@@ -9,14 +10,30 @@ import { EASE, isDesktopPointer, prefersReducedMotion } from '../../lib/motion'
  * banner height.
  */
 export default function PageBanner({ kicker, title, accent, subtitle, image = '/images/hero.webp' }) {
+  // Same scroll-out parallax as the home hero: as the banner scrolls away the
+  // photo drifts slower than the page and the copy lifts + fades, so interior
+  // pages get the same layered depth. Desktop-only.
+  const ref = useRef(null)
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ['start start', 'end start'],
+  })
+  const imgY = useTransform(scrollYProgress, [0, 1], [0, 90])
+  const contentY = useTransform(scrollYProgress, [0, 1], [0, 110])
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.9], [1, 0])
+
   return (
-    <section className="relative flex min-h-[60svh] items-center overflow-hidden bg-ink pt-24">
+    <section
+      ref={ref}
+      className="relative flex min-h-[60svh] items-center overflow-hidden bg-ink pt-24"
+    >
       {/* Full-screen scale intro is desktop-only: animating a viewport-sized
           image transform janks mobile GPUs (same fix as the home hero). */}
       <motion.div
         initial={isDesktopPointer ? { scale: 1.12 } : false}
         animate={isDesktopPointer ? { scale: 1 } : undefined}
         transition={isDesktopPointer ? { duration: 1.4, ease: EASE } : undefined}
+        style={isDesktopPointer ? { y: imgY } : undefined}
         className="absolute inset-0"
       >
         <img
@@ -39,7 +56,10 @@ export default function PageBanner({ kicker, title, accent, subtitle, image = '/
         </div>
       </div>
 
-      <div className="relative mx-auto w-full max-w-7xl px-5 lg:px-8">
+      <motion.div
+        style={isDesktopPointer ? { y: contentY, opacity: contentOpacity } : undefined}
+        className="relative mx-auto w-full max-w-7xl px-5 lg:px-8"
+      >
         <motion.div
           initial={prefersReducedMotion ? false : 'hidden'}
           animate="show"
@@ -81,7 +101,7 @@ export default function PageBanner({ kicker, title, accent, subtitle, image = '/
             <span className="text-chalk">{accent ? `${title} ${accent}` : title}</span>
           </motion.nav>
         </motion.div>
-      </div>
+      </motion.div>
 
       <div className="bg-hazard absolute inset-x-0 bottom-0 h-2 opacity-80" />
     </section>

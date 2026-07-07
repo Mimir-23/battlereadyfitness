@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
-import { AnimatePresence, motion } from 'motion/react'
+import { AnimatePresence, motion, useScroll, useTransform } from 'motion/react'
 import { FaStar, FaChevronLeft, FaChevronRight, FaQuoteLeft } from 'react-icons/fa6'
-import { Reveal, EASE, prefersReducedMotion } from '../../lib/motion'
+import { Reveal, EASE, prefersReducedMotion, isDesktopPointer } from '../../lib/motion'
 import { useContent } from '../../content/ContentProvider'
+import Parallax from '../ui/Parallax'
 
 const AUTOPLAY_MS = 7000
 
@@ -25,6 +26,16 @@ export default function Testimonial() {
   const [index, setIndex] = useState(0)
   const [dir, setDir] = useState(1)
   const touchX = useRef(null)
+
+  // Background photo drifts slower than the page while the section crosses the
+  // viewport (desktop). The wrapper overshoots the section by 48px each side so
+  // the ±44px drift can never expose a gap.
+  const sectionRef = useRef(null)
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start end', 'end start'],
+  })
+  const bgY = useTransform(scrollYProgress, [0, 1], [-44, 44])
 
   // Content can shrink from the admin panel while we're pointing past the end.
   const safeIndex = index < items.length ? index : 0
@@ -51,27 +62,34 @@ export default function Testimonial() {
   if (!current) return null
 
   return (
-    <section className="relative overflow-hidden border-y border-iron py-24 sm:py-28">
+    <section ref={sectionRef} className="relative overflow-hidden border-y border-iron py-24 sm:py-28">
       {t.image && (
-        <img
-          src={t.image}
-          alt=""
-          aria-hidden="true"
-          className="absolute inset-0 h-full w-full object-cover"
-          loading="lazy"
-          decoding="async"
-        />
+        <motion.div
+          style={isDesktopPointer ? { y: bgY } : undefined}
+          className="absolute inset-x-0 -inset-y-12"
+        >
+          <img
+            src={t.image}
+            alt=""
+            aria-hidden="true"
+            className="h-full w-full object-cover"
+            loading="lazy"
+            decoding="async"
+          />
+        </motion.div>
       )}
       <div className="absolute inset-0 bg-ink/85" />
       <div className="absolute inset-0 bg-grid opacity-40" />
       <div className="pointer-events-none absolute left-1/2 top-1/2 h-[420px] w-[420px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-battle/10 blur-[140px]" />
 
-      {/* giant watermark quote glyph */}
-      <FaQuoteLeft
+      {/* giant watermark quote glyph — parallax drift on a deeper plane */}
+      <Parallax
+        speed={34}
         aria-hidden="true"
-        className="pointer-events-none absolute left-1/2 top-14 -translate-x-1/2 text-battle/[0.07]"
-        size={180}
-      />
+        className="pointer-events-none absolute left-1/2 top-14"
+      >
+        <FaQuoteLeft className="-translate-x-1/2 text-battle/[0.07]" size={180} />
+      </Parallax>
 
       <div className="relative mx-auto max-w-4xl px-5 text-center lg:px-8">
         <Reveal>
