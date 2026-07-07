@@ -418,7 +418,7 @@ const SYNC_PANELS = {
     settingKey: 'plansSync',
     what: 'los planes',
     activeText:
-      'Activa — cada día a las 12 pm los planes se actualizan con los paquetes y precios de Recess.',
+      'Activa — cada día a las 12 de la noche los planes se actualizan con los paquetes y precios de Recess.',
     pausedText:
       'Pausada — los planes quedan como están y puedes editarlos sin que se sobrescriban.',
   },
@@ -426,7 +426,7 @@ const SYNC_PANELS = {
     settingKey: 'scheduleSync',
     what: 'el horario',
     activeText:
-      'Activa — cada día a las 12 pm el horario se actualiza con el calendario de clases de Recess.',
+      'Activa — cada día a las 12 de la noche el horario se actualiza con el calendario de clases de Recess.',
     pausedText:
       'Pausada — el horario queda como está y puedes editarlo sin que se sobrescriba.',
   },
@@ -454,7 +454,7 @@ function RecessSyncPanel({ settingKey, what, activeText, pausedText, sectionKey,
       notify(
         active
           ? `Sincronización pausada. No se tocará ${what} hasta que la actives de nuevo.`
-          : `Sincronización activada. Recess actualizará ${what} cada día a las 12 pm.`,
+          : `Sincronización activada. Recess actualizará ${what} cada día a las 12 de la noche.`,
       )
     } catch (err) {
       notify('No se pudo cambiar: ' + (err?.message || 'error'), 'error')
@@ -541,7 +541,7 @@ function RecessSyncPanel({ settingKey, what, activeText, pausedText, sectionKey,
 
       <div className="mt-3 flex flex-wrap items-center justify-between gap-3 border-t border-iron pt-3">
         <span className="text-[11px] text-smoke">
-          Corre sola cada día a las 12 pm (hora de Miami).
+          Corre sola cada día a las 12 de la noche (hora de Miami).
         </span>
         <button
           type="button"
