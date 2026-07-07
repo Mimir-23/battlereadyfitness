@@ -16,7 +16,10 @@ export default function ParallaxImage({ src, alt, className = '', strength = 80 
         src={src}
         alt={alt}
         style={isDesktopPointer ? { y } : undefined}
-        className={`w-full object-cover ${isDesktopPointer ? 'h-[120%]' : 'h-full'}`}
+        // Sobra un 10% por ARRIBA y por abajo (no solo abajo): con la imagen
+        // anclada al tope, el drift positivo descubría una franja del fondo
+        // justo cuando la tarjeta rozaba el borde superior del viewport.
+        className={`w-full object-cover ${isDesktopPointer ? 'relative -top-[10%] h-[120%]' : 'h-full'}`}
         loading="lazy"
         decoding="async"
       />

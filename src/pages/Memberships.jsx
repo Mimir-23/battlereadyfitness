@@ -19,6 +19,7 @@ import SectionHeading from '../components/ui/SectionHeading'
 import CTAButton from '../components/ui/CTAButton'
 import RecessEmbed from '../components/ui/RecessEmbed'
 import Spotlight from '../components/ui/Spotlight'
+import Parallax from '../components/ui/Parallax'
 
 export default function Memberships() {
   usePageTitle('Memberships')
@@ -133,7 +134,9 @@ export default function Memberships() {
 
       {/* Recess checkout embed */}
       <section id="join" className="relative overflow-hidden border-y border-iron bg-coal py-24">
-        <div className="pointer-events-none absolute -right-40 top-1/4 h-[440px] w-[440px] rounded-full bg-battle/10 blur-[140px]" />
+        <Parallax speed={70} className="pointer-events-none absolute -right-40 top-1/4">
+          <div className="h-[440px] w-[440px] rounded-full bg-battle/10 blur-[140px]" />
+        </Parallax>
 
         <div className="relative mx-auto max-w-5xl px-5 lg:px-8">
           <SectionHeading

@@ -12,6 +12,16 @@ const isDesktopPointer =
   typeof window !== 'undefined' &&
   window.matchMedia('(hover: hover) and (pointer: fine)').matches
 
+/* Singleton compartido: componentes sueltos (p. ej. el botón "volver arriba")
+   necesitan desplazar la página SIN pasar por props. Usar window.scrollTo
+   nativo con Lenis activo hace que ambos peleen por la posición. */
+let activeLenis = null
+
+/** The live Lenis instance, or null on touch / reduced motion. */
+export function getLenis() {
+  return activeLenis
+}
+
 /**
  * Initialises Lenis smooth scrolling on desktop mouse devices and drives it with
  * a plain rAF loop (no GSAP dependency). Returns a ref holding the Lenis
@@ -31,6 +41,7 @@ export function useSmoothScroll() {
       wheelMultiplier: 1,
     })
     lenisRef.current = lenis
+    activeLenis = lenis
 
     let rafId
     const raf = (time) => {
@@ -57,6 +68,7 @@ export function useSmoothScroll() {
       cancelAnimationFrame(rafId)
       lenis.destroy()
       lenisRef.current = null
+      if (activeLenis === lenis) activeLenis = null
     }
   }, [])
 

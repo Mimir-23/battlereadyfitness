@@ -14,6 +14,7 @@ import { useContent } from '../../content/ContentProvider'
 import { whatsappUrl } from '../../content/defaults'
 import { fadeUp, stagger, Reveal, reveal } from '../../lib/motion'
 import SectionHeading from '../ui/SectionHeading'
+import Parallax from '../ui/Parallax'
 
 /* ------------------------------------------------------------------ */
 /*  Contact — "the HQ": a command-center panel with every way to reach  */
@@ -69,8 +70,10 @@ export default function Contact() {
 
   return (
     <section id="contact" className="relative overflow-hidden bg-coal py-24">
-      {/* ambient glow */}
-      <div className="pointer-events-none absolute -left-40 bottom-0 h-[420px] w-[420px] rounded-full bg-battle/10 blur-[140px]" />
+      {/* ambient glow — drifts slower than the page (deeper plane) */}
+      <Parallax speed={70} className="pointer-events-none absolute -left-40 bottom-0">
+        <div className="h-[420px] w-[420px] rounded-full bg-battle/10 blur-[140px]" />
+      </Parallax>
 
       <div className="relative mx-auto max-w-7xl px-5 lg:px-8">
         <SectionHeading number="04" kicker="Get In Touch" title="FIND THE" accent="GYM" />

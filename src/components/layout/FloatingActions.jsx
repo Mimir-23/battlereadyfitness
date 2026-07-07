@@ -10,6 +10,7 @@ import {
 } from 'react-icons/fa6'
 import { useContent } from '../../content/ContentProvider'
 import { whatsappUrl } from '../../content/defaults'
+import { getLenis } from '../../lib/useSmoothScroll'
 
 /** Floating contact hub: one button that fans out into WhatsApp / Instagram /
     Facebook, plus the back-to-top control that appears after scrolling. */
@@ -59,7 +60,13 @@ export default function FloatingActions() {
         {show && !open && (
           <motion.button
             type="button"
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            onClick={() => {
+              // Con Lenis activo, el scrollTo nativo pelea con su rAF — usamos
+              // el suyo; en táctil (sin Lenis) el nativo es el correcto.
+              const lenis = getLenis()
+              if (lenis) lenis.scrollTo(0, { duration: 1.2 })
+              else window.scrollTo({ top: 0, behavior: 'smooth' })
+            }}
             aria-label="Back to top"
             initial={{ opacity: 0, scale: 0.6 }}
             animate={{ opacity: 1, scale: 1 }}

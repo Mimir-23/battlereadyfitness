@@ -142,13 +142,15 @@ function Lightbox({ items, index, onChange }) {
   const close = () => onChange(-1)
   const step = (dir) => onChange((index + dir + items.length) % items.length)
 
-  // Keyboard controls + scroll lock while open.
+  // Keyboard controls + scroll lock while open. Con deps explícitas: sin
+  // ellas el efecto corría en CADA render, re-atando el listener y
+  // reescribiendo el overflow del documento una y otra vez.
   useEffect(() => {
     if (!isOpen) return
     const onKey = (e) => {
-      if (e.key === 'Escape') close()
-      else if (e.key === 'ArrowLeft' && many) step(-1)
-      else if (e.key === 'ArrowRight' && many) step(1)
+      if (e.key === 'Escape') onChange(-1)
+      else if (e.key === 'ArrowLeft' && many) onChange((index - 1 + items.length) % items.length)
+      else if (e.key === 'ArrowRight' && many) onChange((index + 1) % items.length)
     }
     window.addEventListener('keydown', onKey)
     document.documentElement.style.overflow = 'hidden'
@@ -156,7 +158,7 @@ function Lightbox({ items, index, onChange }) {
       window.removeEventListener('keydown', onKey)
       document.documentElement.style.overflow = ''
     }
-  })
+  }, [isOpen, index, many, items.length, onChange])
 
   const current = isOpen ? items[index] : null
 

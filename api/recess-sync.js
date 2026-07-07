@@ -150,10 +150,13 @@ export function parseClasses(html) {
 
 /** La zona horaria que el propio portal declara en su configuración. */
 export function parseTimeZone(html) {
-  const m = html.match(/"timezone",value:"([A-Za-z_/+-]+)"/)
+  // Con dígitos incluidos: identificadores como "Etc/GMT+5" también son
+  // válidos y el patrón anterior los cortaba a la mitad.
+  const m = html.match(/"timezone",value:"([A-Za-z0-9_/+-]+)"/)
+  if (!m) return DEFAULT_TIME_ZONE
   try {
     // Valida el identificador construyendo un formateador con él.
-    new Intl.DateTimeFormat('en-US', { timeZone: m?.[1] })
+    new Intl.DateTimeFormat('en-US', { timeZone: m[1] })
     return m[1]
   } catch {
     return DEFAULT_TIME_ZONE
@@ -284,7 +287,14 @@ async function writeContent(env, key, value) {
       'Content-Type': 'application/json',
       Prefer: 'resolution=merge-duplicates',
     },
-    body: JSON.stringify({ key, value }),
+    // Fecha y autor incluidos: sin ellos el panel mostraba como "última
+    // edición" la del admin anterior aunque el sync acabara de escribir.
+    body: JSON.stringify({
+      key,
+      value,
+      updated_at: new Date().toISOString(),
+      updated_by: 'recess-sync',
+    }),
   })
   if (!res.ok) throw new Error(`Supabase write ${key}: HTTP ${res.status}`)
 }

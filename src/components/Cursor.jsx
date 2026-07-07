@@ -40,20 +40,18 @@ export default function Cursor() {
       x.set(e.clientX)
       y.set(e.clientY)
     }
+    // Un solo handler que SINCRONIZA el estado con lo que hay bajo el puntero.
+    // Con el par mouseover/mouseout clásico, si el elemento interactivo
+    // desaparece del DOM (cambio de ruta, menú que se cierra) el mouseout
+    // nunca llega y el cursor se queda "agrandado" — esto se autocorrige.
     const over = (e) => {
-      if (e.target.closest?.('a, button, [data-cursor], input, textarea, select'))
-        setHovering(true)
-    }
-    const out = (e) => {
-      if (e.target.closest?.('a, button, [data-cursor], input, textarea, select'))
-        setHovering(false)
+      setHovering(!!e.target.closest?.('a, button, [data-cursor], input, textarea, select'))
     }
     const dn = () => setDown(true)
     const up = () => setDown(false)
 
     window.addEventListener('mousemove', move)
     document.addEventListener('mouseover', over)
-    document.addEventListener('mouseout', out)
     window.addEventListener('mousedown', dn)
     window.addEventListener('mouseup', up)
 
@@ -61,7 +59,6 @@ export default function Cursor() {
       document.body.classList.remove('has-cursor')
       window.removeEventListener('mousemove', move)
       document.removeEventListener('mouseover', over)
-      document.removeEventListener('mouseout', out)
       window.removeEventListener('mousedown', dn)
       window.removeEventListener('mouseup', up)
     }
