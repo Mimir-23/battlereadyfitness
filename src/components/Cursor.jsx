@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
-import { motion, useMotionValue, useSpring, useTransform } from 'motion/react'
+import { motion, useMotionValue, useSpring, useTransform, useVelocity } from 'motion/react'
 
 /**
- * Weight-plate cursor. A small dot tracks the pointer 1:1 while an olympic
- * plate (rim, grip notches, center hole) follows with spring lag — and rolls
- * like a real plate as the pointer moves horizontally. It grows over
- * interactive elements and squashes on press, like gripping the weight.
- * Disabled on touch devices and when reduced motion is requested.
+ * Dumbbell cursor. A small dot tracks the pointer 1:1 while a dumbbell follows
+ * with spring lag, swinging with the momentum of the movement as if carried.
+ * Over interactive elements it starts doing reps (a curl-like bounce) and on
+ * press it squashes, like gripping the weight. Disabled on touch devices and
+ * when reduced motion is requested.
  */
 export default function Cursor() {
   const [enabled] = useState(() => {
@@ -23,8 +23,13 @@ export default function Cursor() {
   const y = useMotionValue(-100)
   const ringX = useSpring(x, { stiffness: 350, damping: 28, mass: 0.4 })
   const ringY = useSpring(y, { stiffness: 350, damping: 28, mass: 0.4 })
-  // The plate rolls with horizontal travel, like a wheel on the gym floor.
-  const roll = useTransform(ringX, (v) => v * 0.6)
+  // Carried-weight sway: horizontal momentum tips the bar around its resting
+  // -14° tilt, springed so it settles back with a little wobble.
+  const vx = useVelocity(ringX)
+  const sway = useSpring(
+    useTransform(vx, [-1400, 0, 1400], [10, -14, -38], { clamp: true }),
+    { stiffness: 160, damping: 12 },
+  )
 
   useEffect(() => {
     if (!enabled) return
@@ -74,41 +79,38 @@ export default function Cursor() {
         <span className="block h-1.5 w-1.5 rounded-full bg-white" />
       </motion.div>
 
-      {/* olympic weight plate: rim, inner face, grip notches, center hole */}
+      {/* dumbbell: bar + two plates per side, swinging with momentum */}
       <motion.div
         className="cursor-ring"
         style={{ x: ringX, y: ringY, translateX: '-50%', translateY: '-50%' }}
-        animate={{ scale: hovering ? 1.7 : down ? 0.8 : 1 }}
+        animate={{ scale: hovering ? 1.55 : down ? 0.82 : 1 }}
         transition={{ type: 'spring', stiffness: 300, damping: 20 }}
       >
-        <motion.svg
-          viewBox="0 0 40 40"
-          className="block h-9 w-9"
-          style={{ rotate: roll }}
-          aria-hidden="true"
-        >
-          <g stroke="white" fill="none">
-            {/* plate rim */}
-            <circle cx="20" cy="20" r="17.5" strokeWidth="3" />
-            {/* inner face edge */}
-            <circle cx="20" cy="20" r="10.5" strokeWidth="1" opacity="0.65" />
-            {/* barbell sleeve hole */}
-            <circle cx="20" cy="20" r="3.75" strokeWidth="1.5" />
-            {/* grip notches (rotate with the roll so the plate reads as spinning) */}
-            {[0, 120, 240].map((a) => (
-              <line
-                key={a}
-                x1="20"
-                y1="6.5"
-                x2="20"
-                y2="12.5"
-                strokeWidth="1.5"
-                opacity="0.8"
-                transform={`rotate(${a} 20 20)`}
-              />
-            ))}
-          </g>
-        </motion.svg>
+        <motion.div style={{ rotate: sway }}>
+          {/* over interactive elements the dumbbell starts doing reps */}
+          <motion.svg
+            viewBox="0 0 48 48"
+            className="block h-10 w-10"
+            animate={hovering ? { y: [0, -6, 0] } : { y: 0 }}
+            transition={
+              hovering
+                ? { duration: 0.55, repeat: Infinity, ease: 'easeInOut' }
+                : { duration: 0.2 }
+            }
+            aria-hidden="true"
+          >
+            <g fill="white">
+              {/* grip bar with knurling gaps */}
+              <rect x="13" y="22.25" width="22" height="3.5" rx="1.75" />
+              {/* inner plates */}
+              <rect x="8.5" y="14.5" width="4.5" height="19" rx="2" />
+              <rect x="35" y="14.5" width="4.5" height="19" rx="2" />
+              {/* outer plates */}
+              <rect x="3.5" y="18.5" width="4" height="11" rx="2" />
+              <rect x="40.5" y="18.5" width="4" height="11" rx="2" />
+            </g>
+          </motion.svg>
+        </motion.div>
       </motion.div>
     </>
   )
