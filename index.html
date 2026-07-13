@@ -53,17 +53,26 @@
 
     <title>Battle Ready Fitness Bootcamp — We're Simply Unique</title>
 
-    <!-- Google tag (gtag.js) — Google Analytics 4 (G-DXH57945TD). Un solo
-         script async: la misma propiedad que Firebase Analytics pero sin cargar
-         el SDK de Firebase (el sitio no usa otras funciones de Firebase). -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-DXH57945TD"></script>
-    <script>
-      window.dataLayer = window.dataLayer || []
-      function gtag() {
-        dataLayer.push(arguments)
+    <!-- Firebase Analytics. Módulo diferido: carga fuera del bundle y sin
+         bloquear el pintado. La apiKey de un config web de Firebase es un
+         identificador público (no un secreto); la seguridad va por las reglas
+         del proyecto, no por ocultar esta llave. -->
+    <script type="module">
+      import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js'
+      import { getAnalytics } from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-analytics.js'
+
+      const firebaseConfig = {
+        apiKey: 'AIzaSyAk0F1yt1BKHSWbYB-zLPiG6sZlZz_b7sk',
+        authDomain: 'battlereadyfitness-f8ac5.firebaseapp.com',
+        projectId: 'battlereadyfitness-f8ac5',
+        storageBucket: 'battlereadyfitness-f8ac5.firebasestorage.app',
+        messagingSenderId: '898879640583',
+        appId: '1:898879640583:web:3b96390993eefe5c5046a2',
+        measurementId: 'G-DXH57945TD',
       }
-      gtag('js', new Date())
-      gtag('config', 'G-DXH57945TD')
+
+      const app = initializeApp(firebaseConfig)
+      getAnalytics(app)
     </script>
   </head>
   <body>
