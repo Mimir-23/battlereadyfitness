@@ -1,6 +1,6 @@
 import { useRef } from 'react'
 import { motion, useScroll, useTransform, useMotionValue, useSpring } from 'motion/react'
-import { FaStar, FaLocationDot, FaArrowRightLong, FaWhatsapp } from 'react-icons/fa6'
+import { FaStar, FaLocationDot, FaArrowRightLong } from 'react-icons/fa6'
 import { useContent } from '../../content/ContentProvider'
 import { whatsappUrl } from '../../content/defaults'
 import { fadeUp, stagger, isDesktopPointer } from '../../lib/motion'
@@ -176,11 +176,11 @@ export default function Hero() {
             variants={fadeUp}
             className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center"
           >
-            <CTAButton to="/memberships">
+            <CTAButton href={WHATSAPP} target="_blank">
               Claim Your 3-Day Free Pass <FaArrowRightLong />
             </CTAButton>
-            <CTAButton href={WHATSAPP} target="_blank" variant="ghost">
-              <FaWhatsapp size={16} /> Book via WhatsApp
+            <CTAButton to="/memberships" variant="ghost">
+              View Memberships
             </CTAButton>
           </motion.div>
 

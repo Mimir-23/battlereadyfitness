@@ -60,7 +60,8 @@
       "Bash(curl -s \"https://battle-ready.recess.tv/embed/checkout/explore?hideMenu=true\")",
       "Bash(curl -s \"https://battle-ready.recess.tv/_app/immutable/chunks/format.E1nZfMJTE7_TuLeaSpFq.js\" -o /tmp/fmt.js -w \"%{http_code} %{size_download}\\\\n\")",
       "Bash(grep -oE 'timezone[A-Za-z_]*|timeZone[^,;]{0,60}|guess\\\\\\(\\\\\\)|tz\\\\\\([^\\)]{0,40}\\\\\\)' /tmp/fmt.js)",
-      "PowerShell(npm run build)"
+      "PowerShell(npm run build)",
+      "PowerShell(npx eslint src/components/sections/Hero.jsx)"
     ]
   }
 }
