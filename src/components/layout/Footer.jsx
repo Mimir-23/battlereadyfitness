@@ -50,7 +50,7 @@ export default function Footer() {
             READY TO <span className="text-battle">FIGHT FOR IT?</span>
           </h3>
           <div className="flex flex-wrap items-center justify-center gap-3">
-            <CTAButton to="/memberships">Claim 3-Day Free Pass</CTAButton>
+            <CTAButton href={WHATSAPP} target="_blank">Claim 3-Day Free Pass</CTAButton>
             <CTAButton href={WHATSAPP} target="_blank" variant="ghost">
               <FaWhatsapp size={16} /> Chat Now
             </CTAButton>

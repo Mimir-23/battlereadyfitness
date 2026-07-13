@@ -86,7 +86,7 @@ export default function Navbar() {
           >
             <FaWhatsapp size={18} />
           </a>
-          <CTAButton to="/memberships" small>
+          <CTAButton href={WHATSAPP} target="_blank" small>
             3-Day Free Pass
           </CTAButton>
         </div>
@@ -129,7 +129,12 @@ export default function Navbar() {
                 </li>
               ))}
               <li className="mt-2">
-                <CTAButton to="/memberships" full onClick={() => setOpen(false)}>
+                <CTAButton
+                  href={WHATSAPP}
+                  target="_blank"
+                  full
+                  onClick={() => setOpen(false)}
+                >
                   Claim 3-Day Free Pass
                 </CTAButton>
               </li>
