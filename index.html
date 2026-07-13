@@ -59,6 +59,28 @@
     </style>
 
     <title>Battle Ready Fitness Bootcamp — We're Simply Unique</title>
+
+    <!-- Firebase Analytics. Módulo diferido: carga fuera del bundle y sin
+         bloquear el pintado. La apiKey de un config web de Firebase es un
+         identificador público (no un secreto); la seguridad va por las reglas
+         del proyecto, no por ocultar esta llave. -->
+    <script type="module">
+      import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js'
+      import { getAnalytics } from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-analytics.js'
+
+      const firebaseConfig = {
+        apiKey: 'AIzaSyAk0F1yt1BKHSWbYB-zLPiG6sZlZz_b7sk',
+        authDomain: 'battlereadyfitness-f8ac5.firebaseapp.com',
+        projectId: 'battlereadyfitness-f8ac5',
+        storageBucket: 'battlereadyfitness-f8ac5.firebasestorage.app',
+        messagingSenderId: '898879640583',
+        appId: '1:898879640583:web:3b96390993eefe5c5046a2',
+        measurementId: 'G-DXH57945TD',
+      }
+
+      const app = initializeApp(firebaseConfig)
+      getAnalytics(app)
+    </script>
   </head>
   <body>
     <!-- Google Tag Manager (noscript) -->
