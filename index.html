@@ -8,19 +8,14 @@
     <meta name="theme-color" content="#0a0a0b" />
     <meta name="description" content="Battle Ready Fitness Bootcamp — high-intensity boot-camp gym in Hialeah, Florida. Personal Training, Bootcamp, Kickboxing, HIIT, Zumba & more. Claim your 3-day free pass." />
 
-    <!-- Critical path: self-hosted fonts + the LCP hero image (mobile picks the
-         828w variant via imagesrcset). No third-party requests before paint. -->
+    <!-- Critical path: self-hosted fonts. The hero image now comes from the
+         admin content (Supabase), so preloading the bundled default would just
+         waste mobile data — instead we warm up the Supabase connection, which
+         serves both the content JSON and every photo. -->
     <link rel="preload" as="font" type="font/woff2" href="/fonts/bebas-neue.woff2" crossorigin />
     <link rel="preload" as="font" type="font/woff2" href="/fonts/oswald-var.woff2" crossorigin />
     <link rel="preload" as="font" type="font/woff2" href="/fonts/inter-var.woff2" crossorigin />
-    <link
-      rel="preload"
-      as="image"
-      href="/images/hero.webp"
-      imagesrcset="/images/hero-sm.webp 828w, /images/hero.webp 1920w"
-      imagesizes="100vw"
-      fetchpriority="high"
-    />
+    <link rel="preconnect" href="https://wqukiawyqihovkvxswyv.supabase.co" crossorigin />
 
     <!-- Instant dark shell: the page is branded-dark with a spinner from the very
          first paint, instead of a white flash while the JS bundle downloads. -->

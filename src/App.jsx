@@ -1,6 +1,7 @@
 import { useEffect, lazy, Suspense } from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { useSmoothScroll } from './lib/useSmoothScroll'
+import { useContentMeta } from './content/ContentProvider'
 
 import Cursor from './components/Cursor'
 import ScrollProgress from './components/ui/ScrollProgress'
@@ -81,10 +82,10 @@ function ScrollManager({ lenisRef }) {
 export default function App() {
   const lenisRef = useSmoothScroll()
   const { pathname } = useLocation()
+  const { ready } = useContentMeta()
   const isAdminArea = pathname.startsWith('/admin')
 
-  // No preloader: the page renders immediately and the hero plays its parallax
-  // entrance on mount. Make sure nothing leaves the document scroll-locked.
+  // Make sure nothing leaves the document scroll-locked.
   useEffect(() => {
     document.documentElement.style.overflow = ''
   }, [])
@@ -98,6 +99,13 @@ export default function App() {
       </Suspense>
     )
   }
+
+  // Espera el contenido real antes de pintar. Si pintáramos con los valores
+  // por defecto, el móvil descargaría TODAS las fotos de fábrica y, al llegar
+  // el contenido de Supabase (~200 ms), las descargaría TODAS otra vez con
+  // las URLs nuevas — el doble de datos en la conexión más lenta. El fetch
+  // tiene timeout: si Supabase no responde, se pinta con los defaults.
+  if (!ready) return <RouteFallback />
 
   return (
     <>

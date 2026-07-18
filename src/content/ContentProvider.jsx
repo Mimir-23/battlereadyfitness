@@ -32,6 +32,8 @@ export function ContentProvider({ children }) {
     if (!isSupabaseConfigured) return
     try {
       // Lightweight REST read — keeps the heavy SDK out of the public bundle.
+      // El sitio espera esta respuesta para pintar (ver App), así que lleva
+      // timeout: en una red móvil colgada es mejor pintar con los defaults.
       const res = await fetch(
         `${SUPABASE_URL}/rest/v1/site_content?select=key,value`,
         {
@@ -39,6 +41,7 @@ export function ContentProvider({ children }) {
             apikey: SUPABASE_ANON_KEY,
             Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
           },
+          signal: AbortSignal.timeout?.(5000),
         },
       )
       if (!res.ok) throw new Error(`HTTP ${res.status}`)
