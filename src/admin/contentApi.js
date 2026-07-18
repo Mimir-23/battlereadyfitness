@@ -67,10 +67,35 @@ const IMAGE_TYPES = {
   'image/avif': 'avif',
 }
 
-/** Upload an image to storage and return its public URL. */
-export async function uploadImage(file) {
+/* Reduce la imagen ANTES de subirla: una foto de cámara (3-8 MB, 4000px)
+   multiplicada por toda la galería congelaba el sitio en celulares. 1920px de
+   lado mayor y WebP ~0.82 dejan cada foto en 150-400 KB sin pérdida visible.
+   GIF se sube tal cual (el canvas mataría la animación). */
+async function compressImage(file) {
+  if (file.type === 'image/gif') return file
+  const bitmap = await createImageBitmap(file).catch(() => null)
+  if (!bitmap) return file
+
+  const MAX = 1920
+  const scale = Math.min(1, MAX / Math.max(bitmap.width, bitmap.height))
+  const canvas = document.createElement('canvas')
+  canvas.width = Math.round(bitmap.width * scale)
+  canvas.height = Math.round(bitmap.height * scale)
+  canvas.getContext('2d').drawImage(bitmap, 0, 0, canvas.width, canvas.height)
+  bitmap.close()
+
+  const blob = await new Promise((r) => canvas.toBlob(r, 'image/webp', 0.82))
+  // Sin soporte webp en canvas, o si no ganamos peso: se sube el original.
+  if (!blob || blob.size >= file.size) return file
+  return new File([blob], 'image.webp', { type: 'image/webp' })
+}
+
+/** Upload an image to storage (compressed) and return its public URL. */
+export async function uploadImage(original) {
+  if (!IMAGE_TYPES[original.type])
+    throw new Error('Formato no permitido. Usa JPG, PNG, WebP, GIF o AVIF.')
+  const file = await compressImage(original)
   const ext = IMAGE_TYPES[file.type]
-  if (!ext) throw new Error('Formato no permitido. Usa JPG, PNG, WebP, GIF o AVIF.')
   const safe = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`
   const path = `uploads/${safe}`
 
