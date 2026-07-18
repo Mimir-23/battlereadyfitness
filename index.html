@@ -24,7 +24,11 @@
          en ContentProvider en vez de repetir la petición. -->
     <script>
       ;(function () {
+        // Misma limpieza que supabaseEnv.js: si la variable viene con una ruta
+        // pegada (/rest/v1) o barra final, sin esto la URL sale doblada y 404.
         var u = '%VITE_SUPABASE_URL%'
+          .replace(/\/(rest|auth|storage)\/v\d.*$/i, '')
+          .replace(/\/+$/, '')
         var k = '%VITE_SUPABASE_ANON_KEY%'
         if (!u || !k || u.indexOf('%') === 0) return
         window.__contentPromise = fetch(u + '/rest/v1/site_content?select=key,value', {
