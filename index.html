@@ -8,14 +8,46 @@
     <meta name="theme-color" content="#0a0a0b" />
     <meta name="description" content="Battle Ready Fitness Bootcamp — high-intensity boot-camp gym in Hialeah, Florida. Personal Training, Bootcamp, Kickboxing, HIIT, Zumba & more. Claim your 3-day free pass." />
 
-    <!-- Critical path: self-hosted fonts. The hero image now comes from the
-         admin content (Supabase), so preloading the bundled default would just
-         waste mobile data — instead we warm up the Supabase connection, which
-         serves both the content JSON and every photo. -->
+    <!-- Critical path: self-hosted fonts + Supabase warm-up. Two preconnects
+         on purpose: the content fetch uses a CORS connection (crossorigin) and
+         the <img> photos use a plain one — browsers don't share them. -->
+    <link rel="preconnect" href="https://wqukiawyqihovkvxswyv.supabase.co" crossorigin />
+    <link rel="preconnect" href="https://wqukiawyqihovkvxswyv.supabase.co" />
     <link rel="preload" as="font" type="font/woff2" href="/fonts/bebas-neue.woff2" crossorigin />
     <link rel="preload" as="font" type="font/woff2" href="/fonts/oswald-var.woff2" crossorigin />
     <link rel="preload" as="font" type="font/woff2" href="/fonts/inter-var.woff2" crossorigin />
-    <link rel="preconnect" href="https://wqukiawyqihovkvxswyv.supabase.co" crossorigin />
+
+    <!-- Arranque adelantado: el contenido del sitio se pide DESDE el primer
+         byte del HTML, en paralelo con la descarga del bundle (antes iba en
+         serie: JS → fetch → foto). Y apenas se sabe cuál es la foto del hero,
+         se pre-carga con prioridad alta. React consume window.__contentPromise
+         en ContentProvider en vez de repetir la petición. -->
+    <script>
+      ;(function () {
+        var u = '%VITE_SUPABASE_URL%'
+        var k = '%VITE_SUPABASE_ANON_KEY%'
+        if (!u || !k || u.indexOf('%') === 0) return
+        window.__contentPromise = fetch(u + '/rest/v1/site_content?select=key,value', {
+          headers: { apikey: k, Authorization: 'Bearer ' + k },
+        })
+          .then(function (r) { return r.ok ? r.json() : null })
+          .catch(function () { return null })
+        window.__contentPromise.then(function (rows) {
+          if (!rows) return
+          for (var i = 0; i < rows.length; i++) {
+            if (rows[i].key === 'hero' && rows[i].value && rows[i].value.image) {
+              var l = document.createElement('link')
+              l.rel = 'preload'
+              l.as = 'image'
+              l.href = rows[i].value.image
+              l.fetchPriority = 'high'
+              document.head.appendChild(l)
+              return
+            }
+          }
+        })
+      })()
+    </script>
 
     <!-- Instant dark shell: the page is branded-dark with a spinner from the very
          first paint, instead of a white flash while the JS bundle downloads. -->

@@ -99,9 +99,12 @@ export async function uploadImage(original) {
   const safe = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`
   const path = `uploads/${safe}`
 
+  // Un año de caché: el nombre del archivo es único (timestamp + aleatorio),
+  // así que nunca se sirve una versión vieja — y las visitas repetidas no
+  // vuelven a descargar ninguna foto.
   const { error } = await supabase.storage
     .from(IMAGE_BUCKET)
-    .upload(path, file, { cacheControl: '3600', upsert: false, contentType: file.type })
+    .upload(path, file, { cacheControl: '31536000', upsert: false, contentType: file.type })
   if (error) throw error
 
   const { data } = supabase.storage.from(IMAGE_BUCKET).getPublicUrl(path)

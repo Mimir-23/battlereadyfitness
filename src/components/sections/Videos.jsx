@@ -13,7 +13,7 @@ import {
 } from 'react-icons/fa6'
 import { useContent } from '../../content/ContentProvider'
 import { resolveVideoEmbed, buildPreviewSrc } from '../../lib/videoEmbed'
-import { fadeUp, stagger, reveal, prefersReducedMotion } from '../../lib/motion'
+import { fadeUp, stagger, reveal, prefersReducedMotion, isDesktopPointer } from '../../lib/motion'
 import SectionHeading from '../ui/SectionHeading'
 import Parallax from '../ui/Parallax'
 
@@ -43,7 +43,9 @@ function TapeCard({ item, index, onOpen }) {
 
   // Admin-uploaded cover first; YouTube auto-thumbnail as fallback.
   const poster = item.thumb || embed.thumb
-  const previewSrc = prefersReducedMotion ? null : buildPreviewSrc(embed)
+  // Preview en vivo solo en escritorio: varios reproductores de YouTube a la
+  // vez saturan la CPU de un teléfono (ahí se queda el póster estático).
+  const previewSrc = isDesktopPointer ? buildPreviewSrc(embed) : null
   const artRef = useRef(null)
   const [live, setLive] = useState(false)
 

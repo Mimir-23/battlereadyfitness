@@ -31,21 +31,38 @@ export function ContentProvider({ children }) {
     // site renders defaults — nothing to fetch.
     if (!isSupabaseConfigured) return
     try {
-      // Lightweight REST read — keeps the heavy SDK out of the public bundle.
-      // El sitio espera esta respuesta para pintar (ver App), así que lleva
-      // timeout: en una red móvil colgada es mejor pintar con los defaults.
-      const res = await fetch(
-        `${SUPABASE_URL}/rest/v1/site_content?select=key,value`,
-        {
-          headers: {
-            apikey: SUPABASE_ANON_KEY,
-            Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+      // El index.html arranca esta misma petición en paralelo con el bundle
+      // (window.__contentPromise); aquí la consumimos si existe, con un tope
+      // de espera. Solo sirve para la primera carga: refresh() del admin
+      // siempre vuelve a la red.
+      let data = null
+      const early = typeof window !== 'undefined' ? window.__contentPromise : null
+      if (early) {
+        window.__contentPromise = null
+        data = await Promise.race([
+          early,
+          new Promise((resolve) => setTimeout(resolve, 4000)),
+        ])
+        data = data || null
+      }
+
+      if (!data) {
+        // Lightweight REST read — keeps the heavy SDK out of the public
+        // bundle. El sitio espera esta respuesta para pintar (ver App), así
+        // que lleva timeout: en una red colgada pintamos con los defaults.
+        const res = await fetch(
+          `${SUPABASE_URL}/rest/v1/site_content?select=key,value`,
+          {
+            headers: {
+              apikey: SUPABASE_ANON_KEY,
+              Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+            },
+            signal: AbortSignal.timeout?.(5000),
           },
-          signal: AbortSignal.timeout?.(5000),
-        },
-      )
-      if (!res.ok) throw new Error(`HTTP ${res.status}`)
-      const data = await res.json()
+        )
+        if (!res.ok) throw new Error(`HTTP ${res.status}`)
+        data = await res.json()
+      }
       const overrides = {}
       for (const row of data || []) overrides[row.key] = row.value
 
