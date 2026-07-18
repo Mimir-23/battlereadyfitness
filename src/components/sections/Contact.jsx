@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { motion } from 'motion/react'
 import {
   FaPhone,
@@ -41,6 +42,8 @@ export default function Contact() {
   const { brand, hours: HOURS } = useContent()
   const WHATSAPP = whatsappUrl(brand)
   const mapSrc = trustedMapSrc(brand.mapsEmbed)
+  // El mapa de Google no se carga hasta que el visitante lo pida (fachada).
+  const [mapOn, setMapOn] = useState(false)
   const fullAddress = `${brand.address} ${brand.city}`
   const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(fullAddress)}`
 
@@ -173,13 +176,36 @@ export default function Contact() {
               variants={fadeUp}
               className="group relative min-h-[380px] overflow-hidden rounded-2xl border border-iron transition-colors duration-300 hover:border-battle/40 lg:min-h-0"
             >
-              <iframe
-                title="Battle Ready Fitness location"
-                src={mapSrc}
-                className="absolute inset-0 h-full w-full grayscale transition-all duration-500 group-hover:grayscale-0"
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-              />
+              {/* Fachada: el iframe de Google Maps descarga ~4 MB en ~80
+                  peticiones, así que no se carga hasta que el visitante lo
+                  pida. El botón "Get Directions" funciona sin cargarlo. */}
+              {mapOn ? (
+                <iframe
+                  title="Battle Ready Fitness location"
+                  src={mapSrc}
+                  className="absolute inset-0 h-full w-full grayscale transition-all duration-500 group-hover:grayscale-0"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setMapOn(true)}
+                  aria-label="Load interactive map"
+                  className="absolute inset-0 flex cursor-pointer flex-col items-center justify-center gap-4 bg-coal bg-grid pb-24"
+                >
+                  <span className="pointer-events-none absolute left-1/2 top-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-battle/10 blur-[90px]" />
+                  <span className="relative flex h-16 w-16 items-center justify-center rounded-full bg-battle text-ink shadow-[0_10px_36px_-8px_rgba(255,210,0,0.7)]">
+                    <span className="absolute inset-0 animate-ping rounded-full bg-battle opacity-30" />
+                    <FaLocationDot size={24} className="relative" />
+                  </span>
+                  <span className="relative font-head text-xs font-bold uppercase tracking-[0.25em] text-chalk">
+                    Tap to load the map
+                  </span>
+                  <span className="relative font-head text-[10px] uppercase tracking-[0.2em] text-smoke">
+                    Interactive · Google Maps
+                  </span>
+                </button>
+              )}
 
               {/* HUD corner brackets */}
               <span className="pointer-events-none absolute left-3 top-3 h-6 w-6 border-l-2 border-t-2 border-battle/60" />
