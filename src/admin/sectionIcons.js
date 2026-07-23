@@ -13,6 +13,7 @@ import {
   FaCalendarDays,
   FaTags,
   FaVideo,
+  FaUserNinja,
   FaLayerGroup,
 } from 'react-icons/fa6'
 
@@ -32,6 +33,7 @@ const MAP = {
   FaCalendarDays,
   FaTags,
   FaVideo,
+  FaUserNinja,
 }
 
 export function sectionIcon(name) {

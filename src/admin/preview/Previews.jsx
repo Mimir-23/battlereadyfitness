@@ -522,8 +522,61 @@ function VideosPreview({ d }) {
   )
 }
 
+function CoachesPreview({ d }) {
+  const items = d?.items || []
+  return (
+    <Frame>
+      <div className="p-4">
+        <div className="text-center">
+          {d?.kicker && (
+            <div className="font-head text-[10px] font-semibold uppercase tracking-[0.25em] text-battle">
+              {d.kicker}
+            </div>
+          )}
+          <div className="mt-1 font-display text-2xl text-chalk">
+            {d?.titleLine1} {d?.accent && <span className="text-battle">{d.accent}</span>}
+          </div>
+        </div>
+        <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
+          {items.map((c, i) => (
+            <div key={i} className="overflow-hidden rounded-lg border border-iron bg-coal">
+              <div className="relative aspect-[4/5]">
+                {c.image && (
+                  <img src={c.image} alt="" className="h-full w-full object-cover" />
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-transparent" />
+                <div className="absolute inset-x-2 bottom-1.5">
+                  <div className="truncate font-head text-[11px] font-bold uppercase text-chalk">
+                    {c.name || 'Coach'}
+                  </div>
+                  {c.alias && (
+                    <div className="truncate text-[9px] uppercase tracking-wider text-battle">
+                      “{c.alias}”
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className="space-y-1 p-2">
+                {['strength', 'cardio', 'technique', 'discipline', 'energy'].map((k) => (
+                  <div key={k} className="h-1 overflow-hidden rounded bg-iron/60">
+                    <div
+                      className="h-full rounded bg-battle"
+                      style={{ width: `${Math.max(0, Math.min(100, Number(c[k]) || 0))}%` }}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </Frame>
+  )
+}
+
 const MAP = {
   hero: HeroPreview,
+  coaches: CoachesPreview,
   videos: VideosPreview,
   programs: ProgramsPreview,
   stats: StatsPreview,

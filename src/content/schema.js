@@ -143,6 +143,53 @@ export const SECTIONS = [
     ],
   },
 
+  /* ---------- Entrenadores ---------- */
+  {
+    key: 'coaches',
+    label: 'Entrenadores',
+    icon: 'FaUserNinja',
+    description: 'La pantalla “elige tu entrenador”: fotos, apodos y estadísticas de combate.',
+    shape: 'object',
+    fields: [
+      { name: 'kicker', label: 'Texto pequeño superior', type: 'text' },
+      { name: 'titleLine1', label: 'Título', type: 'text', required: true },
+      { name: 'accent', label: 'Título — parte destacada (amarilla)', type: 'text' },
+      { name: 'paragraph', label: 'Párrafo', type: 'textarea' },
+      {
+        name: 'items',
+        label: 'Entrenadores',
+        type: 'list',
+        itemLabel: (it) => it.name || 'Entrenador',
+        newItem: () => ({
+          image: '/images/coach.webp',
+          name: '',
+          alias: '',
+          role: '',
+          quote: '',
+          instagram: '',
+          strength: 80,
+          cardio: 80,
+          technique: 80,
+          discipline: 80,
+          energy: 80,
+        }),
+        item: [
+          { name: 'image', label: 'Foto', type: 'image', required: true },
+          { name: 'name', label: 'Nombre', type: 'text', required: true },
+          { name: 'alias', label: 'Apodo de guerra', type: 'text', help: 'Ej: The Sergeant, The Machine' },
+          { name: 'role', label: 'Especialidad / cargo', type: 'text', required: true, help: 'Ej: Head Coach · Bootcamp' },
+          { name: 'quote', label: 'Frase de batalla', type: 'textarea' },
+          { name: 'instagram', label: 'Instagram (enlace del perfil)', type: 'text' },
+          { name: 'strength', label: 'Fuerza (0-100)', type: 'number', required: true },
+          { name: 'cardio', label: 'Cardio (0-100)', type: 'number', required: true },
+          { name: 'technique', label: 'Técnica (0-100)', type: 'number', required: true },
+          { name: 'discipline', label: 'Disciplina (0-100)', type: 'number', required: true },
+          { name: 'energy', label: 'Energía (0-100)', type: 'number', required: true },
+        ],
+      },
+    ],
+  },
+
   /* ---------- Galería ---------- */
   {
     key: 'gallery',

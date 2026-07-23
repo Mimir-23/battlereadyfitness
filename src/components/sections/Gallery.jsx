@@ -44,7 +44,7 @@ export default function Gallery() {
   return (
     <section id="gallery" className="bg-ink py-24">
       <div className="mx-auto max-w-7xl px-5 lg:px-8">
-        <SectionHeading number="03" kicker="Step Inside" title="THE" accent="BATTLEGROUND" />
+        <SectionHeading number="04" kicker="Step Inside" title="THE" accent="BATTLEGROUND" />
         <p className="mx-auto mt-4 max-w-xl text-center text-fog">
           Real sweat, real iron, real results. This is where warriors are forged.
         </p>

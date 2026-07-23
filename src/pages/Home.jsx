@@ -4,6 +4,7 @@ import Marquee from '../components/ui/Marquee'
 import Stats from '../components/sections/Stats'
 import Programs from '../components/sections/Programs'
 import WhyUs from '../components/sections/WhyUs'
+import Coaches from '../components/sections/Coaches'
 import Gallery from '../components/sections/Gallery'
 import Videos from '../components/sections/Videos'
 import Testimonial from '../components/sections/Testimonial'
@@ -20,6 +21,7 @@ export default function Home() {
       <Stats />
       <Programs />
       <WhyUs />
+      <Coaches />
       <Gallery />
       <Videos />
       <Marquee reverse />
