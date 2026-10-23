@@ -44,7 +44,7 @@ const photo = cta.image ? responsiveImage(cta.image, { sizes: '100vw', widths: [
             style="animation: var(--animate-pulse-ring)"
           >
             Claim Yours Now
-            <FaArrowRightLong className="transition-transform group-hover:translate-x-1" />
+            <FaArrowRightLong aria-hidden="true" className="transition-transform group-hover:translate-x-1" />
           </a>
         </div>
         <a
@@ -53,7 +53,8 @@ const photo = cta.image ? responsiveImage(cta.image, { sizes: '100vw', widths: [
           rel="noreferrer"
           class="inline-flex items-center justify-center gap-2 border border-ink/30 bg-ink/10 px-8 py-4 font-head text-sm font-bold uppercase tracking-widest text-ink backdrop-blur-sm transition-colors hover:bg-ink hover:text-battle"
         >
-          <FaWhatsapp size={16} /> WhatsApp Us
+          <FaWhatsapp aria-hidden="true" size={16} /> WhatsApp Us
+          <span class="sr-only"> (opens in a new tab)</span>
         </a>
       </div>
     </div>

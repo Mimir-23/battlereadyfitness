@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useId, useRef, useState } from 'react'
 import {
   FaUpload,
   FaPlus,
@@ -19,20 +19,33 @@ import { useToast, Spinner } from './ui'
 const inputCls =
   'w-full rounded-lg border border-iron bg-ink px-3 py-2 text-sm text-chalk placeholder:text-smoke focus:border-battle focus:outline-none'
 
-function Label({ field }) {
+/* Simple fields get a real <label for>; composite ones (image, icons,
+   lists) are a group named by the same text. */
+const LABELLED = new Set(['text', 'textarea', 'number', 'select', undefined])
+
+function Label({ field, htmlFor, id, helpId }) {
+  const Tag = htmlFor ? 'label' : 'span'
   return (
     <div className="mb-1 flex items-baseline gap-2">
-      <label className="font-head text-xs font-semibold uppercase tracking-wider text-fog">
+      <Tag id={id} htmlFor={htmlFor} className="font-head text-xs font-semibold uppercase tracking-wider text-fog">
         {field.label}
-        {field.required && <span className="ml-0.5 text-alert">*</span>}
-      </label>
-      {field.help && <span className="text-[11px] text-smoke">— {field.help}</span>}
+        {field.required && (
+          <span aria-hidden="true" className="ml-0.5 text-alert">
+            *
+          </span>
+        )}
+      </Tag>
+      {field.help && (
+        <span id={helpId} className="text-[0.6875rem] text-smoke">
+          — {field.help}
+        </span>
+      )}
     </div>
   )
 }
 
 /* ---------- Image upload ---------- */
-function ImageUploader({ value, onChange }) {
+function ImageUploader({ value, onChange, label = 'Imagen' }) {
   const fileRef = useRef(null)
   const [busy, setBusy] = useState(false)
   const [dragging, setDragging] = useState(false)
@@ -81,12 +94,13 @@ function ImageUploader({ value, onChange }) {
         type="button"
         onClick={() => fileRef.current?.click()}
         title="Cambiar imagen"
+        aria-label={`Cambiar imagen: ${label}`}
         className="group h-20 w-20 shrink-0 overflow-hidden rounded-lg border border-iron bg-coal"
       >
         {value ? (
           <img src={value} alt="" className="h-full w-full object-cover transition-opacity group-hover:opacity-70" />
         ) : (
-          <span className="flex h-full w-full items-center justify-center text-[10px] text-smoke">
+          <span className="flex h-full w-full items-center justify-center text-[0.625rem] text-smoke">
             Sin imagen
           </span>
         )}
@@ -98,17 +112,26 @@ function ImageUploader({ value, onChange }) {
           disabled={busy}
           className="inline-flex items-center gap-2 rounded-lg border border-battle/50 bg-battle/10 px-3 py-2 font-head text-xs font-semibold uppercase tracking-wider text-battle transition-colors hover:bg-battle/20 disabled:opacity-60"
         >
-          {busy ? <Spinner className="border-battle/30 border-t-battle" /> : <FaUpload />}
+          {busy ? <Spinner className="border-battle/30 border-t-battle" /> : <FaUpload aria-hidden="true" />}
           {busy ? 'Subiendo…' : 'Subir imagen'}
         </button>
         <input
           value={value || ''}
           onChange={(e) => onChange(e.target.value)}
           placeholder="o pega una URL de imagen"
+          aria-label={`${label}: URL de la imagen`}
           className={inputCls}
         />
-        <p className="text-[11px] text-smoke">También puedes arrastrar y soltar la imagen aquí.</p>
-        <input ref={fileRef} type="file" accept="image/*" onChange={(e) => handleFile(e.target.files?.[0])} className="hidden" />
+        <p className="text-[0.6875rem] text-smoke">También puedes arrastrar y soltar la imagen aquí.</p>
+        <input
+          ref={fileRef}
+          type="file"
+          accept="image/*"
+          tabIndex={-1}
+          aria-hidden="true"
+          onChange={(e) => handleFile(e.target.files?.[0])}
+          className="hidden"
+        />
       </div>
     </div>
   )
@@ -126,6 +149,8 @@ function IconPicker({ value, onChange }) {
             key={name}
             type="button"
             title={ICON_LABELS[name] || name}
+            aria-label={ICON_LABELS[name] || name}
+            aria-pressed={active}
             onClick={() => onChange(name)}
             className={`flex h-10 w-10 items-center justify-center rounded-lg border transition-colors ${
               active
@@ -133,7 +158,7 @@ function IconPicker({ value, onChange }) {
                 : 'border-iron bg-ink text-fog hover:border-battle/50'
             }`}
           >
-            <Icon size={18} />
+            <Icon aria-hidden="true" size={18} />
           </button>
         )
       })}
@@ -158,32 +183,37 @@ function StringList({ value, onChange, itemLabel = 'Elemento' }) {
     <div className="space-y-2">
       {list.map((item, i) => (
         <div key={i} className="flex items-center gap-1.5">
-          <input value={item} onChange={(e) => set(i, e.target.value)} className={inputCls} />
+          <input
+            value={item}
+            onChange={(e) => set(i, e.target.value)}
+            aria-label={`${itemLabel} ${i + 1}`}
+            className={inputCls}
+          />
           <button
             type="button"
             onClick={() => move(i, -1)}
             disabled={i === 0}
             className="shrink-0 rounded p-1.5 text-smoke hover:text-chalk disabled:opacity-30"
-            aria-label="Subir"
+            aria-label={`Subir ${itemLabel.toLowerCase()} ${i + 1}`}
           >
-            <FaArrowUp size={11} />
+            <FaArrowUp aria-hidden="true" size={11} />
           </button>
           <button
             type="button"
             onClick={() => move(i, 1)}
             disabled={i === list.length - 1}
             className="shrink-0 rounded p-1.5 text-smoke hover:text-chalk disabled:opacity-30"
-            aria-label="Bajar"
+            aria-label={`Bajar ${itemLabel.toLowerCase()} ${i + 1}`}
           >
-            <FaArrowDown size={11} />
+            <FaArrowDown aria-hidden="true" size={11} />
           </button>
           <button
             type="button"
             onClick={() => remove(i)}
             className="shrink-0 rounded-lg border border-iron p-2 text-smoke hover:border-alert/50 hover:text-alert"
-            aria-label="Eliminar"
+            aria-label={`Eliminar ${itemLabel.toLowerCase()} ${i + 1}`}
           >
-            <FaTrashCan size={13} />
+            <FaTrashCan aria-hidden="true" size={13} />
           </button>
         </div>
       ))}
@@ -192,18 +222,27 @@ function StringList({ value, onChange, itemLabel = 'Elemento' }) {
         onClick={add}
         className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-battle hover:underline"
       >
-        <FaPlus size={11} /> Añadir {itemLabel.toLowerCase()}
+        <FaPlus aria-hidden="true" size={11} /> Añadir {itemLabel.toLowerCase()}
       </button>
     </div>
   )
 }
 
 /* ---------- One field (dispatches on type) ---------- */
-export function FieldInput({ field, value, onChange }) {
+export function FieldInput({ field, value, onChange, id, labelId, describedBy }) {
+  // Accessible wiring from FieldRow: the control's id (for <label for>), the
+  // label's id (switches, groups) and the help text.
+  const a11y = { id, 'aria-describedby': describedBy, 'aria-required': field.required || undefined }
+  const group = (children) => (
+    <div role="group" aria-labelledby={labelId} aria-describedby={describedBy}>
+      {children}
+    </div>
+  )
   switch (field.type) {
     case 'textarea':
       return (
         <textarea
+          {...a11y}
           rows={3}
           value={value ?? ''}
           onChange={(e) => onChange(e.target.value)}
@@ -213,6 +252,7 @@ export function FieldInput({ field, value, onChange }) {
     case 'number':
       return (
         <input
+          {...a11y}
           type="number"
           value={value ?? ''}
           onChange={(e) => onChange(e.target.value === '' ? '' : Number(e.target.value))}
@@ -221,7 +261,7 @@ export function FieldInput({ field, value, onChange }) {
       )
     case 'select':
       return (
-        <select value={value ?? ''} onChange={(e) => onChange(e.target.value)} className={inputCls}>
+        <select {...a11y} value={value ?? ''} onChange={(e) => onChange(e.target.value)} className={inputCls}>
           {field.options.map((o) => (
             <option key={o.value} value={o.value}>
               {o.label}
@@ -239,6 +279,8 @@ export function FieldInput({ field, value, onChange }) {
           }`}
           role="switch"
           aria-checked={!!value}
+          aria-labelledby={labelId}
+          aria-describedby={describedBy}
         >
           <span
             className={`absolute top-0.5 h-5 w-5 rounded-full bg-ink transition-transform ${
@@ -248,16 +290,17 @@ export function FieldInput({ field, value, onChange }) {
         </button>
       )
     case 'image':
-      return <ImageUploader value={value} onChange={onChange} />
+      return group(<ImageUploader value={value} onChange={onChange} label={field.label} />)
     case 'icon':
-      return <IconPicker value={value} onChange={onChange} />
+      return group(<IconPicker value={value} onChange={onChange} />)
     case 'string-list':
-      return <StringList value={value} onChange={onChange} itemLabel={field.itemLabel} />
+      return group(<StringList value={value} onChange={onChange} itemLabel={field.itemLabel} />)
     case 'list':
-      return <ListField field={field} value={value} onChange={onChange} />
+      return group(<ListField field={field} value={value} onChange={onChange} />)
     default:
       return (
         <input
+          {...a11y}
           value={value ?? ''}
           onChange={(e) => onChange(e.target.value)}
           placeholder={field.placeholder}
@@ -268,36 +311,43 @@ export function FieldInput({ field, value, onChange }) {
 }
 
 /* ---------- A set of fields for one object ---------- */
+function FieldRow({ field: f, value, onChange }) {
+  const id = useId()
+  const labelId = `${id}-label`
+  const helpId = f.help ? `${id}-help` : undefined
+  const wiring = { id, labelId, describedBy: helpId }
+  if (f.type === 'boolean') {
+    return (
+      <div>
+        <div className="mb-1" />
+        <div className="flex items-center gap-3">
+          <FieldInput field={f} value={value} onChange={onChange} {...wiring} />
+          <span id={labelId} className="font-head text-xs font-semibold uppercase tracking-wider text-fog">
+            {f.label}
+          </span>
+          {f.help && (
+            <span id={helpId} className="text-[0.6875rem] text-smoke">
+              — {f.help}
+            </span>
+          )}
+        </div>
+      </div>
+    )
+  }
+  return (
+    <div>
+      <Label field={f} htmlFor={LABELLED.has(f.type) ? id : undefined} id={labelId} helpId={helpId} />
+      <FieldInput field={f} value={value} onChange={onChange} {...wiring} />
+    </div>
+  )
+}
+
 export function ObjectFields({ fields, value, onChange }) {
   const obj = value || {}
   return (
     <div className="space-y-4">
       {fields.map((f) => (
-        <div key={f.name}>
-          {f.type !== 'boolean' ? (
-            <Label field={f} />
-          ) : (
-            <div className="mb-1" />
-          )}
-          {f.type === 'boolean' ? (
-            <div className="flex items-center gap-3">
-              <FieldInput
-                field={f}
-                value={obj[f.name]}
-                onChange={(v) => onChange({ ...obj, [f.name]: v })}
-              />
-              <span className="font-head text-xs font-semibold uppercase tracking-wider text-fog">
-                {f.label}
-              </span>
-            </div>
-          ) : (
-            <FieldInput
-              field={f}
-              value={obj[f.name]}
-              onChange={(v) => onChange({ ...obj, [f.name]: v })}
-            />
-          )}
-        </div>
+        <FieldRow key={f.name} field={f} value={obj[f.name]} onChange={(v) => onChange({ ...obj, [f.name]: v })} />
       ))}
     </div>
   )
@@ -339,7 +389,7 @@ export function ListField({ field, value, onChange }) {
   return (
     <div className="space-y-2">
       {list.length > 1 && (
-        <div className="text-[11px] text-smoke">
+        <div className="text-[0.6875rem] text-smoke">
           {list.length} elementos — pulsa uno para abrirlo o cerrarlo.
         </div>
       )}
@@ -349,25 +399,27 @@ export function ListField({ field, value, onChange }) {
             <button
               type="button"
               onClick={() => setOpen(open === i ? -1 : i)}
+              aria-expanded={open === i}
               className="flex flex-1 items-center gap-2 text-left font-head text-sm font-semibold text-chalk"
             >
               <FaChevronDown
+                aria-hidden="true"
                 size={11}
                 className={`shrink-0 text-smoke transition-transform ${open === i ? '' : '-rotate-90'}`}
               />
               <span className="text-smoke">#{i + 1}</span> {labelOf(item, i)}
             </button>
-            <button type="button" onClick={() => move(i, -1)} disabled={i === 0} className="rounded p-1.5 text-smoke hover:text-chalk disabled:opacity-30" aria-label="Subir" title="Subir">
-              <FaArrowUp size={12} />
+            <button type="button" onClick={() => move(i, -1)} disabled={i === 0} className="rounded p-1.5 text-smoke hover:text-chalk disabled:opacity-30" aria-label={`Subir: ${labelOf(item, i)}`} title="Subir">
+              <FaArrowUp aria-hidden="true" size={12} />
             </button>
-            <button type="button" onClick={() => move(i, 1)} disabled={i === list.length - 1} className="rounded p-1.5 text-smoke hover:text-chalk disabled:opacity-30" aria-label="Bajar" title="Bajar">
-              <FaArrowDown size={12} />
+            <button type="button" onClick={() => move(i, 1)} disabled={i === list.length - 1} className="rounded p-1.5 text-smoke hover:text-chalk disabled:opacity-30" aria-label={`Bajar: ${labelOf(item, i)}`} title="Bajar">
+              <FaArrowDown aria-hidden="true" size={12} />
             </button>
-            <button type="button" onClick={() => duplicate(i)} className="rounded p-1.5 text-smoke hover:text-battle" aria-label="Duplicar" title="Duplicar">
-              <FaCopy size={12} />
+            <button type="button" onClick={() => duplicate(i)} className="rounded p-1.5 text-smoke hover:text-battle" aria-label={`Duplicar: ${labelOf(item, i)}`} title="Duplicar">
+              <FaCopy aria-hidden="true" size={12} />
             </button>
-            <button type="button" onClick={() => remove(i)} className="rounded p-1.5 text-smoke hover:text-alert" aria-label="Eliminar" title="Eliminar">
-              <FaTrashCan size={13} />
+            <button type="button" onClick={() => remove(i)} className="rounded p-1.5 text-smoke hover:text-alert" aria-label={`Eliminar: ${labelOf(item, i)}`} title="Eliminar">
+              <FaTrashCan aria-hidden="true" size={13} />
             </button>
           </div>
           {open === i && (
@@ -382,7 +434,7 @@ export function ListField({ field, value, onChange }) {
         onClick={add}
         className="inline-flex items-center gap-2 rounded-lg border border-dashed border-iron px-4 py-2.5 font-head text-xs font-semibold uppercase tracking-wider text-fog transition-colors hover:border-battle/50 hover:text-battle"
       >
-        <FaPlus size={12} /> Añadir
+        <FaPlus aria-hidden="true" size={12} /> Añadir
       </button>
     </div>
   )

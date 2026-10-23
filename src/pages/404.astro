@@ -13,9 +13,11 @@ cacheContentPage(Astro, live)
 
 <BaseLayout content={content} title="Page Not Found">
   <section class="relative flex min-h-svh items-center justify-center overflow-hidden bg-ink bg-grid px-5 text-center">
-    <span class="pointer-events-none absolute select-none font-display text-[40vw] leading-none text-stroke-chalk opacity-20">
-      404
-    </span>
+    <span
+      aria-hidden="true"
+      data-n="404"
+      class="pointer-events-none absolute select-none font-display text-[40vw] leading-none text-stroke-chalk opacity-20 before:content-[attr(data-n)]"
+    ></span>
     <div class="relative">
       <span class="font-head text-xs font-semibold uppercase tracking-[0.3em] text-battle">Off the battleground</span>
       <h1 class="mt-4 font-display text-6xl text-chalk sm:text-7xl">
@@ -26,7 +28,7 @@ cacheContentPage(Astro, live)
       </p>
       <div class="mt-8 flex justify-center">
         <CTAButton href="/">
-          Back to Home <FaArrowRightLong />
+          Back to Home <FaArrowRightLong aria-hidden="true" />
         </CTAButton>
       </div>
     </div>

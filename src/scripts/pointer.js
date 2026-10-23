@@ -1,4 +1,4 @@
-import { fine, Spring, onFrame, mapRange } from './core.js'
+import { fine, Spring, onFrame, mapRange, isStill, onStill } from './core.js'
 
 /* ------------------------------------------------------------------ */
 /*  Pointer effects (precise pointer + motion allowed): the dumbbell    */
@@ -128,6 +128,7 @@ function initMagnetic() {
       })
     }
     el.addEventListener('mousemove', (e) => {
+      if (isStill()) return
       const r = el.getBoundingClientRect()
       sx.target = (e.clientX - (r.left + r.width / 2)) * 0.35
       sy.target = (e.clientY - (r.top + r.height / 2)) * 0.35
@@ -137,6 +138,10 @@ function initMagnetic() {
       sx.target = 0
       sy.target = 0
       run()
+    })
+    onStill(() => {
+      sx.value = sx.target = sx.velocity = 0
+      sy.value = sy.target = sy.velocity = 0
     })
   }
 }
@@ -168,7 +173,7 @@ function initSpotlight() {
       const py = (e.clientY - r.top) / r.height
       el.style.setProperty('--mx', `${px * 100}%`)
       el.style.setProperty('--my', `${py * 100}%`)
-      if (!strength) return
+      if (!strength || isStill()) return
       rotY.target = (px - 0.5) * strength
       rotX.target = (0.5 - py) * strength
       run()
@@ -179,6 +184,10 @@ function initSpotlight() {
       rotY.target = 0
       run()
     })
+    onStill(() => {
+      rotX.value = rotX.target = rotX.velocity = 0
+      rotY.value = rotY.target = rotY.velocity = 0
+    })
   }
 }
 
@@ -187,4 +196,14 @@ export function initPointerEffects() {
   initCursor()
   initMagnetic()
   initSpotlight()
+  // "Stop animations": the standard cursor comes back and nothing follows it.
+  onStill(() => {
+    document.querySelectorAll('.cursor-dot, .cursor-ring').forEach((el) => el.remove())
+    document.body.classList.remove('has-cursor')
+    document.querySelectorAll('[data-magnetic]').forEach((el) => (el.style.transform = ''))
+    document.querySelectorAll('[data-spotlight]').forEach((el) => {
+      el.style.removeProperty('--rx')
+      el.style.removeProperty('--ry')
+    })
+  })
 }

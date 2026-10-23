@@ -388,6 +388,48 @@ DEFAULT_CONTENT.legal = {
   ],
 }
 
+/* ---------- Declaración de accesibilidad (página /accessibility) ----------
+   Mismo formato que los términos: una línea en blanco separa párrafos y las
+   líneas que empiezan con "- " forman una lista. */
+DEFAULT_CONTENT.accessibility = {
+  kicker: 'Accessibility · Battle Ready Fitness',
+  title: 'ACCESS FOR',
+  accent: 'EVERY WARRIOR',
+  updated: 'October 2026',
+  intro:
+    'Everyone deserves a place on the battleground. We want this website to work for you whether you use a screen reader, navigate with a keyboard, see colors differently, or are Deaf or hard of hearing.',
+  sections: [
+    {
+      title: 'Our Commitment',
+      body: 'We design and test this site against the Web Content Accessibility Guidelines (WCAG) 2.2, level AA. Accessibility is ongoing work: we check new content and features as we add them, and we fix the problems you tell us about.',
+    },
+    {
+      title: 'Accessibility Options',
+      body: 'Open the accessibility button (the person icon at the bottom left of every page) to adjust the site. Your choices are saved on your device and apply to every page.\n\n- Screen reader: the site reads itself aloud with your device\'s voice. It speaks whatever you reach with the Tab key or tap, and "Read page" reads everything from where you are, highlighting each part. Press Ctrl to silence it.\n- Text size: up to 150%, without breaking the layout.\n- High contrast: brighter text and stronger borders. It also turns on by itself if your device asks for more contrast.\n- Underline links: find links without relying on color.\n- Readable font: plain letters and normal spacing instead of the condensed display type.\n- Stop animations: no motion, sliding carousels, parallax or moving video previews. It also turns on by itself if your device is set to reduce motion.\n- Video captions: subtitles on whenever the video has them.\n- Color vision: correction filters for protanopia, deuteranopia and tritanopia, and a grayscale mode.',
+    },
+    {
+      title: 'Blind & Low-Vision Visitors',
+      body: 'The site works with screen readers such as VoiceOver, NVDA, JAWS and TalkBack, and entirely with a keyboard. No screen reader on this device? Turn on "Screen reader" in the accessibility options and the site reads itself aloud.\n\n- "Skip to content" is the first link on every page, and "Accessibility options" the second.\n- Pages are organized with landmarks and headings, and the menu tells you which page you are on.\n- Every button and link has a clear name, and meaningful images have text descriptions.\n- The class schedule is a real table: you hear the day and time of each class.\n- Changes on the page (filters, carousels, the class you picked) are announced.\n- Photo and video viewers keep focus inside while open, close with Escape and move with the arrow keys.\n- The focus outline is always visible and never hidden behind the top menu.',
+    },
+    {
+      title: 'Color-Blind Visitors',
+      body: 'Information on this site never depends on color alone: links, selected days, plans and states also change in text, shape or position. Text meets WCAG contrast ratios on our dark background, and the color vision filters in the accessibility options can make the yellow and red accents easier to tell apart.',
+    },
+    {
+      title: 'Deaf & Hard-of-Hearing Visitors',
+      body: 'Nothing on the website relies on sound, and every way to reach us works in writing.\n\n- Turn on "Video captions" to show subtitles in our YouTube videos whenever they are available.\n- Videos can include a written transcript, shown under the player. If one is missing, ask us for it.\n- Message us on WhatsApp or by email to ask questions, book or get help — no phone call needed.\n- Planning your first class? Write to us beforehand and tell us what works best for you.',
+    },
+    {
+      title: 'Third-Party Content',
+      body: 'Class booking and checkout are provided by our member portal, Recess, and some videos are hosted on YouTube, Instagram, TikTok or Facebook. We choose accessible options where we can, but we do not control those services. If any of them gets in your way, message us and we will book you or answer your question directly.',
+    },
+    {
+      title: 'Feedback & Contact',
+      body: 'Found a barrier, or need information in another format? Tell us what page you were on and what happened, and we will get back to you as soon as possible. Reach us on WhatsApp, at contact@battlereadyfitness.com, or visit us at 18600 NW 87th Avenue, Suite 116, Hialeah, Florida 33015.',
+    },
+  ],
+}
+
 /** URL-friendly anchor for a heading ("Privacy Policy" → "privacy-policy"). */
 export function slugify(text) {
   return String(text || '')

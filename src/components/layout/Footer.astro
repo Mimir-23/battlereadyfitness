@@ -33,13 +33,13 @@ const hrefOf = (item) => item.to || `/${item.hash || ''}`
     <div
       class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-5 px-5 py-8 text-center lg:flex-row lg:px-8 lg:text-left"
     >
-      <h3 class="font-display text-3xl text-chalk sm:text-4xl">
+      <h2 class="font-display text-3xl text-chalk sm:text-4xl">
         READY TO <span class="text-battle">FIGHT FOR IT?</span>
-      </h3>
+      </h2>
       <div class="flex flex-wrap items-center justify-center gap-3">
         <CTAButton href={WHATSAPP} target="_blank">Claim 3-Day Free Pass</CTAButton>
         <CTAButton href={WHATSAPP} target="_blank" variant="ghost">
-          <FaWhatsapp size={16} /> Chat Now
+          <FaWhatsapp aria-hidden="true" size={16} /> Chat Now
         </CTAButton>
       </div>
     </div>
@@ -62,10 +62,10 @@ const hrefOf = (item) => item.to || `/${item.hash || ''}`
                 href={s.href}
                 target="_blank"
                 rel="noreferrer"
-                aria-label={s.label}
+                aria-label={`${s.label} (opens in a new tab)`}
                 class="flex h-11 w-11 items-center justify-center rounded-full border border-iron text-fog transition-colors duration-300 hover:border-battle hover:bg-battle hover:text-ink"
               >
-                <Icon size={15} />
+                <Icon aria-hidden="true" size={15} />
               </a>
             )
           })
@@ -74,7 +74,7 @@ const hrefOf = (item) => item.to || `/${item.hash || ''}`
     </div>
 
     <div>
-      <h4 class="font-head text-sm font-semibold uppercase tracking-[0.2em] text-chalk">Programs</h4>
+      <h3 class="font-head text-sm font-semibold uppercase tracking-[0.2em] text-chalk">Programs</h3>
       <ul class="mt-4 space-y-2.5">
         {
           PROGRAMS.map((p) => (
@@ -89,7 +89,7 @@ const hrefOf = (item) => item.to || `/${item.hash || ''}`
     </div>
 
     <div>
-      <h4 class="font-head text-sm font-semibold uppercase tracking-[0.2em] text-chalk">Explore</h4>
+      <h3 class="font-head text-sm font-semibold uppercase tracking-[0.2em] text-chalk">Explore</h3>
       <ul class="mt-4 space-y-2.5">
         {
           NAV.filter((n) => n.label !== 'Home').map((n) => (
@@ -101,11 +101,11 @@ const hrefOf = (item) => item.to || `/${item.hash || ''}`
           ))
         }
       </ul>
-      <h4
+      <h3
         class="mt-7 flex items-center gap-2 font-head text-sm font-semibold uppercase tracking-[0.2em] text-chalk"
       >
-        <FaClock size={13} className="text-battle" /> Hours
-      </h4>
+        <FaClock aria-hidden="true" size={13} className="text-battle" /> Hours
+      </h3>
       <ul class="mt-3 space-y-1.5">
         {
           HOURS.map(({ day, time }) => (
@@ -119,15 +119,15 @@ const hrefOf = (item) => item.to || `/${item.hash || ''}`
     </div>
 
     <div>
-      <h4 class="font-head text-sm font-semibold uppercase tracking-[0.2em] text-chalk">Contact</h4>
+      <h3 class="font-head text-sm font-semibold uppercase tracking-[0.2em] text-chalk">Contact</h3>
       <ul class="mt-4 space-y-3 text-sm">
         <li class="flex gap-3 text-fog">
-          <FaLocationDot className="mt-0.5 shrink-0 text-battle" size={15} />
+          <FaLocationDot aria-hidden="true" className="mt-0.5 shrink-0 text-battle" size={15} />
           <span>{brand.address}, {brand.city}</span>
         </li>
         <li>
           <a href={brand.phoneHref} class="flex items-center gap-3 py-1 text-fog transition-colors hover:text-battle">
-            <FaPhone className="shrink-0 text-battle" size={15} />
+            <FaPhone aria-hidden="true" className="shrink-0 text-battle" size={15} />
             {brand.phone}
           </a>
         </li>
@@ -138,8 +138,9 @@ const hrefOf = (item) => item.to || `/${item.hash || ''}`
             rel="noreferrer"
             class="flex items-center gap-3 py-1 text-fog transition-colors hover:text-battle"
           >
-            <FaMobileScreenButton className="shrink-0 text-battle" size={15} />
+            <FaMobileScreenButton aria-hidden="true" className="shrink-0 text-battle" size={15} />
             {brand.whatsappNumber}
+            <span class="sr-only"> (WhatsApp, opens in a new tab)</span>
           </a>
         </li>
         <li>
@@ -147,7 +148,7 @@ const hrefOf = (item) => item.to || `/${item.hash || ''}`
             href={`mailto:${brand.email}`}
             class="flex items-center gap-3 break-all py-1 text-fog transition-colors hover:text-battle"
           >
-            <FaEnvelope className="shrink-0 text-battle" size={15} />
+            <FaEnvelope aria-hidden="true" className="shrink-0 text-battle" size={15} />
             {brand.email}
           </a>
         </li>
@@ -170,8 +171,11 @@ const hrefOf = (item) => item.to || `/${item.hash || ''}`
         <a href="/terms#privacy-policy" class="text-xs uppercase tracking-widest text-smoke transition-colors hover:text-battle">
           Privacy Policy
         </a>
+        <a href="/accessibility" class="text-xs uppercase tracking-widest text-smoke transition-colors hover:text-battle">
+          Accessibility
+        </a>
       </nav>
-      <p class="text-xs uppercase tracking-widest text-smoke">Forged in Hialeah, Florida 🔥</p>
+      <p class="text-xs uppercase tracking-widest text-smoke">Forged in Hialeah, Florida <span aria-hidden="true">🔥</span></p>
     </div>
   </div>
 </footer>

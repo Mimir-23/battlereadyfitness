@@ -171,7 +171,7 @@ export default function AdminDashboard() {
                   {s.label}
                 </h2>
                 <p className="mt-1 flex-1 text-sm text-smoke">{s.description}</p>
-                <div className="mt-3 text-[11px]">
+                <div className="mt-3 text-[0.6875rem]">
                   {edited ? (
                     <span className="flex items-center gap-1.5 text-battle">
                       <FaCircleCheck size={11} /> Editado {formatDate(edited.updated_at)}

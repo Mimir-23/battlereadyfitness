@@ -26,6 +26,7 @@ const skin =
     : 'border border-iron bg-ink/30 text-chalk backdrop-blur-sm hover:border-battle hover:text-battle'
 const className = `${base} ${size} ${width} ${skin}`
 const rel = target ? 'noreferrer' : undefined
+const newTab = target === '_blank'
 const isMagnetic = magnetic && !full
 ---
 
@@ -40,6 +41,7 @@ const isMagnetic = magnetic && !full
         <span class="pointer-events-none absolute bottom-1 right-1 h-2 w-2 border-b border-r border-current opacity-0 transition-opacity duration-300 group-hover:opacity-60" />
         <span class="relative flex items-center gap-2">
           <slot />
+          {newTab && <span class="sr-only"> (opens in a new tab)</span>}
         </span>
       </a>
     </div>
@@ -52,6 +54,7 @@ const isMagnetic = magnetic && !full
       <span class="pointer-events-none absolute bottom-1 right-1 h-2 w-2 border-b border-r border-current opacity-0 transition-opacity duration-300 group-hover:opacity-60" />
       <span class="relative flex items-center gap-2">
         <slot />
+        {newTab && <span class="sr-only"> (opens in a new tab)</span>}
       </span>
     </a>
   )

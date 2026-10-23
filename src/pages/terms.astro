@@ -1,12 +1,10 @@
 ---
-import { FaArrowRightLong, FaWhatsapp, FaScaleBalanced } from 'react-icons/fa6'
+import { FaScaleBalanced } from 'react-icons/fa6'
 import BaseLayout from '../layouts/BaseLayout.astro'
 import PageBanner from '../components/ui/PageBanner.astro'
-import CTAButton from '../components/ui/CTAButton.astro'
+import PolicyDocument from '../components/ui/PolicyDocument.astro'
 import { loadContent, cacheContentPage } from '../lib/content.js'
 import { fullBleedImage } from '../lib/images.js'
-import { parseLegalBody } from '../lib/legal.js'
-import { whatsappUrl, slugify } from '../content/defaults.js'
 
 /* Terms & Conditions with the privacy and cookie policies — editable from
    the panel (section "Términos y políticas"). */
@@ -14,12 +12,6 @@ const { content, live } = await loadContent()
 cacheContentPage(Astro, live)
 
 const legal = content.legal
-const sections = (legal.sections || []).map((s, i) => ({
-  ...s,
-  id: slugify(s.title) || `section-${i + 1}`,
-  blocks: parseLegalBody(s.body),
-}))
-const pad = (n) => String(n).padStart(2, '0')
 const banner = '/images/g3.webp'
 ---
 
@@ -36,89 +28,10 @@ const banner = '/images/g3.webp'
     subtitle={legal.updated ? `Last updated: ${legal.updated}` : undefined}
     image={banner}
   />
-
-  <section class="relative bg-ink bg-grid py-24">
-    <div class="mx-auto grid max-w-7xl gap-12 px-5 lg:grid-cols-[16rem_minmax(0,1fr)] lg:gap-16 lg:px-8">
-      {/* contents */}
-      <aside class="lg:sticky lg:top-28 lg:self-start">
-        <div data-reveal class="rounded-2xl border border-iron bg-coal p-5">
-          <div class="flex items-center gap-2 font-head text-[11px] font-semibold uppercase tracking-[0.25em] text-battle">
-            <FaScaleBalanced size={12} /> Contents
-          </div>
-          <ol class="mt-4 space-y-1">
-            {
-              sections.map((s, i) => (
-                <li>
-                  <a
-                    href={`#${s.id}`}
-                    class="group flex items-baseline gap-3 rounded-lg px-2 py-1.5 text-sm text-fog transition-colors hover:bg-ink hover:text-chalk"
-                  >
-                    <span class="font-display text-base leading-none text-smoke transition-colors group-hover:text-battle">
-                      {pad(i + 1)}
-                    </span>
-                    {s.title}
-                  </a>
-                </li>
-              ))
-            }
-          </ol>
-        </div>
-      </aside>
-
-      <div class="min-w-0">
-        {
-          legal.intro && (
-            <p data-reveal class="max-w-3xl border-l-2 border-battle pl-5 text-lg leading-relaxed text-chalk">
-              {legal.intro}
-            </p>
-          )
-        }
-
-        <div class="mt-12 space-y-5">
-          {
-            sections.map((s, i) => (
-              <article
-                id={s.id}
-                data-reveal
-                class="rounded-2xl border border-iron bg-coal p-6 transition-colors duration-300 hover:border-battle/40 sm:p-8"
-              >
-                <h2 class="flex items-baseline gap-4 font-head text-xl font-semibold uppercase tracking-wide text-chalk sm:text-2xl">
-                  <span class="font-display text-3xl leading-none text-battle">{pad(i + 1)}</span>
-                  {s.title}
-                </h2>
-                <div class="mt-4 max-w-3xl space-y-4 leading-relaxed text-fog">
-                  {s.blocks.map((b) =>
-                    b.type === 'ul' ? (
-                      <ul class="space-y-2">
-                        {b.items.map((item) => (
-                          <li class="flex gap-3">
-                            <span class="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-battle" />
-                            <span>{item}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <p>{b.text}</p>
-                    ),
-                  )}
-                </div>
-              </article>
-            ))
-          }
-        </div>
-
-        <div data-reveal class="mt-12 flex flex-col gap-3 rounded-2xl border border-iron bg-ink p-6 sm:flex-row sm:items-center sm:justify-between">
-          <p class="text-sm text-fog">Questions about these terms or your information?</p>
-          <div class="flex flex-wrap gap-3">
-            <CTAButton href={whatsappUrl(content.brand)} target="_blank" small>
-              <FaWhatsapp size={14} /> Ask Us
-            </CTAButton>
-            <CTAButton href="/#contact" variant="ghost" small>
-              Contact <FaArrowRightLong size={12} />
-            </CTAButton>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+  <PolicyDocument
+    doc={legal}
+    brand={content.brand}
+    icon={FaScaleBalanced}
+    question="Questions about these terms or your information?"
+  />
 </BaseLayout>
