@@ -1,0 +1,169 @@
+---
+import {
+  FaClock,
+  FaPhone,
+  FaMobileScreenButton,
+  FaEnvelope,
+  FaLocationDot,
+  FaWhatsapp,
+  FaFacebookF,
+  FaInstagram,
+  FaXTwitter,
+} from 'react-icons/fa6'
+import { whatsappUrl } from '../../content/defaults.js'
+import { logoImage } from '../../lib/images.js'
+import CTAButton from '../ui/CTAButton.astro'
+
+const { content } = Astro.props
+const { nav: NAV, programs: PROGRAMS, hours: HOURS, brand } = content
+const WHATSAPP = whatsappUrl(brand)
+const SOCIALS = [
+  { icon: FaFacebookF, href: brand.facebook, label: 'Facebook' },
+  { icon: FaInstagram, href: brand.instagram, label: 'Instagram' },
+  { icon: FaXTwitter, href: 'https://twitter.com/Battle_ReadyFit', label: 'Twitter' },
+  { icon: FaWhatsapp, href: WHATSAPP, label: 'WhatsApp' },
+].filter((s) => s.href)
+const logo = logoImage()
+const hrefOf = (item) => item.to || `/${item.hash || ''}`
+---
+
+<footer class="border-t border-iron bg-ink">
+  {/* top CTA strip */}
+  <div class="border-b border-iron">
+    <div
+      class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-5 px-5 py-8 text-center lg:flex-row lg:px-8 lg:text-left"
+    >
+      <h3 class="font-display text-3xl text-chalk sm:text-4xl">
+        READY TO <span class="text-battle">FIGHT FOR IT?</span>
+      </h3>
+      <div class="flex flex-wrap items-center justify-center gap-3">
+        <CTAButton href={WHATSAPP} target="_blank">Claim 3-Day Free Pass</CTAButton>
+        <CTAButton href={WHATSAPP} target="_blank" variant="ghost">
+          <FaWhatsapp size={16} /> Chat Now
+        </CTAButton>
+      </div>
+    </div>
+  </div>
+
+  {/* main grid */}
+  <div class="mx-auto grid max-w-7xl gap-10 px-5 py-14 sm:grid-cols-2 lg:grid-cols-4 lg:px-8">
+    <div>
+      <img {...logo} alt="Battle Ready Fitness" width="418" height="164" loading="lazy" decoding="async" class="h-11 w-auto" />
+      <p class="mt-4 max-w-xs text-sm leading-relaxed text-fog">
+        Battle Ready Fitness Bootcamp — Hialeah&apos;s premier boot-camp gym. We&apos;re not just the best, we&apos;re
+        simply unique.
+      </p>
+      <div class="mt-5 flex gap-3">
+        {
+          SOCIALS.map((s) => {
+            const Icon = s.icon
+            return (
+              <a
+                href={s.href}
+                target="_blank"
+                rel="noreferrer"
+                aria-label={s.label}
+                class="flex h-11 w-11 items-center justify-center rounded-full border border-iron text-fog transition-colors duration-300 hover:border-battle hover:bg-battle hover:text-ink"
+              >
+                <Icon size={15} />
+              </a>
+            )
+          })
+        }
+      </div>
+    </div>
+
+    <div>
+      <h4 class="font-head text-sm font-semibold uppercase tracking-[0.2em] text-chalk">Programs</h4>
+      <ul class="mt-4 space-y-2.5">
+        {
+          PROGRAMS.map((p) => (
+            <li>
+              <a href="/#programs" class="inline-block py-1 text-sm text-fog transition-colors hover:text-battle">
+                {p.name}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <div>
+      <h4 class="font-head text-sm font-semibold uppercase tracking-[0.2em] text-chalk">Explore</h4>
+      <ul class="mt-4 space-y-2.5">
+        {
+          NAV.filter((n) => n.label !== 'Home').map((n) => (
+            <li>
+              <a href={hrefOf(n)} class="inline-block py-1 text-sm text-fog transition-colors hover:text-battle">
+                {n.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <h4
+        class="mt-7 flex items-center gap-2 font-head text-sm font-semibold uppercase tracking-[0.2em] text-chalk"
+      >
+        <FaClock size={13} className="text-battle" /> Hours
+      </h4>
+      <ul class="mt-3 space-y-1.5">
+        {
+          HOURS.map(({ day, time }) => (
+            <li class="flex justify-between gap-4 text-sm text-fog">
+              <span>{day}</span>
+              <span class="text-smoke">{time}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <div>
+      <h4 class="font-head text-sm font-semibold uppercase tracking-[0.2em] text-chalk">Contact</h4>
+      <ul class="mt-4 space-y-3 text-sm">
+        <li class="flex gap-3 text-fog">
+          <FaLocationDot className="mt-0.5 shrink-0 text-battle" size={15} />
+          <span>{brand.address}, {brand.city}</span>
+        </li>
+        <li>
+          <a href={brand.phoneHref} class="flex items-center gap-3 py-1 text-fog transition-colors hover:text-battle">
+            <FaPhone className="shrink-0 text-battle" size={15} />
+            {brand.phone}
+          </a>
+        </li>
+        <li>
+          <a
+            href={WHATSAPP}
+            target="_blank"
+            rel="noreferrer"
+            class="flex items-center gap-3 py-1 text-fog transition-colors hover:text-battle"
+          >
+            <FaMobileScreenButton className="shrink-0 text-battle" size={15} />
+            {brand.whatsappNumber}
+          </a>
+        </li>
+        <li>
+          <a
+            href={`mailto:${brand.email}`}
+            class="flex items-center gap-3 break-all py-1 text-fog transition-colors hover:text-battle"
+          >
+            <FaEnvelope className="shrink-0 text-battle" size={15} />
+            {brand.email}
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  {/* legal bar */}
+  <div class="border-t border-iron">
+    <div
+      class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-5 py-6 text-center sm:flex-row sm:text-left lg:px-8"
+    >
+      <p class="text-xs uppercase tracking-widest text-smoke">
+        © Copyright 2018 — Battle Ready Fitness Bootcamp — All Rights Reserved
+      </p>
+      <p class="text-xs uppercase tracking-widest text-smoke">Forged in Hialeah, Florida 🔥</p>
+    </div>
+  </div>
+</footer>

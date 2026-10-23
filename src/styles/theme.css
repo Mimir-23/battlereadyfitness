@@ -1,38 +1,18 @@
-@import 'tailwindcss';
-
-/* ---------- Self-hosted fonts (latin subset, variable weights) ----------
-   Served from our own origin: no render-blocking Google Fonts request and no
-   third-party connection on the critical path. Preloaded in index.html. */
-@font-face {
-  font-family: 'Bebas Neue';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('/fonts/bebas-neue.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-@font-face {
-  font-family: 'Oswald';
-  font-style: normal;
-  font-weight: 400 700;
-  font-display: swap;
-  src: url('/fonts/oswald-var.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-@font-face {
-  font-family: 'Inter';
-  font-style: normal;
-  font-weight: 400 700;
-  font-display: swap;
-  src: url('/fonts/inter-var.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-
 /* ============================================================
    BATTLE READY FITNESS — Design System (Tailwind v4)
    Tactical palette anchored on the logo: battle yellow + black,
    with an "alert red" accent for energy/intensity.
    ============================================================ */
+/* Familias tipográficas: las variables --font-bebas/-oswald/-inter las
+   define el componente <Font> de Astro (fuente propia + fallback con
+   métricas ajustadas). `inline` hace que las utilidades usen la variable
+   directamente. */
+@theme inline {
+  --font-display: var(--font-bebas);
+  --font-head: var(--font-oswald);
+  --font-body: var(--font-inter);
+}
+
 @theme {
   /* Brand */
   --color-battle: #ffd200; /* primary — logo tactical yellow */
@@ -50,11 +30,6 @@
   --color-smoke: #8a8a93; /* muted text */
   --color-fog: #c7c7cf; /* secondary text */
   --color-chalk: #f5f5f4; /* primary text on dark */
-
-  /* Type scale */
-  --font-display: 'Bebas Neue', sans-serif;
-  --font-head: 'Oswald', sans-serif;
-  --font-body: 'Inter', system-ui, sans-serif;
 
   /* Motion */
   --ease-power: cubic-bezier(0.16, 1, 0.3, 1);
@@ -228,7 +203,7 @@ body {
   margin: 0;
   background: var(--color-ink);
   color: var(--color-fog);
-  font-family: var(--font-body);
+  font-family: var(--font-inter);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   /* Clip horizontal overflow WITHOUT turning <body> into a scroll container.

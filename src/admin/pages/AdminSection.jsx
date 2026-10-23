@@ -17,13 +17,13 @@ import {
 import { SECTIONS, SECTION_BY_KEY, validateSection } from '../../content/schema'
 import { DEFAULT_CONTENT } from '../../content/defaults'
 import { useContentMeta } from '../../content/ContentProvider'
-import { useAuth } from '../../admin/AuthProvider'
-import { saveSection, resetSection, fetchSavedMeta, fetchSectionValue } from '../../admin/contentApi'
-import { FieldInput, ObjectFields, ListField } from '../../admin/fields'
-import ScheduleEditor from '../../admin/ScheduleEditor'
-import SectionPreview from '../../admin/preview/Previews'
-import PreviewShell from '../../admin/preview/PreviewShell'
-import { useToast, useConfirm, useUnsaved, Spinner } from '../../admin/ui'
+import { useAuth } from '../AuthProvider'
+import { saveSection, resetSection, fetchSavedMeta, fetchSectionValue } from '../contentApi'
+import { FieldInput, ObjectFields, ListField } from '../fields'
+import ScheduleEditor from '../ScheduleEditor'
+import SectionPreview from '../preview/Previews'
+import PreviewShell from '../preview/PreviewShell'
+import { useToast, useConfirm, useUnsaved, Spinner } from '../ui'
 
 const clone = (v) => JSON.parse(JSON.stringify(v ?? null))
 

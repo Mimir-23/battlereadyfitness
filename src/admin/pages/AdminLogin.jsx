@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { FaLock, FaArrowRightLong, FaEye, FaEyeSlash } from 'react-icons/fa6'
-import { useAuth } from '../../admin/AuthProvider'
-import { Spinner } from '../../admin/ui'
+import { useAuth } from '../AuthProvider'
+import { Spinner } from '../ui'
 import SetupNotice from './SetupNotice'
 
 /** Admin sign-in screen. */

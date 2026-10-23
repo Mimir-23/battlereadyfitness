@@ -10,9 +10,9 @@ import {
   FaShieldHalved,
 } from 'react-icons/fa6'
 import { SECTIONS, SECTION_BY_KEY } from '../../content/schema'
-import { sectionIcon } from '../../admin/sectionIcons'
-import { fetchSavedMeta, fetchHistory } from '../../admin/contentApi'
-import { Spinner } from '../../admin/ui'
+import { sectionIcon } from '../sectionIcons'
+import { fetchSavedMeta, fetchHistory } from '../contentApi'
+import { Spinner } from '../ui'
 
 /** Overview: every editable section as a card, plus a simple change log. */
 export default function AdminDashboard() {

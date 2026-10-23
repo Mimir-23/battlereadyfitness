@@ -1,6 +1,6 @@
 import { Routes, Route } from 'react-router-dom'
-import { AuthProvider } from '../../admin/AuthProvider'
-import { ToastProvider, ConfirmProvider, UnsavedProvider } from '../../admin/ui'
+import { AuthProvider } from '../AuthProvider'
+import { ToastProvider, ConfirmProvider, UnsavedProvider } from '../ui'
 import AdminLayout from './AdminLayout'
 import AdminLogin from './AdminLogin'
 import AdminDashboard from './AdminDashboard'

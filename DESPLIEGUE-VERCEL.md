@@ -116,18 +116,19 @@ git push -u origin main
 
 ### C.2 Configuración del build
 
-Vercel detecta **Vite** automáticamente. Verifica que diga:
+Vercel detecta **Astro** automáticamente. Verifica que diga:
 
 | Campo | Valor |
 |---|---|
-| Framework Preset | **Vite** |
+| Framework Preset | **Astro** |
 | Build Command | `npm run build` |
-| Output Directory | `dist` |
+| Output Directory | *(automático — déjalo vacío)* |
 | Install Command | `npm install` |
+| Node.js Version | **22.x o superior** (Settings → General) |
 
-No cambies nada más. El archivo `vercel.json` del proyecto ya se encarga de
-que las rutas (`/admin`, `/schedule`, `/memberships`) funcionen al entrar
-directo o recargar la página.
+No cambies nada más. Astro genera solo las rutas (`/admin`, `/schedule`,
+`/memberships`), la función del servidor y la configuración de caché e
+imágenes; `vercel.json` aporta el cron diario y las cabeceras de seguridad.
 
 ### C.3 Variables de entorno (¡el paso clave!)
 
@@ -199,39 +200,43 @@ Si los 7 puntos pasan: **está en producción.** 🎉
 
 | Síntoma | Causa | Solución |
 |---|---|---|
-| 404 al recargar `/admin` o `/schedule` | Falta el rewrite de SPA | Ya resuelto con `vercel.json` (debe estar en el repo). Verifica que se subió a GitHub. |
+| 404 al recargar `/admin` o `/schedule` | El proyecto no se compiló como Astro | En Vercel → Settings → General, el Framework Preset debe ser **Astro** y el Output Directory vacío. Vuelve a desplegar. |
 | `/admin` dice **"Casi listo"** | Faltan las variables de entorno o tienen otro nombre | Revisa C.3 (nombres exactos, sin espacios) y haz **Redeploy**. |
 | Login dice "Correo o contraseña incorrectos" | Usuario mal creado | En Supabase → Authentication → Users: verifica que el usuario existe y está **confirmado** (Auto Confirm). |
 | Entras pero dice **"Sin acceso"** | Tu correo no está en la tabla `admins` | Repite el paso A.3 con el mismo correo del login. |
 | Guardar da error "permission denied" / "violates row-level security" | El `schema.sql` no se ejecutó completo, o el correo no coincide | Vuelve a ejecutar `schema.sql` (es seguro repetirlo) y revisa A.3. |
 | No se pueden subir imágenes | Políticas de Storage no creadas | Revisa el aviso del paso A.2 (`must be owner...`) y crea las políticas desde la interfaz de Storage. |
-| Los cambios del panel no se ven en el sitio | Caché del navegador | Recarga con Ctrl+Shift+R o prueba en incógnito. El contenido se lee en cada visita. |
+| Los cambios del panel no se ven en el sitio | La copia del CDN no se purgó | Al guardar, el panel purga la caché (`/api/revalidate`); si esa llamada falla, el sitio se actualiza solo en máximo 5 minutos. Prueba en incógnito para descartar el navegador. |
 | El build falla en Vercel | Suele ser un error de código | Corre `npm run build` en tu máquina para ver el error exacto antes de subir. |
 
 ---
 
 ## Notas técnicas (por si otro desarrollador toca el proyecto)
 
-- **Stack:** React 19 + Vite + Tailwind v4 + React Router 7. SPA pura (sin SSR).
-- **`vercel.json`:** reescribe todas las rutas a `index.html` (React Router se
-  encarga del enrutado) y cachea `/assets/*` como inmutable (los nombres de
-  archivo llevan hash).
-- **Contenido:** el sitio público lee `site_content` de Supabase por REST
-  (`fetch` plano, sin SDK) y hace *merge* sobre los valores por defecto de
-  `src/content/defaults.js`. Si Supabase no responde o no está configurado,
-  el sitio renderiza los defaults — nunca se rompe.
-- **Panel `/admin`:** chunk *lazy* separado (~63 KB gzip) que sí carga el SDK
-  de Supabase (auth + storage). El bundle público no lo incluye.
-- **Seguridad:** la `anon key` es pública; RLS restringe la escritura a los
-  correos de `public.admins` (función `public.is_admin()`).
-- **Imágenes:** el sitio usa WebP optimizado (`public/images/*.webp`). Si se
-  añaden imágenes nuevas al proyecto, ejecuta `npm run optimize:images`
-  (script en `scripts/optimize-images.mjs`, añade la entrada nueva a la lista
-  `JOBS`) para generar su versión WebP redimensionada. Las imágenes subidas
-  desde el panel `/admin` van a Supabase Storage y no pasan por este script.
-- **Restos de Firebase:** `firebase.json`, `deploy.cjs`, `llave.json` y la
-  dependencia `firebase-tools` son de un despliegue anterior en Firebase
-  Hosting. Vercel los ignora; se pueden borrar cuando se confirme que ya no
-  se usará Firebase. `llave.json` y el JSON de credenciales están en
-  `.gitignore` y **no deben subirse nunca** al repositorio.
+- **Stack:** Astro 7 (`output: 'server'`, adaptador `@astrojs/vercel`) + Tailwind v4.
+  React 19 solo en el panel `/admin` (isla `client:only`).
+- **Render y caché:** las páginas públicas se renderizan en el servidor con el contenido de
+  Supabase ya incluido (`src/lib/content.js`) y el CDN de Vercel las guarda con *route caching*
+  de Astro: 5 minutos frescas y luego `stale-while-revalidate`, etiquetadas `content`. Si
+  Supabase no responde se renderizan los valores por defecto y esa copia solo se guarda 15 s.
+- **Publicación inmediata:** al guardar o restaurar, el panel llama a `POST /api/revalidate`
+  con la sesión del admin; el servidor verifica que el correo está en `admins` y borra del CDN
+  todo lo etiquetado `content`. El cron de Recess hace lo mismo cuando cambia algo.
+- **Panel `/admin`:** páginas estáticas (prerenderizadas) que cargan la app de React con el SDK
+  de Supabase (auth + storage). El sitio público no descarga React ni Supabase.
+- **Seguridad:** la `anon key` es pública; RLS restringe la escritura a los correos de
+  `public.admins` (función `public.is_admin()`).
+- **Imágenes:** fotos del proyecto (`public/images/*.webp`) y subidas del panel (Supabase
+  Storage) se sirven por el optimizador de Vercel (`/_vercel/image`) con `srcset`; los anchos
+  permitidos están en `src/lib/image-widths.js`. Si se añaden imágenes nuevas al proyecto,
+  `npm run optimize:images` genera su WebP base.
+- **Fuentes:** propias (`src/assets/fonts`), servidas con hash por la API de fuentes de Astro,
+  que además genera *fallbacks* con métricas ajustadas para evitar saltos de texto.
+- **Vista previa local del build:** `npm run preview` compila con el adaptador de Node (caché
+  en memoria) y lo sirve en `http://localhost:4321`.
+- **Restos de Firebase:** `firebase.json`, `.firebaserc`, `deploy.cjs`, el workflow de GitHub
+  Actions y la dependencia `firebase-tools` son de un despliegue anterior en Firebase Hosting.
+  Ese hosting solo sirve archivos estáticos, así que ya no puede alojar este sitio. Vercel los
+  ignora; se pueden borrar. `llave.json` y el JSON de credenciales están en `.gitignore` y
+  **no deben subirse nunca** al repositorio.
 - **Guía del panel para el cliente final:** ver [`PANEL-ADMIN.md`](./PANEL-ADMIN.md).

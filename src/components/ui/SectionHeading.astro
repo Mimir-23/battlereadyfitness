@@ -1,0 +1,38 @@
+---
+/** Kicker + oversized display title used at the top of every major section. */
+const { number, kicker, title, accent, align = 'center' } = Astro.props
+const center = align === 'center'
+---
+
+<div class={`relative max-w-2xl ${center ? 'mx-auto text-center' : ''}`}>
+  {/* giant stencil index behind the title, drifting on a deeper plane */}
+  {
+    number && (
+      <div
+        aria-hidden="true"
+        class={`pointer-events-none absolute inset-x-0 -top-16 z-0 flex ${center ? 'justify-center' : 'justify-start'}`}
+      >
+        <div data-parallax="26,-26">
+          <span class="font-display text-[9rem] leading-none text-stroke-chalk opacity-35 select-none">{number}</span>
+        </div>
+      </div>
+    )
+  }
+
+  <div class="relative z-10">
+    <div data-reveal>
+      <div class={`flex items-center gap-3 ${center ? 'justify-center' : ''}`}>
+        {number && <span class="font-display text-2xl text-stroke leading-none">{number}</span>}
+        <span class="font-head text-xs font-semibold uppercase tracking-[0.3em] text-battle">{kicker}</span>
+      </div>
+    </div>
+    <h2 data-reveal="heading" class="mt-3 font-display text-5xl leading-[0.95] text-chalk lg:text-6xl">
+      {title} {accent && <span class="text-battle">{accent}</span>}
+    </h2>
+    <div
+      data-reveal="line"
+      class={`mt-5 h-0.5 w-24 origin-left bg-gradient-to-r from-battle to-transparent ${center ? 'mx-auto' : ''}`}
+    >
+    </div>
+  </div>
+</div>

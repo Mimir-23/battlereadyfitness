@@ -1,0 +1,25 @@
+---
+import { FaFire } from 'react-icons/fa6'
+
+/** Infinite scrolling word band that skews with scroll velocity (desktop). */
+const { words = [], reverse = false } = Astro.props
+const items = [...words, ...words]
+---
+
+<div class={`relative overflow-hidden border-y border-iron py-4 ${reverse ? 'bg-ink' : 'bg-battle'}`}>
+  <div data-skew class="w-max">
+    <div
+      class="flex w-max items-center gap-8 whitespace-nowrap"
+      style={`animation: ${reverse ? 'var(--animate-marquee-rev)' : 'var(--animate-marquee)'}`}
+    >
+      {
+        items.map((word) => (
+          <span class="flex items-center gap-8">
+            <span class={`font-display text-2xl tracking-wide ${reverse ? 'text-stroke-chalk' : 'text-ink'}`}>{word}</span>
+            <FaFire className={reverse ? 'text-battle' : 'text-ink/70'} size={18} />
+          </span>
+        ))
+      }
+    </div>
+  </div>
+</div>

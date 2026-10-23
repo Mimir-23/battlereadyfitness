@@ -7,10 +7,10 @@ import {
   FaXmark,
   FaArrowUpRightFromSquare,
 } from 'react-icons/fa6'
-import { useAuth } from '../../admin/AuthProvider'
-import { Spinner, useConfirm, useUnsaved } from '../../admin/ui'
+import { useAuth } from '../AuthProvider'
+import { Spinner, useConfirm, useUnsaved } from '../ui'
 import { SECTIONS } from '../../content/schema'
-import { sectionIcon } from '../../admin/sectionIcons'
+import { sectionIcon } from '../sectionIcons'
 import SetupNotice from './SetupNotice'
 
 /* ------------------------------------------------------------------ */

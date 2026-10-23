@@ -1,0 +1,73 @@
+---
+import { FaLocationDot } from 'react-icons/fa6'
+import { fullBleedImage } from '../../lib/images.js'
+
+/**
+ * Hero banner for interior pages (Schedule, Memberships). Mirrors the home
+ * hero's tactical treatment — image, gradients, grid, scanline — at banner
+ * height. On desktop the photo drifts slower than the page and the copy
+ * lifts + fades as it scrolls away (src/scripts/scroll-effects.js).
+ */
+const { kicker, title, accent, subtitle, image = '/images/hero.webp' } = Astro.props
+const img = fullBleedImage(image)
+let i = 0
+---
+
+<section data-banner class="relative flex min-h-[60svh] items-center overflow-hidden bg-ink pt-24">
+  <div data-banner-bg class="absolute inset-0">
+    <div data-banner-zoom class="absolute inset-0">
+      <img {...img} alt="" aria-hidden="true" fetchpriority="high" decoding="async" class="h-full w-full object-cover" />
+    </div>
+  </div>
+  <div class="absolute inset-0 bg-gradient-to-r from-ink via-ink/85 to-ink/40"></div>
+  <div class="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-ink/60"></div>
+  <div class="absolute inset-0 bg-grid opacity-40"></div>
+  <div class="pointer-events-none absolute inset-0 overflow-hidden">
+    {/* Full-height wrapper so translateY(±100%) sweeps the whole banner. */}
+    <div class="absolute inset-0" style="animation: var(--animate-scan)">
+      <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-battle/70 to-transparent"></div>
+    </div>
+  </div>
+
+  <div data-banner-content class="relative mx-auto w-full max-w-7xl px-5 lg:px-8">
+    <div class="max-w-3xl">
+      <div data-banner-item style={`--i:${i++}`}>
+        <span
+          class="inline-flex items-center gap-2 rounded-full border border-battle/40 bg-battle/10 px-4 py-1.5 font-head text-xs font-medium uppercase tracking-[0.2em] text-battle backdrop-blur-sm"
+        >
+          <FaLocationDot size={12} />
+          {kicker}
+        </span>
+      </div>
+
+      <h1
+        data-banner-item
+        style={`--i:${i++}`}
+        class="mt-6 font-display text-[clamp(2.75rem,10vw,6rem)] leading-[0.88] text-chalk"
+      >
+        {title} {accent && <span class="text-battle">{accent}</span>}
+      </h1>
+
+      {
+        subtitle && (
+          <p data-banner-item style={`--i:${i++}`} class="mt-6 max-w-xl text-lg leading-relaxed text-fog">
+            {subtitle}
+          </p>
+        )
+      }
+
+      <nav
+        data-banner-item
+        style={`--i:${i++}`}
+        aria-label="Breadcrumb"
+        class="mt-7 flex items-center gap-2 font-head text-xs uppercase tracking-[0.2em] text-smoke"
+      >
+        <a href="/" class="transition-colors hover:text-battle">Home</a>
+        <span class="text-iron">/</span>
+        <span class="text-chalk">{accent ? `${title} ${accent}` : title}</span>
+      </nav>
+    </div>
+  </div>
+
+  <div class="bg-hazard absolute inset-x-0 bottom-0 h-2 opacity-80"></div>
+</section>

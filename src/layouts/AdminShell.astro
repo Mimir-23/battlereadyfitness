@@ -1,0 +1,39 @@
+---
+import { Font } from 'astro:assets'
+import '../styles/admin.css'
+import AdminRoot from '../admin/AdminRoot.jsx'
+import RopeLoader from '../components/ui/RopeLoader.astro'
+
+/* Static shell of the /admin panel: the React app (with Supabase auth and
+   storage) only runs here, as a client-only island. */
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#0a0a0b" />
+    <title>Panel de contenido — Battle Ready Fitness</title>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <Font cssVariable="--font-bebas" />
+    <Font cssVariable="--font-oswald" />
+    <Font cssVariable="--font-inter" />
+    <script is:inline>
+      // Tras un despliegue, una pestaña con el HTML anterior puede pedir
+      // archivos que ya no existen: recargar trae el HTML (y nombres) nuevos.
+      addEventListener('vite:preloadError', (e) => {
+        e.preventDefault()
+        location.reload()
+      })
+    </script>
+  </head>
+  <body>
+    <AdminRoot client:only="react">
+      <div slot="fallback" class="flex min-h-svh items-center justify-center bg-ink">
+        <RopeLoader />
+      </div>
+    </AdminRoot>
+  </body>
+</html>

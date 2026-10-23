@@ -5,9 +5,9 @@ import reactRefresh from 'eslint-plugin-react-refresh'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig([
-  globalIgnores(['dist']),
+  globalIgnores(['dist', '.vercel', '.astro']),
   {
-    files: ['**/*.{js,jsx}'],
+    files: ['**/*.{js,jsx,mjs}'],
     extends: [
       js.configs.recommended,
       reactHooks.configs.flat.recommended,
@@ -19,8 +19,9 @@ export default defineConfig([
     },
   },
   {
-    // Funciones serverless de Vercel: entorno Node, no navegador.
-    files: ['api/**/*.js'],
-    languageOptions: { globals: globals.node },
+    // Código que corre en el servidor (render, endpoints /api) y scripts de
+    // Node. Parte de src/lib se comparte con el navegador.
+    files: ['src/lib/**/*.js', 'src/pages/**/*.js', 'scripts/**/*.mjs', 'astro.config.mjs'],
+    languageOptions: { globals: { ...globals.node, ...globals.browser } },
   },
 ])

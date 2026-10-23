@@ -1,0 +1,20 @@
+---
+import { responsiveImage } from '../../lib/images.js'
+
+/** Scroll-linked parallax image inside a clipped, relatively-positioned frame. */
+const { src, alt, class: className = '', strength = 80, sizes = '100vw', widths } = Astro.props
+const img = responsiveImage(src, { sizes, widths })
+---
+
+<div class={`overflow-hidden ${className}`}>
+  <img
+    {...img}
+    alt={alt}
+    data-parallax-img
+    data-parallax={`${-strength},${strength}`}
+    data-parallax-target="parent"
+    class="h-full w-full object-cover"
+    loading="lazy"
+    decoding="async"
+  />
+</div>

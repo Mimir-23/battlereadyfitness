@@ -1,0 +1,49 @@
+---
+/**
+ * Embeds a Recess (battle-ready.recess.tv) iframe and auto-resizes it to its
+ * content: Recess posts `["setHeight", <px>]` messages and src/scripts/recess.js
+ * applies them, so there's no inner scrollbar. A branded skeleton holds the
+ * space while the portal loads. The portal (~2 MB of scripts) only starts
+ * loading as the visitor scrolls toward it, or right away when they pick a
+ * plan or class, so it never competes with the page's own first paint.
+ */
+const { src, title = 'Recess Embed', minHeight = 720 } = Astro.props
+---
+
+<div data-recess class="relative" style={`min-height: ${minHeight}px`} data-min-height={minHeight}>
+  <div data-recess-skeleton class="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-ink">
+    <div class="relative h-12 w-12">
+      <span class="absolute inset-0 rounded-full border-2 border-iron"></span>
+      <span
+        class="absolute inset-0 rounded-full border-2 border-transparent border-t-battle"
+        style="animation: var(--animate-spin-slow)"></span>
+    </div>
+    <span class="font-head text-xs uppercase tracking-[0.3em] text-smoke">Loading secure checkout…</span>
+    {/* shimmer rows */}
+    <div class="mt-2 w-full max-w-sm space-y-3 px-6">
+      {
+        [0, 1, 2].map(() => (
+          <div class="relative h-10 overflow-hidden rounded-lg bg-coal">
+            <div
+              class="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"
+              style="animation: var(--animate-shimmer)"
+            />
+          </div>
+        ))
+      }
+    </div>
+  </div>
+  <iframe
+    data-recess-frame
+    id="embedIframe"
+    title={title}
+    data-src={src}
+    width="100%"
+    loading="lazy"
+    style={`border: none; width: 100%; height: ${minHeight}px`}
+    allowfullscreen></iframe>
+</div>
+
+<script>
+  import '../../scripts/recess.js'
+</script>

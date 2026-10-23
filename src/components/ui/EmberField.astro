@@ -1,0 +1,27 @@
+---
+/**
+ * Drifting ember particles for the "intensity / fire" motif. Pure CSS
+ * animation, GPU-friendly (transform/opacity only). Desktop only: the
+ * `ember-field` class keeps it hidden on touch and for reduced motion.
+ */
+const { count = 18 } = Astro.props
+const embers = Array.from({ length: count }, () => ({
+  left: Math.random() * 100,
+  size: 1.5 + Math.random() * 2.5,
+  delay: Math.random() * 7,
+  duration: 5 + Math.random() * 5,
+  bottom: Math.random() * 30,
+}))
+const f = (n) => Number(n.toFixed(3))
+---
+
+<div class="ember-field pointer-events-none absolute inset-0 overflow-hidden motion-reduce:hidden" aria-hidden="true">
+  {
+    embers.map((e) => (
+      <span
+        class="absolute rounded-full bg-battle"
+        style={`left: ${f(e.left)}%; bottom: ${f(e.bottom)}%; width: ${f(e.size)}px; height: ${f(e.size)}px; filter: blur(0.5px); box-shadow: 0 0 6px rgba(255,210,0,0.8); animation: ember ${f(e.duration)}s linear ${f(e.delay)}s infinite`}
+      />
+    ))
+  }
+</div>
