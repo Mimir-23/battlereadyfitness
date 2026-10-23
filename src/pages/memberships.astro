@@ -1,0 +1,235 @@
+---
+import {
+  FaCheck,
+  FaWhatsapp,
+  FaArrowRightLong,
+  FaArrowLeftLong,
+  FaLock,
+  FaShieldHalved,
+  FaBoltLightning,
+  FaCircleXmark,
+} from 'react-icons/fa6'
+import BaseLayout from '../layouts/BaseLayout.astro'
+import PageBanner from '../components/ui/PageBanner.astro'
+import SectionHeading from '../components/ui/SectionHeading.astro'
+import CTAButton from '../components/ui/CTAButton.astro'
+import RecessEmbed from '../components/ui/RecessEmbed.astro'
+import { loadContent, cacheContentPage } from '../lib/content.js'
+import { fullBleedImage } from '../lib/images.js'
+import { whatsappUrl } from '../content/defaults.js'
+
+const { content, live } = await loadContent()
+cacheContentPage(Astro, live)
+
+const { plans: PLANS, brand } = content
+const RECESS_MEMBERSHIPS = brand.recessUrl
+const WHATSAPP = whatsappUrl(brand)
+
+// A plan synced from Recess opens its exact package in the checkout below
+// (…/embed/checkout/package/<id>) instead of the full list.
+const packageSrc = (plan) => {
+  if (!plan.recessId) return ''
+  try {
+    const origin = new URL(RECESS_MEMBERSHIPS).origin
+    return `${origin}/embed/checkout/package/${encodeURIComponent(plan.recessId)}?hideMenu=true`
+  } catch {
+    return ''
+  }
+}
+const banner = '/images/cta.webp'
+---
+
+<BaseLayout content={content} title="Memberships" preloadImage={fullBleedImage(banner)}>
+  <PageBanner
+    kicker="No Contracts · Cancel Anytime"
+    title="MEMBER"
+    accent="SHIPS"
+    subtitle="One pass, every battle program. Start with 3 free days, then pick the plan that matches your fight."
+    image={banner}
+  />
+
+  <div data-memberships data-checkout-url={RECESS_MEMBERSHIPS || ''}>
+    {/* Plan cards */}
+    <section class="bg-ink bg-grid py-24">
+      <div class="mx-auto max-w-7xl px-5 lg:px-8">
+        <SectionHeading number="01" kicker="Choose Your Plan" title="JOIN THE" accent="RANKS" />
+
+        <div data-reveal-group class="mt-14 grid gap-5 lg:grid-cols-3">
+          {
+            PLANS.map((plan) => (
+              <div
+                data-reveal
+                data-reveal-item
+                data-spotlight
+                data-lift
+                class={`spotlight relative flex flex-col overflow-hidden rounded-2xl border p-8 ${
+                  plan.featured ? 'border-battle bg-coal lg:scale-[1.03]' : 'border-iron bg-coal hover:border-battle/40'
+                }`}
+                data-glow={plan.featured ? '' : undefined}
+              >
+                {plan.featured && (
+                  <>
+                    <div class="bg-hazard absolute inset-x-0 top-0 h-2 opacity-80" />
+                    <span class="absolute right-5 top-5 rounded-full bg-battle px-3 py-1 font-head text-[10px] font-bold uppercase tracking-[0.2em] text-ink">
+                      Most Popular
+                    </span>
+                  </>
+                )}
+
+                <h3 class="font-head text-xl font-semibold uppercase tracking-wide text-chalk">{plan.name}</h3>
+                <div class="mt-4 flex items-end gap-2">
+                  <span class="font-display text-5xl text-battle">{plan.price}</span>
+                  <span class="mb-1.5 text-sm text-smoke">{plan.period}</span>
+                </div>
+                <p class="mt-4 text-sm leading-relaxed text-fog">{plan.desc}</p>
+
+                <ul class="mt-6 space-y-3">
+                  {(plan.perks || []).map((perk, pi) => (
+                    <li
+                      data-reveal="perk"
+                      style={`--reveal-delay: ${(0.1 + pi * 0.08).toFixed(2)}s`}
+                      class="flex items-center gap-3 text-sm text-fog"
+                    >
+                      <span class="flex h-5 w-5 items-center justify-center rounded-full bg-battle/15 text-battle">
+                        <FaCheck size={10} />
+                      </span>
+                      {perk}
+                    </li>
+                  ))}
+                </ul>
+
+                <div class="mt-8 pt-2">
+                  <CTAButton
+                    href="#join"
+                    full
+                    variant={plan.featured ? 'primary' : 'ghost'}
+                    magnetic={false}
+                    data-select-plan
+                    data-plan-src={packageSrc(plan)}
+                    data-plan-name={plan.name}
+                  >
+                    {plan.cta}
+                  </CTAButton>
+                </div>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    {/* Recess checkout embed */}
+    <section id="join" class="relative overflow-hidden border-y border-iron bg-coal py-24">
+      <div data-parallax="70,-70" class="pointer-events-none absolute -right-40 top-1/4">
+        <div class="h-[440px] w-[440px] rounded-full bg-battle/10 blur-[140px]"></div>
+      </div>
+
+      <div class="relative mx-auto max-w-5xl px-5 lg:px-8">
+        <SectionHeading number="02" kicker="Secure Checkout" title="EXPLORE" accent="PACKAGES" />
+        <p class="mx-auto mt-4 max-w-xl text-center text-fog">
+          Pick your package and complete sign-up right here — securely powered by our Recess member portal.
+        </p>
+
+        {/* Secure checkout terminal */}
+        <div data-reveal class="mt-12 overflow-hidden rounded-2xl border border-iron bg-ink shadow-2xl">
+          <div class="bg-hazard h-1.5"></div>
+
+          {/* terminal top bar */}
+          <div class="flex items-center justify-between gap-3 border-b border-iron bg-coal/60 px-4 py-3.5 sm:px-5">
+            <div class="flex items-center gap-3">
+              <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-battle/10 text-battle">
+                <FaLock size={15} />
+              </span>
+              <div class="leading-tight">
+                <div class="font-head text-xs font-bold uppercase tracking-[0.2em] text-chalk">Secure Checkout</div>
+                <div class="mt-0.5 font-head text-[10px] uppercase tracking-wider text-smoke">
+                  256-bit SSL · Powered by Recess
+                </div>
+              </div>
+            </div>
+            <span
+              class="flex items-center gap-2 rounded-full border border-battle/40 bg-battle/10 px-3 py-1.5 font-head text-[10px] font-semibold uppercase tracking-wider text-battle"
+            >
+              <FaShieldHalved size={11} /> <span class="hidden sm:inline">Encrypted</span>
+            </span>
+          </div>
+
+          {/* deep-link bar: which package the terminal is showing */}
+          <div
+            data-selected-bar
+            hidden
+            class="flex flex-wrap items-center justify-between gap-3 border-b border-iron bg-battle/5 px-4 py-3 sm:px-5"
+          >
+            <span class="min-w-0 truncate font-head text-xs font-semibold uppercase tracking-wider text-chalk">
+              Checkout: <span data-selected-name class="text-battle"></span>
+            </span>
+            <button
+              type="button"
+              data-clear-selection
+              class="inline-flex shrink-0 cursor-pointer items-center gap-2 font-head text-[11px] font-semibold uppercase tracking-wider text-smoke transition-colors hover:text-battle"
+            >
+              <FaArrowLeftLong size={11} /> View all packages
+            </button>
+          </div>
+
+          <RecessEmbed src={RECESS_MEMBERSHIPS} title="Battle Ready — Explore Packages" minHeight={760} />
+        </div>
+
+        {/* trust badges */}
+        <div class="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {
+            [
+              { icon: FaLock, label: 'SSL Secure' },
+              { icon: FaShieldHalved, label: 'Secure Payment' },
+              { icon: FaBoltLightning, label: 'Instant Access' },
+              { icon: FaCircleXmark, label: 'Cancel Anytime' },
+            ].map((b) => {
+              const Icon = b.icon
+              return (
+                <div class="flex items-center gap-2.5 rounded-xl border border-iron bg-ink px-4 py-3">
+                  <Icon size={15} className="shrink-0 text-battle" />
+                  <span class="font-head text-[11px] font-semibold uppercase tracking-wider text-fog">{b.label}</span>
+                </div>
+              )
+            })
+          }
+        </div>
+
+        <div class="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <p class="text-sm text-smoke">Prefer to talk it through first?</p>
+          <CTAButton href={WHATSAPP} target="_blank" variant="ghost">
+            <FaWhatsapp size={16} /> Message a Coach <FaArrowRightLong size={14} />
+          </CTAButton>
+        </div>
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<script>
+  import { setRecessSrc } from '../scripts/recess.js'
+
+  /* Picking a plan loads that exact package in the checkout below; plans
+     without a Recess id (e.g. the free pass) show the full list. */
+  const root = document.querySelector('[data-memberships]')
+  const embed = root?.querySelector('[data-recess]')
+  const bar = root?.querySelector('[data-selected-bar]')
+
+  const select = (picked) => {
+    if (!embed) return
+    bar.hidden = !picked
+    if (picked) root.querySelector('[data-selected-name]').textContent = picked.name
+    setRecessSrc(
+      embed,
+      picked ? picked.src : root.dataset.checkoutUrl,
+      picked ? `Battle Ready — ${picked.name} checkout` : 'Battle Ready — Explore Packages',
+    )
+  }
+
+  root?.querySelectorAll('[data-select-plan]').forEach((a) => {
+    a.addEventListener('click', () =>
+      select(a.dataset.planSrc ? { src: a.dataset.planSrc, name: a.dataset.planName } : null),
+    )
+  })
+  root?.querySelector('[data-clear-selection]')?.addEventListener('click', () => select(null))
+</script>

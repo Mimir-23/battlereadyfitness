@@ -1,0 +1,101 @@
+---
+import { FaArrowRightLong } from 'react-icons/fa6'
+import { getIcon } from '../../content/icons.js'
+import { responsiveImage } from '../../lib/images.js'
+import SectionHeading from '../ui/SectionHeading.astro'
+
+const { programs = [] } = Astro.props
+---
+
+<section id="programs" class="bg-ink bg-grid py-24">
+  <div class="mx-auto max-w-7xl px-5 lg:px-8">
+    <SectionHeading number="01" kicker="Train Your Way" title="CHOOSE YOUR" accent="BATTLE" />
+    <p class="mx-auto mt-4 max-w-xl text-center text-fog">
+      {programs.length} battle-tested programs engineered to build strength, torch fat, and forge discipline. Pick your fight.
+    </p>
+
+    <div data-reveal-group class="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        programs.map((p, i) => {
+          const Icon = getIcon(p.icon)
+          const featured = i === 1
+          const img = responsiveImage(p.img, {
+            sizes: featured ? '(min-width: 1024px) 520px, 130vw' : '(min-width: 1024px) 520px, (min-width: 640px) 65vw, 130vw',
+            widths: [640, 828, 1080, 1280],
+          })
+          return (
+            <div
+              data-reveal
+              data-reveal-item
+              data-spotlight
+              data-tilt="6"
+              data-lift
+              data-cursor
+              class={`spotlight group relative flex min-h-[340px] flex-col justify-end overflow-hidden rounded-2xl border border-iron hover:border-battle/50 ${
+                featured ? 'sm:col-span-2 lg:col-span-1' : ''
+              }`}
+            >
+              <img
+                {...img}
+                alt={p.name}
+                loading="lazy"
+                decoding="async"
+                class="absolute inset-0 h-full w-full object-cover transition-all duration-700 group-hover:scale-110 lg:grayscale lg:group-hover:grayscale-0"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/70 to-ink/20 transition-colors duration-500 group-hover:from-ink group-hover:via-ink/60" />
+
+              {/* oversized index watermark */}
+              <span class="pointer-events-none absolute right-4 top-2 font-display text-7xl leading-none text-stroke-chalk opacity-20 transition-opacity duration-500 group-hover:opacity-40">
+                {String(i + 1).padStart(2, '0')}
+              </span>
+
+              {featured && (
+                <span class="absolute left-4 top-4 z-10 rounded-full bg-battle px-3 py-1 font-head text-[10px] font-bold uppercase tracking-[0.2em] text-ink">
+                  Signature
+                </span>
+              )}
+
+              <div class="relative z-10 p-7">
+                <div class="flex items-center justify-between">
+                  <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-battle/15 text-battle backdrop-blur-sm transition-colors duration-300 group-hover:bg-battle group-hover:text-ink">
+                    <Icon size={22} />
+                  </div>
+                  <span class="font-head text-[10px] font-semibold uppercase tracking-[0.2em] text-smoke">{p.tag}</span>
+                </div>
+                <h3 class="mt-5 font-head text-2xl font-semibold uppercase tracking-wide text-chalk">{p.name}</h3>
+                <p class="mt-2 overflow-hidden text-sm leading-relaxed text-fog transition-all duration-500 lg:max-h-0 lg:opacity-0 lg:group-hover:max-h-32 lg:group-hover:opacity-100">
+                  {p.desc}
+                </p>
+                <a
+                  href="/memberships"
+                  class="mt-3 inline-flex items-center gap-2 py-2 font-head text-xs font-semibold uppercase tracking-widest text-battle transition-all group-hover:gap-3"
+                >
+                  Get Started Now <FaArrowRightLong size={12} />
+                </a>
+              </div>
+            </div>
+          )
+        })
+      }
+
+      {/* CTA tile */}
+      <div
+        data-reveal
+        data-reveal-item
+        class="relative flex min-h-[340px] flex-col justify-center overflow-hidden rounded-2xl bg-battle p-8"
+      >
+        <div class="bg-hazard absolute inset-x-0 top-0 h-2.5 opacity-80"></div>
+        <h3 class="font-display text-5xl leading-none text-ink">STOP WAITING</h3>
+        <p class="mt-4 text-sm font-medium text-ink/80">Your first 3 days are on us. Walk in. Get to work. Transform.</p>
+        <div class="mt-6">
+          <a
+            href="/memberships"
+            class="inline-flex items-center gap-2 py-2 font-head text-sm font-bold uppercase tracking-widest text-ink"
+          >
+            Claim Yours Now <FaArrowRightLong />
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

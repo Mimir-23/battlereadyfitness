@@ -1,0 +1,14 @@
+---
+import AdminShell from '../../layouts/AdminShell.astro'
+import { SECTIONS } from '../../content/schema.js'
+
+/* Every panel URL is the same static shell; the React app inside routes
+   by itself. Prerendered: served as plain files, no function needed. */
+export const prerender = true
+
+export function getStaticPaths() {
+  return [undefined, 'login', ...SECTIONS.map((s) => s.key)].map((path) => ({ params: { path } }))
+}
+---
+
+<AdminShell />

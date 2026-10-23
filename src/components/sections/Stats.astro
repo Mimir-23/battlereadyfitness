@@ -1,0 +1,23 @@
+---
+const { stats = [] } = Astro.props
+---
+
+<section class="relative border-b border-iron bg-coal py-14">
+  {/* thin hazard accent along the top edge */}
+  <div class="bg-hazard absolute inset-x-0 top-0 h-1 opacity-60"></div>
+  <div
+    data-reveal-group
+    class="mx-auto grid max-w-7xl grid-cols-2 gap-8 px-5 lg:grid-cols-4 lg:gap-0 lg:divide-x lg:divide-iron lg:px-8"
+  >
+    {
+      stats.map((s) => (
+        <div data-reveal data-reveal-item data-lift-soft class="group text-center lg:px-8">
+          <div class="font-display text-5xl text-battle transition-[text-shadow] duration-300 group-hover:[text-shadow:0_0_28px_rgba(255,210,0,0.45)] lg:text-6xl">
+            <span data-counter={Number(s.value) || 0} data-suffix={s.suffix || ''}>{`${Number(s.value) || 0}${s.suffix || ''}`}</span>
+          </div>
+          <div class="mt-2 font-head text-xs font-medium uppercase tracking-[0.2em] text-smoke">{s.label}</div>
+        </div>
+      ))
+    }
+  </div>
+</section>

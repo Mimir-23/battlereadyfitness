@@ -7,6 +7,23 @@ import { supabase, IMAGE_BUCKET } from '../lib/supabase'
 /*  RLS (admins only) on the server.                                    */
 /* ------------------------------------------------------------------ */
 
+/**
+ * The public pages are served from Vercel's CDN cache. After every write the
+ * panel asks the server to purge that copy, so the very next visit already
+ * renders the new content. If the purge fails the change still goes live on
+ * its own within a few minutes, so it never blocks the save.
+ */
+async function publishChanges() {
+  try {
+    const { data } = await supabase.auth.getSession()
+    const token = data.session?.access_token
+    if (!token) return
+    await fetch('/api/revalidate', { method: 'POST', headers: { Authorization: `Bearer ${token}` } })
+  } catch {
+    /* sin purga: el CDN se actualiza solo en unos minutos */
+  }
+}
+
 /** Save (insert or update) one section's content. */
 export async function saveSection(key, value, email) {
   const { error } = await supabase
@@ -16,6 +33,7 @@ export async function saveSection(key, value, email) {
       { onConflict: 'key' },
     )
   if (error) throw error
+  await publishChanges()
 }
 
 /** Read one section's currently saved value (null = no override). */
@@ -33,6 +51,7 @@ export async function fetchSectionValue(key) {
 export async function resetSection(key) {
   const { error } = await supabase.from('site_content').delete().eq('key', key)
   if (error) throw error
+  await publishChanges()
 }
 
 /** When was each section last edited (key → { updated_at, updated_by }). */

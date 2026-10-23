@@ -1,0 +1,149 @@
+---
+import { FaStar, FaLocationDot, FaArrowRightLong } from 'react-icons/fa6'
+import { whatsappUrl } from '../../content/defaults.js'
+import { fullBleedImage, logoImage } from '../../lib/images.js'
+import CTAButton from '../ui/CTAButton.astro'
+import RopeLoader from '../ui/RopeLoader.astro'
+import EmberField from '../ui/EmberField.astro'
+
+const { content } = Astro.props
+const { hero, brand } = content
+const WHATSAPP = whatsappUrl(brand)
+
+const photo = fullBleedImage(hero.image)
+const logo = logoImage()
+---
+
+<section id="top" data-hero class="relative flex min-h-svh items-center overflow-hidden bg-ink">
+  {/* Desktop: the photo opens with a slow zoom-out, then tracks scroll and
+      the pointer. Touch: static (full-screen transforms jank mobile GPUs). */}
+  <div data-hero-bg class="absolute inset-0">
+    <img
+      {...photo}
+      data-hero-img
+      alt="Athletes training inside Battle Ready Fitness"
+      class="h-full w-full object-cover"
+      fetchpriority="high"
+      decoding="async"
+    />
+  </div>
+  <div class="absolute inset-0 bg-gradient-to-r from-ink via-ink/85 to-ink/40"></div>
+  <div class="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-ink/60"></div>
+  <div class="absolute inset-0 bg-grid opacity-40"></div>
+
+  {/* ambient yellow glow orb — drifts with the pointer (deeper plane) */}
+  <div
+    data-hero-orb
+    class="pointer-events-none absolute -right-32 top-1/3 h-[520px] w-[520px] rounded-full bg-battle/15 blur-[160px]"
+  >
+  </div>
+
+  {/* rising embers */}
+  <EmberField count={20} />
+
+  {/* scanline: full-height wrapper so translateY(±100%) sweeps the screen */}
+  <div class="pointer-events-none absolute inset-0 overflow-hidden">
+    <div class="absolute inset-0" style="animation: var(--animate-scan)">
+      <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-battle/70 to-transparent"></div>
+    </div>
+  </div>
+
+  {/* HUD corner brackets */}
+  <div class="pointer-events-none absolute inset-5 hidden lg:block">
+    <span class="absolute left-0 top-0 h-8 w-8 border-l-2 border-t-2 border-battle/50"></span>
+    <span class="absolute right-0 top-0 h-8 w-8 border-r-2 border-t-2 border-battle/50"></span>
+    <span class="absolute bottom-0 left-0 h-8 w-8 border-b-2 border-l-2 border-battle/50"></span>
+    <span class="absolute bottom-0 right-0 h-8 w-8 border-b-2 border-r-2 border-battle/50"></span>
+  </div>
+
+  {/* tactical readout (top-right) */}
+  <div
+    class="pointer-events-none absolute right-8 top-28 hidden flex-col items-end gap-1 font-head text-[10px] uppercase tracking-[0.25em] text-smoke xl:flex"
+  >
+    <span class="flex items-center gap-2">
+      <span class="h-1.5 w-1.5 rounded-full bg-battle" style="animation: var(--animate-blink)"></span>
+      System: Ready
+    </span>
+    <span>Lat 25.86° · Lon -80.31°</span>
+    <span>Hialeah · FL · USA</span>
+  </div>
+
+  <div data-hero-content class="relative mx-auto w-full max-w-7xl px-5 pt-24 lg:px-8">
+    <div class="max-w-3xl">
+      <div data-hero-item style="--i:0">
+        <img
+          {...logo}
+          alt="Battle Ready Fitness Bootcamp"
+          width="418"
+          height="164"
+          decoding="async"
+          class="h-16 w-auto drop-shadow-[0_4px_18px_rgba(255,210,0,0.35)] sm:h-20"
+        />
+      </div>
+
+      <div data-hero-item style="--i:1" class="mt-5">
+        <span
+          class="inline-flex items-center gap-2 rounded-full border border-battle/40 bg-battle/10 px-4 py-1.5 font-head text-xs font-medium uppercase tracking-[0.2em] text-battle backdrop-blur-sm"
+        >
+          <FaLocationDot size={12} />
+          {hero.badge}
+        </span>
+      </div>
+
+      <h1
+        data-hero-item
+        style="--i:2"
+        class="mt-6 font-display text-[clamp(2.5rem,11vw,7.5rem)] leading-[0.88] text-chalk"
+      >
+        {hero.titleLine1}
+        {
+          hero.titleLine2 && (
+            <>
+              <br />
+              {hero.titleLine2}
+            </>
+          )
+        }
+        {
+          hero.accent && (
+            <>
+              <br />
+              <span data-hero-accent class="inline-block text-gradient-battle">
+                {hero.accent}
+              </span>
+            </>
+          )
+        }
+      </h1>
+
+      <p data-hero-item style="--i:3" class="mt-6 max-w-xl text-lg leading-relaxed text-fog">
+        {hero.paragraph}
+      </p>
+
+      <div data-hero-item style="--i:4" class="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
+        <CTAButton href={WHATSAPP} target="_blank">
+          Claim Your 3-Day Free Pass <FaArrowRightLong />
+        </CTAButton>
+        <CTAButton href="/memberships" variant="ghost">View Memberships</CTAButton>
+      </div>
+
+      <div data-hero-item style="--i:5" class="mt-10 flex items-center gap-4 text-sm text-smoke">
+        <div class="flex text-battle">
+          {
+            [0, 1, 2, 3, 4].map((i) => (
+              <span data-star style={`--i:${i}`}>
+                <FaStar size={16} />
+              </span>
+            ))
+          }
+        </div>
+        <span class="font-head uppercase tracking-wider">{hero.ratingText}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="absolute bottom-8 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-3 lg:flex">
+    <RopeLoader />
+    <span class="font-head text-[10px] uppercase tracking-[0.3em] text-smoke">Scroll</span>
+  </div>
+</section>

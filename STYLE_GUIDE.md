@@ -5,15 +5,16 @@ A redesign of the Battle Ready Fitness Bootcamp homepage. The visual system is a
 an "alert red" accent for energy and intensity. The mood: intense, powerful, and
 performance-driven — a boot camp, not a boutique.
 
-Built with **React 19 + Vite**, **Tailwind CSS v4**, **Motion (Framer Motion)**,
-and **React Icons** (`react-icons/fa6`).
+Built with **Astro 7**, **Tailwind CSS v4**, native CSS animations plus small
+vanilla scripts, and **React Icons** (`react-icons/fa6`, rendered as inline SVG
+on the server).
 
 ---
 
 ## 1. Color Palette
 
 Extracted from the logo (tactical yellow on black) and expanded into a full,
-gym-focused system. Defined as Tailwind v4 `@theme` tokens in `src/index.css`.
+gym-focused system. Defined as Tailwind v4 `@theme` tokens in `src/styles/theme.css`.
 
 ### Brand
 
@@ -48,7 +49,8 @@ thin caution bands on the CTA section and "No esperes más" tile.
 
 ## 2. Typography
 
-Three Google Fonts, each with a job:
+Three self-hosted fonts (Astro Fonts API, with metric-matched fallbacks), each
+with a job:
 
 | Role               | Font          | Weights      | Usage                                            |
 | ------------------ | ------------- | ------------ | ------------------------------------------------ |
@@ -94,12 +96,13 @@ How the design communicates gym/fitness energy:
 
 ## 4. Animation Behaviors
 
-Powered by Motion. All respect `prefers-reduced-motion` (globally neutralized in
-`index.css`).
+Native CSS animations and small scripts in `src/scripts/`. All respect
+`prefers-reduced-motion` (globally neutralized in `src/styles/theme.css`);
+scroll-linked and showpiece effects run on desktop mouse devices only.
 
 | Animation             | Where                     | Behavior                                                                  |
 | --------------------- | ------------------------- | ------------------------------------------------------------------------- |
-| **Scroll progress**   | Top of page               | Yellow bar scales x with scroll (spring-smoothed `useScroll`)             |
+| **Scroll progress**   | Top of page               | Yellow bar scales x with scroll (spring-smoothed)                         |
 | **Ken Burns**         | Hero & CTA bg images      | Slow 22s cinematic zoom/pan (`kenburns`), alternating                     |
 | **Hero zoom-parallax**| Hero                      | Bg scales 1→1.18 and content drifts `y`/fades on scroll                   |
 | **Parallax image**    | About (coach) image       | Image translates `y` opposite to scroll inside a clipped frame            |
@@ -114,7 +117,7 @@ Powered by Motion. All respect `prefers-reduced-motion` (globally neutralized in
 | **Button sheen**      | Primary CTAs              | Light sweep on hover; `active:scale` press feedback                       |
 | **Pulse ring**        | Final "Claim Yours" CTA   | Expanding yellow ring draws the eye to the key conversion action          |
 | **WhatsApp FAB**      | Floating bottom-right     | `animate-ping` halo, label expands on hover; back-to-top appears >600px   |
-| **Mobile menu**       | Navbar (mobile)           | Height/opacity expand-collapse via `AnimatePresence`                      |
+| **Mobile menu**       | Navbar (mobile)           | Height/opacity expand-collapse (CSS grid-rows transition)                 |
 
 **Timing:** micro-interactions 150–300ms; reveals ~600ms; all transform/opacity
 based for GPU performance. Easing standard: `cubic-bezier(0.16, 1, 0.3, 1)`.
@@ -156,10 +159,13 @@ All copy is reused from the live site (battlereadyfitness.com):
 
 ## 7. Files
 
-| File                | Purpose                                                  |
-| ------------------- | -------------------------------------------------------- |
-| `src/index.css`     | Tailwind v4 `@theme` tokens, fonts, keyframes, utilities |
-| `src/App.jsx`       | Full homepage — all sections, motion, icons              |
-| `vite.config.js`    | Adds `@tailwindcss/vite` plugin                          |
+| File                       | Purpose                                                        |
+| -------------------------- | -------------------------------------------------------------- |
+| `src/styles/theme.css`     | Tailwind v4 `@theme` tokens, keyframes, shared utilities       |
+| `src/styles/global.css`    | Public-site entry: reveal/intro/dialog animations, motion flags |
+| `src/layouts/BaseLayout.astro` | Page shell: SEO, fonts, global chrome, boot script         |
+| `src/components/`          | Sections and UI pieces (`.astro`)                              |
+| `src/scripts/`             | Client behaviour (menus, dialogs, carousels, scroll effects)   |
+| `astro.config.mjs`         | Adapter, route caching, fonts, Tailwind                        |
 
-Run: `npm run dev` (dev) · `npm run build` (production).
+Run: `npm run dev` (dev) · `npm run build` (production) · `npm run preview` (local production build).

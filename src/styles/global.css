@@ -1,0 +1,392 @@
+@import 'tailwindcss' source(none);
+@import './theme.css';
+
+/* Solo el sitio público: las clases del panel /admin viven en admin.css y
+   no engordan el CSS que descarga cada visitante. */
+@source '../components';
+@source '../layouts';
+@source '../pages';
+@source '../scripts';
+@source '../lib';
+@source '../content';
+
+/* ============================================================
+   Estados globales (los fija el script de arranque en <html>):
+   .fx     → escritorio con mouse y sin "reducir movimiento":
+             revelados al hacer scroll, parallax, intro del hero…
+   .motion → sin "reducir movimiento" (cualquier dispositivo)
+   .fine   → puntero preciso (cursor, magnético, spotlight)
+   .ready  → la página ya es visible (tras un prerender, al activarse)
+   Sin JavaScript no se aplica ninguna: todo queda visible y quieto.
+   ============================================================ */
+
+/* ---------- Revelado al entrar en pantalla (escritorio) ---------- */
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(var(--reveal-y, 24px));
+  }
+}
+@keyframes reveal-x {
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+}
+@keyframes reveal-line {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+.fx [data-reveal]:not(.is-in) {
+  opacity: 0;
+}
+.fx [data-reveal='line']:not(.is-in) {
+  opacity: 1;
+  transform: scaleX(0);
+}
+.fx [data-reveal].is-in {
+  animation: var(--reveal-anim, reveal-up) var(--reveal-dur, 0.45s) var(--reveal-ease, var(--ease-power))
+    var(--reveal-delay, 0s) both;
+}
+.fx [data-reveal='heading'] {
+  --reveal-dur: 0.6s;
+}
+.fx [data-reveal='line'] {
+  --reveal-anim: reveal-line;
+  --reveal-dur: 0.7s;
+  --reveal-delay: 0.15s;
+}
+.fx [data-reveal='perk'] {
+  --reveal-anim: reveal-x;
+  --reveal-dur: 0.4s;
+  --reveal-ease: cubic-bezier(0, 0, 0.58, 1);
+}
+
+/* ---------- Barra de navegación: entrada al cargar ---------- */
+@keyframes nav-in {
+  from {
+    transform: translateY(-80px);
+    opacity: 0;
+  }
+}
+.ready:not(.same-site) [data-intro='nav'] {
+  animation: nav-in 0.6s var(--ease-power) both;
+}
+
+/* Menú móvil: despliegue de alto (0 → auto) con opacidad. */
+[data-menu] {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition:
+    grid-template-rows 0.3s var(--ease-power),
+    opacity 0.3s var(--ease-power);
+}
+[data-menu][data-open] {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+[data-menu] > * {
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* ---------- Hero (escritorio): zoom de entrada + cascada ---------- */
+@keyframes hero-zoom {
+  from {
+    transform: scale(1.3);
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes hero-accent {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}
+@keyframes star-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+}
+
+.fx [data-hero-img] {
+  transform: scale(1.05);
+}
+.fx.ready [data-hero-img] {
+  animation:
+    hero-zoom 1.8s var(--ease-power) both,
+    fade-in 1s cubic-bezier(0, 0, 0.58, 1) both;
+}
+.fx.ready [data-hero-item] {
+  animation: reveal-up 0.45s var(--ease-power) calc(var(--i, 0) * 0.06s) both;
+}
+.fx.ready [data-hero-accent] {
+  animation: hero-accent 0.6s cubic-bezier(0, 0, 0.58, 1) 0.55s both;
+}
+.fx.ready [data-star] {
+  animation: star-pop var(--spring-stars-dur) var(--spring-stars) calc(0.7s + var(--i, 0) * 0.08s) both;
+}
+
+/* Banner de las páginas internas: zoom del fondo (escritorio) y cascada
+   del texto (todos los dispositivos salvo "reducir movimiento"). */
+@keyframes banner-zoom {
+  from {
+    transform: scale(1.12);
+  }
+}
+.fx.ready [data-banner-zoom] {
+  animation: banner-zoom 1.4s var(--ease-power) both;
+}
+.motion.ready [data-banner-item] {
+  animation: reveal-up 0.6s var(--ease-power) calc(var(--i, 0) * 0.1s) both;
+}
+
+/* ---------- Cortina de entrada entre páginas (escritorio) ---------- */
+@keyframes wipe {
+  from {
+    transform: scaleY(1);
+  }
+  to {
+    transform: scaleY(0);
+  }
+}
+.route-wipe {
+  display: none;
+}
+.fx .route-wipe {
+  display: block;
+  transform: scaleY(0);
+}
+.fx.ready .route-wipe {
+  animation: wipe 0.7s var(--ease-power) both;
+}
+
+/* ---------- Partículas y efectos solo de escritorio ---------- */
+.ember-field {
+  display: none;
+}
+.fx .ember-field {
+  display: block;
+}
+.fx [data-kenburns] {
+  animation: var(--animate-kenburns);
+}
+
+/* ---------- Elevación en hover (resorte) ---------- */
+[data-lift] {
+  transition: border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.fine [data-lift] {
+  transition:
+    border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    translate var(--spring-lift-dur) var(--spring-lift);
+}
+.fine [data-lift]:hover {
+  translate: 0 var(--lift, -6px);
+}
+.fx [data-lift-soft] {
+  transition: translate 0.2s cubic-bezier(0, 0, 0.58, 1);
+}
+.fx [data-lift-soft]:hover {
+  translate: 0 -5px;
+}
+
+/* Inclinación 3D hacia el puntero (los grados los fija el script). */
+.fine [data-tilt] {
+  transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+}
+
+/* ---------- Botón de contacto flotante ---------- */
+.fab {
+  pointer-events: none;
+}
+.fab > * {
+  pointer-events: auto;
+}
+[data-totop] {
+  opacity: 0;
+  scale: 0.6;
+  visibility: hidden;
+  transition:
+    opacity 0.3s cubic-bezier(0.25, 0.1, 0.35, 1),
+    scale var(--spring-pop-dur) var(--spring-pop),
+    visibility 0s linear 0.3s;
+}
+[data-totop][data-show] {
+  opacity: 1;
+  scale: 1;
+  visibility: visible;
+  transition-delay: 0s;
+}
+[data-fan-link] {
+  opacity: 0;
+  transform: translate(0, 0) scale(0.3);
+  visibility: hidden;
+  transition:
+    transform 0.18s cubic-bezier(0, 0, 0.58, 1) var(--out-delay, 0s),
+    opacity 0.18s cubic-bezier(0, 0, 0.58, 1) var(--out-delay, 0s),
+    visibility 0s linear calc(var(--out-delay, 0s) + 0.18s);
+}
+[data-fab][data-open] [data-fan-link] {
+  opacity: 1;
+  transform: translate(var(--x), var(--y)) scale(1);
+  visibility: visible;
+  transition:
+    transform var(--spring-fan-dur) var(--spring-fan) var(--in-delay, 0s),
+    opacity var(--spring-fan-dur) var(--spring-fan) var(--in-delay, 0s),
+    visibility 0s linear var(--in-delay, 0s);
+}
+[data-fab-icon] {
+  transition: rotate 0.2s cubic-bezier(0, 0, 0.58, 1);
+}
+[data-fab][data-open] [data-fab-icon] {
+  rotate: 90deg;
+}
+
+/* ---------- Diálogos (perfil de coach, galería, videos) ---------- */
+@keyframes dialog-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: scale(var(--pop-from, 0.96));
+  }
+}
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(26px);
+  }
+}
+@keyframes rise-out {
+  to {
+    opacity: 0;
+    transform: translateY(-18px);
+  }
+}
+@keyframes portrait-in {
+  from {
+    opacity: 0;
+    transform: scale(1.06);
+  }
+}
+@keyframes bar-fill {
+  from {
+    width: 0;
+  }
+}
+[data-dialog]:not([data-open]) {
+  display: none;
+}
+[data-dialog][data-open] {
+  animation: fade-in 0.25s cubic-bezier(0, 0, 0.58, 1);
+}
+[data-dialog][data-closing] {
+  animation: dialog-out 0.25s cubic-bezier(0, 0, 0.58, 1) forwards;
+}
+[data-slide]:not([data-active]) {
+  display: none;
+}
+[data-slide='pop'][data-active][data-animate] {
+  animation: pop-in 0.25s var(--ease-power);
+}
+[data-slide='rise'][data-active][data-animate] {
+  animation: rise-in 0.3s var(--ease-power);
+}
+[data-slide='rise'][data-active][data-leaving] {
+  animation: rise-out 0.3s var(--ease-power) forwards;
+}
+[data-slide='rise'][data-active][data-animate] [data-portrait] {
+  animation: portrait-in 0.45s var(--ease-power);
+}
+[data-slide][data-active][data-animate] [data-bar] {
+  animation: bar-fill 0.8s var(--ease-power) calc(0.2s + var(--i, 0) * 0.08s) both;
+}
+
+/* ---------- Testimonios: deslizamiento direccional ---------- */
+@keyframes quote-in {
+  from {
+    opacity: 0;
+    transform: translateX(calc(48px * var(--dir, 1)));
+  }
+}
+@keyframes quote-out {
+  to {
+    opacity: 0;
+    transform: translateX(calc(-48px * var(--dir, 1)));
+  }
+}
+[data-quote]:not([data-active]) {
+  display: none;
+}
+[data-quote][data-active][data-animate] {
+  animation: quote-in 0.5s var(--ease-power);
+}
+[data-quote][data-active][data-leaving] {
+  animation: quote-out 0.3s var(--ease-power) forwards;
+}
+
+/* ---------- Embeds de Recess: esqueleto hasta que cargan ---------- */
+[data-recess][data-loaded] [data-recess-skeleton] {
+  display: none;
+}
+
+/* Scroll bloqueado mientras hay un diálogo abierto. */
+html.is-locked {
+  overflow: hidden;
+}
+
+/* Con "reducir movimiento" las animaciones ya duran ~0 (ver theme.css);
+   aquí también se anulan los retardos para que nada espere oculto. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-delay: 0s !important;
+    transition-delay: 0s !important;
+  }
+}
+
+/* Cursor: sobre elementos interactivos la mancuerna "hace repeticiones". */
+@keyframes reps {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+.cursor-reps {
+  animation: reps 0.55s ease-in-out infinite;
+}
+
+/* Imagen con parallax (escritorio): sobra un 10% arriba y abajo para que
+   el desplazamiento nunca descubra el fondo. */
+.fx [data-parallax-img] {
+  position: relative;
+  top: -10%;
+  height: 120%;
+}
+
+/* Plan destacado: brillo pulsante continuo, compatible con su revelado. */
+[data-glow] {
+  animation: var(--animate-glow);
+}
+.fx [data-reveal].is-in[data-glow] {
+  animation:
+    var(--reveal-anim, reveal-up) var(--reveal-dur, 0.45s) var(--reveal-ease, var(--ease-power))
+      var(--reveal-delay, 0s) both,
+    var(--animate-glow);
+}

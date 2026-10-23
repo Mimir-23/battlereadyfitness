@@ -1,0 +1,61 @@
+---
+import { FaArrowRightLong, FaWhatsapp } from 'react-icons/fa6'
+import { whatsappUrl } from '../../content/defaults.js'
+import { responsiveImage } from '../../lib/images.js'
+
+/** Full-bleed yellow "claim your free pass" call-to-action band. */
+const { cta, brand } = Astro.props
+const WHATSAPP = whatsappUrl(brand)
+const photo = cta.image ? responsiveImage(cta.image, { sizes: '100vw', widths: [640, 828, 1080, 1280, 1600, 1920], quality: 70 }) : null
+---
+
+<section class="relative overflow-hidden py-28">
+  {/* Photo drifts slower than the page (desktop); the slow kenburns zoom
+      runs on the img itself. The wrapper overshoots ±48px so no gap shows. */}
+  <div data-parallax="-44,44" data-parallax-target="section" class="absolute inset-x-0 -inset-y-12">
+    {photo && (
+      <img {...photo} alt="" aria-hidden="true" data-kenburns class="h-full w-full object-cover" loading="lazy" decoding="async" />
+    )}
+  </div>
+  <div class="absolute inset-0 bg-battle/85"></div>
+  <div class="bg-hazard absolute inset-x-0 top-0 h-2.5"></div>
+  <div class="bg-hazard absolute inset-x-0 bottom-0 h-2.5"></div>
+
+  <div class="relative mx-auto max-w-4xl px-5 text-center lg:px-8">
+    <div data-reveal>
+      <span class="font-head text-sm font-bold uppercase tracking-[0.3em] text-ink/70">{cta.kicker}</span>
+      <h2 class="mt-4 font-display text-[clamp(2.75rem,10vw,6rem)] leading-[0.9] text-ink">
+        {cta.titleLine1}
+        {
+          cta.titleLine2 && (
+            <>
+              <br />
+              {cta.titleLine2}
+            </>
+          )
+        }
+      </h2>
+      <p class="mx-auto mt-5 max-w-lg font-medium text-ink/80">{cta.paragraph}</p>
+      <div class="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
+        <div class="inline-block" data-magnetic>
+          <a
+            href="/memberships"
+            class="group inline-flex cursor-pointer items-center justify-center gap-2 bg-ink px-8 py-4 font-head text-sm font-bold uppercase tracking-widest text-battle transition-transform duration-200 hover:scale-[1.03] active:scale-95"
+            style="animation: var(--animate-pulse-ring)"
+          >
+            Claim Yours Now
+            <FaArrowRightLong className="transition-transform group-hover:translate-x-1" />
+          </a>
+        </div>
+        <a
+          href={WHATSAPP}
+          target="_blank"
+          rel="noreferrer"
+          class="inline-flex items-center justify-center gap-2 border border-ink/30 bg-ink/10 px-8 py-4 font-head text-sm font-bold uppercase tracking-widest text-ink backdrop-blur-sm transition-colors hover:bg-ink hover:text-battle"
+        >
+          <FaWhatsapp size={16} /> WhatsApp Us
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,14 @@
+---
+/** Five "jump rope" bars that bounce in sequence — small brand loader/accent. */
+---
+
+<div class="flex items-end gap-1.5" aria-label="Loading">
+  {
+    [0, 1, 2, 3, 4].map((i) => (
+      <span
+        class="block w-1.5 rounded-full bg-battle"
+        style={`height: 28px; animation: var(--animate-rope); animation-delay: ${i * 0.12}s`}
+      />
+    ))
+  }
+</div>

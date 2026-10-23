@@ -29,3 +29,6 @@ dist-ssr
 # Credenciales — nunca subir al repositorio
 iauto-d3a10-firebase-adminsdk-fbsvc-6ce7256dc8.json
 llave.json
+
+# Astro
+.astro

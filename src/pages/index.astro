@@ -1,0 +1,35 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+import Hero from '../components/sections/Hero.astro'
+import Marquee from '../components/ui/Marquee.astro'
+import Stats from '../components/sections/Stats.astro'
+import Programs from '../components/sections/Programs.astro'
+import WhyUs from '../components/sections/WhyUs.astro'
+import Coaches from '../components/sections/Coaches.astro'
+import Gallery from '../components/sections/Gallery.astro'
+import Videos from '../components/sections/Videos.astro'
+import Testimonial from '../components/sections/Testimonial.astro'
+import CTABand from '../components/sections/CTABand.astro'
+import Contact from '../components/sections/Contact.astro'
+import { loadContent, cacheContentPage } from '../lib/content.js'
+import { fullBleedImage } from '../lib/images.js'
+
+/* Landing page — all the anchored sections, composed in order. */
+const { content, live } = await loadContent()
+cacheContentPage(Astro, live)
+---
+
+<BaseLayout content={content} preloadImage={fullBleedImage(content.hero.image)}>
+  <Hero content={content} />
+  <Marquee words={content.marquee} />
+  <Stats stats={content.stats} />
+  <Programs programs={content.programs} />
+  <WhyUs why={content.why} brand={content.brand} />
+  <Coaches coaches={content.coaches} brand={content.brand} />
+  <Gallery gallery={content.gallery} />
+  <Videos videos={content.videos} />
+  <Marquee words={content.marquee} reverse />
+  <Testimonial testimonial={content.testimonial} />
+  <CTABand cta={content.cta} brand={content.brand} />
+  <Contact brand={content.brand} hours={content.hours} />
+</BaseLayout>

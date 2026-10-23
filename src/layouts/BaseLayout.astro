@@ -1,0 +1,216 @@
+---
+import { Font } from 'astro:assets'
+import '../styles/global.css'
+import Navbar from '../components/layout/Navbar.astro'
+import Footer from '../components/layout/Footer.astro'
+import FloatingActions from '../components/layout/FloatingActions.astro'
+import { springCssVars } from '../lib/spring.js'
+import { SUPABASE_URL } from '../lib/supabaseEnv.js'
+
+/**
+ * Public site shell: SEO tags, fonts, the boot script that picks the motion
+ * level before the first paint, and the global chrome (navbar, footer,
+ * floating contact, cursor, scroll progress, page wipe).
+ */
+interface Props {
+  content: any
+  title?: string
+  description?: string
+  /** Absolute or root-relative image for social previews. */
+  image?: string
+  /** Above-the-fold photo ({ src, srcset, sizes }) to fetch with top priority. */
+  preloadImage?: { src: string; srcset?: string; sizes?: string }
+}
+
+const { content, title, description, image, preloadImage } = Astro.props
+const BASE = 'Battle Ready Fitness Bootcamp'
+const fullTitle = title ? `${title} — ${BASE}` : `${BASE} — We're Simply Unique`
+const desc =
+  description ??
+  'Battle Ready Fitness Bootcamp — high-intensity boot-camp gym in Hialeah, Florida. Personal Training, Bootcamp, Kickboxing, HIIT, Zumba & more. Claim your 3-day free pass.'
+const site = Astro.site ?? new URL(Astro.url.origin)
+const canonical = new URL(Astro.url.pathname, site).href
+const absolute = (src) => (src ? new URL(src, site).href : undefined)
+const ogImage = absolute(image ?? content.hero?.image)
+
+// Fotos subidas desde el panel: conexión anticipada con Supabase Storage.
+const usesSupabase = !!SUPABASE_URL && JSON.stringify(content).includes(SUPABASE_URL)
+
+// Datos estructurados (Google): ficha del gimnasio con dirección y contacto.
+const { brand } = content
+const cityMatch = /^\s*([^,]+),\s*(.+?)\s+(\d{5})\s*$/.exec(brand.city || '')
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ExerciseGym',
+  name: BASE,
+  url: site.href,
+  image: ogImage,
+  logo: absolute('/logo.webp'),
+  telephone: brand.phone,
+  email: brand.email,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: brand.address,
+    addressLocality: cityMatch ? cityMatch[1] : brand.city,
+    ...(cityMatch && { addressRegion: cityMatch[2], postalCode: cityMatch[3] }),
+    addressCountry: 'US',
+  },
+  sameAs: [brand.instagram, brand.facebook].filter(Boolean),
+}
+
+// Navegación instantánea (Chrome): prerender de la página enlazada al
+// mostrar intención (hover / toque). Nunca el panel ni la API.
+const speculation = {
+  prerender: [
+    {
+      where: {
+        and: [
+          { href_matches: '/*' },
+          { not: { href_matches: '/admin*' } },
+          { not: { href_matches: '/api/*' } },
+        ],
+      },
+      eagerness: 'moderate',
+    },
+  ],
+}
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={desc} />
+    <link rel="canonical" href={canonical} />
+    <meta name="theme-color" content="#0a0a0b" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/logo-removebg-preview.png" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={BASE} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={desc} />
+    <meta property="og:url" content={canonical} />
+    {ogImage && <meta property="og:image" content={ogImage} />}
+    <meta name="twitter:card" content="summary_large_image" />
+
+    {/* Nivel de animación antes del primer pintado (ver global.css). Sin
+        JS no se activa nada: la página queda visible y estática. */}
+    <script is:inline>
+      ;(() => {
+        const d = document.documentElement
+        const mq = (q) => matchMedia(q).matches
+        const reduced = mq('(prefers-reduced-motion: reduce)')
+        d.classList.add('js')
+        if (!reduced) d.classList.add('motion')
+        if (!reduced && mq('(hover: hover) and (pointer: fine)')) d.classList.add('fx')
+        if (!reduced && mq('(pointer: fine)')) d.classList.add('fine')
+        // Entre páginas del propio sitio la barra ya estaba ahí (como en el SPA).
+        try {
+          if (document.referrer && new URL(document.referrer).origin === location.origin) d.classList.add('same-site')
+        } catch {}
+        // Tras un prerender, las intros arrancan cuando la página se muestra.
+        const ready = () => d.classList.add('ready')
+        if (document.prerendering) document.addEventListener('prerenderingchange', ready, { once: true })
+        else ready()
+        // Red de seguridad: si el JS del sitio no arranca, nada queda oculto.
+        addEventListener('load', () => setTimeout(() => window.__site || d.classList.remove('fx'), 3000))
+        // Tras un despliegue, una pestaña con el HTML anterior puede pedir
+        // archivos que ya no existen: recargar trae el HTML nuevo.
+        addEventListener('vite:preloadError', (e) => {
+          e.preventDefault()
+          location.reload()
+        })
+      })()
+    </script>
+    <style is:inline set:html={`:root{${springCssVars()}}`}></style>
+
+    <Font cssVariable="--font-bebas" preload />
+    <Font cssVariable="--font-oswald" preload />
+    <Font cssVariable="--font-inter" preload />
+    {usesSupabase && <link rel="preconnect" href={SUPABASE_URL} />}
+    {
+      preloadImage && (
+        <link
+          rel="preload"
+          as="image"
+          href={preloadImage.src}
+          imagesrcset={preloadImage.srcset}
+          imagesizes={preloadImage.sizes}
+          fetchpriority="high"
+        />
+      )
+    }
+    <slot name="head" />
+
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    <script is:inline type="speculationrules" set:html={JSON.stringify(speculation)} />
+
+    {/* Firebase Analytics, fuera del camino crítico: se carga cuando la
+        página ya terminó y el navegador está ocioso. La apiKey de un config
+        web de Firebase es un identificador público, no un secreto. */}
+    <script is:inline>
+      ;(() => {
+        const start = () =>
+          Promise.all([
+            import('https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js'),
+            import('https://www.gstatic.com/firebasejs/12.16.0/firebase-analytics.js'),
+          ])
+            .then(([{ initializeApp }, { getAnalytics }]) =>
+              getAnalytics(
+                initializeApp({
+                  apiKey: 'AIzaSyAk0F1yt1BKHSWbYB-zLPiG6sZlZz_b7sk',
+                  authDomain: 'battlereadyfitness-f8ac5.firebaseapp.com',
+                  projectId: 'battlereadyfitness-f8ac5',
+                  storageBucket: 'battlereadyfitness-f8ac5.firebasestorage.app',
+                  messagingSenderId: '898879640583',
+                  appId: '1:898879640583:web:3b96390993eefe5c5046a2',
+                  measurementId: 'G-DXH57945TD',
+                }),
+              ),
+            )
+            .catch(() => {})
+        const idle = () => (window.requestIdleCallback ? requestIdleCallback(start, { timeout: 4000 }) : setTimeout(start, 2000))
+        const afterLoad = () => (document.readyState === 'complete' ? idle() : addEventListener('load', idle, { once: true }))
+        // Un prerender especulativo no es una visita: se mide al mostrarse.
+        if (document.prerendering) document.addEventListener('prerenderingchange', afterLoad, { once: true })
+        else afterLoad()
+      })()
+    </script>
+  </head>
+  <body>
+    <div class="grain" aria-hidden="true"></div>
+    <div
+      data-scroll-progress
+      class="fixed inset-x-0 top-0 z-[60] h-1 origin-left bg-battle"
+      style="transform: scaleX(0)"
+      aria-hidden="true"
+    >
+    </div>
+
+    {/* Tactical curtain that sweeps up to reveal each page (desktop). */}
+    <div class="route-wipe pointer-events-none fixed inset-0 z-[80] origin-top" aria-hidden="true">
+      <div class="relative h-full w-full bg-ink">
+        <div class="absolute inset-0 bg-grid opacity-40"></div>
+        <div class="absolute inset-x-0 bottom-0 h-1.5 bg-battle"></div>
+        <div class="bg-hazard absolute inset-x-0 bottom-1.5 h-2 opacity-80"></div>
+        <span class="absolute bottom-8 left-1/2 -translate-x-1/2 font-display text-5xl text-stroke-chalk opacity-40">
+          BR
+        </span>
+      </div>
+    </div>
+
+    <Navbar content={content} />
+    <main>
+      <slot />
+    </main>
+    <Footer content={content} />
+    <FloatingActions brand={content.brand} />
+
+    <script>
+      import '../scripts/site.js'
+    </script>
+  </body>
+</html>

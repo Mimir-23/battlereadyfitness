@@ -1,0 +1,244 @@
+---
+import {
+  FaPlay,
+  FaXmark,
+  FaChevronLeft,
+  FaChevronRight,
+  FaYoutube,
+  FaInstagram,
+  FaTiktok,
+  FaFacebookF,
+  FaVolumeXmark,
+} from 'react-icons/fa6'
+import { resolveVideoEmbed, buildPreviewSrc } from '../../lib/videoEmbed.js'
+import { responsiveImage } from '../../lib/images.js'
+import SectionHeading from '../ui/SectionHeading.astro'
+
+/* ------------------------------------------------------------------ */
+/*  Videos — "FIGHT TAPES": every video is a poster taped to the gym    */
+/*  wall, slightly tilted, crossed by a hazard-tape band. Tapping one   */
+/*  opens a full-screen player that adapts to the video's format        */
+/*  (16:9 widescreen or 9:16 vertical). No iframe loads until then      */
+/*  (src/scripts/videos.js), except the muted YouTube previews that run */
+/*  on desktop while a poster is on screen.                             */
+/* ------------------------------------------------------------------ */
+
+const { videos } = Astro.props
+const PLATFORM = {
+  YouTube: { icon: FaYoutube, tint: 'text-[#FF4444]', stamp: 'border-[#FF4444]/70 text-[#FF6666]' },
+  Instagram: { icon: FaInstagram, tint: 'text-[#DD2A7B]', stamp: 'border-[#DD2A7B]/70 text-[#F06AA7]' },
+  TikTok: { icon: FaTiktok, tint: 'text-[#25F4EE]', stamp: 'border-[#25F4EE]/60 text-[#25F4EE]' },
+  Facebook: { icon: FaFacebookF, tint: 'text-[#4B94F8]', stamp: 'border-[#4B94F8]/70 text-[#6FA9F9]' },
+}
+
+const items = (videos?.items || [])
+  .map((it) => ({ ...it, embed: resolveVideoEmbed(it.url) }))
+  .filter((it) => it.embed)
+const many = items.length > 1
+const pad = (n) => String(n).padStart(2, '0')
+---
+
+{
+  items.length > 0 && (
+    <section id="videos" data-videos class="relative overflow-hidden border-t border-iron bg-coal py-24">
+      {/* ambient glow — drifts slower than the page (deeper plane) */}
+      <div data-parallax="70,-70" class="pointer-events-none absolute -right-40 top-1/3">
+        <div class="h-[440px] w-[440px] rounded-full bg-battle/10 blur-[140px]" />
+      </div>
+
+      <div class="relative mx-auto max-w-7xl px-5 lg:px-8">
+        <SectionHeading kicker={videos.kicker} title={videos.titleLine1} accent={videos.accent} />
+        {videos.paragraph && <p class="mx-auto mt-4 max-w-xl text-center text-fog">{videos.paragraph}</p>}
+
+        {/* the wall */}
+        <div class="relative mx-auto mt-12 max-w-6xl pb-4">
+          {/* hazard-tape band running behind the posters */}
+          <div
+            aria-hidden="true"
+            class="bg-hazard pointer-events-none absolute left-1/2 top-1/2 h-9 w-[130vw] -translate-x-1/2 -translate-y-1/2 -rotate-2 opacity-60"
+          />
+          <div data-reveal-group class="relative flex flex-wrap items-start justify-center gap-4 sm:gap-6">
+            {items.map((item, index) => {
+              const { embed } = item
+              const p = PLATFORM[embed.platform]
+              const Icon = p?.icon || FaPlay
+              const tilted = index % 2 === 0 ? '-rotate-[1.75deg]' : 'rotate-[1.75deg]'
+              const offset = index % 3 === 1 ? 'sm:translate-y-5' : ''
+              // Admin-uploaded cover first; YouTube auto-thumbnail as fallback.
+              const poster = item.thumb || embed.thumb
+              const posterImg = poster
+                ? responsiveImage(poster, { sizes: '(min-width: 640px) 320px, 50vw', widths: [384, 640, 828] })
+                : null
+              const previewSrc = buildPreviewSrc(embed)
+              return (
+                <button
+                  type="button"
+                  data-reveal
+                  data-reveal-item
+                  data-open-video={index}
+                  aria-label={`Play video: ${item.label || embed.platform}`}
+                  class={`group relative w-[calc(50%-0.5rem)] cursor-pointer sm:w-auto sm:max-w-80 sm:grow sm:basis-52 ${tilted} ${offset} transition-transform duration-300 hover:z-10 hover:rotate-0 hover:scale-[1.05] focus-visible:rotate-0`}
+                >
+                  {/* pieces of tape holding the poster to the wall */}
+                  <span class="pointer-events-none absolute -left-3 -top-2 z-10 h-4 w-12 -rotate-[38deg] bg-chalk/20 shadow-sm backdrop-blur-[1px]" />
+                  <span class="pointer-events-none absolute -right-3 -top-2 z-10 h-4 w-12 rotate-[38deg] bg-chalk/20 shadow-sm backdrop-blur-[1px]" />
+
+                  <div class="overflow-hidden rounded-sm border-2 border-iron bg-ink text-left shadow-[0_22px_45px_-18px_rgba(0,0,0,0.9)] transition-colors duration-300 group-hover:border-battle/60">
+                    <div class="bg-hazard h-1.5 opacity-80" />
+
+                    {/* poster art */}
+                    <div data-poster data-preview-src={previewSrc || undefined} class="relative aspect-[4/5] overflow-hidden">
+                      {posterImg ? (
+                        <img
+                          {...posterImg}
+                          alt=""
+                          loading="lazy"
+                          decoding="async"
+                          class="h-full w-full object-cover grayscale-[45%] transition-all duration-500 group-hover:scale-105 group-hover:grayscale-0"
+                        />
+                      ) : (
+                        <div class="h-full w-full bg-gradient-to-br from-coal via-ink to-coal bg-[repeating-linear-gradient(-45deg,transparent,transparent_12px,rgba(255,210,0,0.05)_12px,rgba(255,210,0,0.05)_24px)]">
+                          <Icon
+                            size={44}
+                            className={`absolute left-1/2 top-[38%] -translate-x-1/2 -translate-y-1/2 ${p?.tint || 'text-battle'} opacity-70 transition-transform duration-500 group-hover:scale-110`}
+                          />
+                        </div>
+                      )}
+
+                      {/* the live muted preview (desktop) is inserted here */}
+                      <div data-shade class="absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-ink/40" />
+
+                      {/* stencil tape number */}
+                      <span class="pointer-events-none absolute -right-1 top-1 font-display text-6xl leading-none text-stroke-chalk opacity-25">
+                        {pad(index + 1)}
+                      </span>
+
+                      {/* platform "rubber stamp" */}
+                      <span
+                        class={`absolute left-2.5 top-2.5 inline-flex -rotate-6 items-center gap-1 border-2 px-1.5 py-0.5 font-head text-[9px] font-bold uppercase tracking-[0.15em] opacity-90 ${p?.stamp || 'border-battle/70 text-battle'}`}
+                      >
+                        <Icon size={9} /> {embed.platform}
+                      </span>
+
+                      {/* play control */}
+                      <span class="absolute inset-x-0 bottom-3 flex justify-center">
+                        <span class="relative flex h-12 w-12 items-center justify-center rounded-full bg-battle text-ink shadow-[0_8px_24px_-6px_rgba(255,210,0,0.7)] transition-transform duration-300 group-hover:scale-110">
+                          <span class="absolute inset-0 hidden animate-ping rounded-full bg-battle opacity-30 group-hover:block" />
+                          <FaPlay size={15} className="relative translate-x-px" />
+                        </span>
+                      </span>
+
+                      {/* the preview runs muted — sound comes with the big player */}
+                      <span
+                        data-muted
+                        hidden
+                        class="absolute bottom-3.5 right-2.5 flex h-6 w-6 items-center justify-center rounded-full bg-ink/70 text-chalk backdrop-blur-sm"
+                      >
+                        <FaVolumeXmark size={10} />
+                      </span>
+                    </div>
+
+                    {/* poster footer */}
+                    <div class="border-t border-iron bg-coal px-3 py-2.5">
+                      <div class="line-clamp-1 font-head text-xs font-semibold uppercase tracking-wide text-chalk">
+                        {item.label || `Round ${index + 1}`}
+                      </div>
+                      <div class="mt-0.5 flex items-center justify-between font-head text-[9px] uppercase tracking-[0.25em] text-smoke">
+                        <span>{`Tape ${pad(index + 1)}`}</span>
+                        <span class="flex gap-px" aria-hidden="true">
+                          {/* barcode detail */}
+                          {[2, 1, 3, 1, 2, 1, 1, 3, 1, 2].map((w) => (
+                            <span class="h-3 bg-smoke/60" style={`width: ${w}px`} />
+                          ))}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              )
+            })}
+          </div>
+        </div>
+
+        <p class="mt-6 text-center font-head text-[10px] font-semibold uppercase tracking-[0.35em] text-smoke">
+          — Press play. Feel the battle. —
+        </p>
+      </div>
+
+      {/* Full-screen player: adapts to widescreen or vertical video, arrows/Esc/swipe. */}
+      <div
+        data-dialog
+        data-video-dialog
+        role="dialog"
+        aria-modal="true"
+        aria-label="Video"
+        class="fixed inset-0 z-[100] flex items-center justify-center bg-ink/95 backdrop-blur-sm"
+      >
+        <button
+          type="button"
+          data-dialog-close
+          aria-label="Close"
+          class="absolute right-4 top-4 z-10 flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-iron bg-coal/80 text-chalk transition-colors hover:border-battle hover:text-battle"
+        >
+          <FaXmark size={18} />
+        </button>
+
+        {many && (
+          <>
+            <button
+              type="button"
+              data-dialog-prev
+              aria-label="Previous video"
+              class="absolute left-2 z-10 flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-iron bg-coal/80 text-chalk transition-colors hover:border-battle hover:text-battle sm:left-5"
+            >
+              <FaChevronLeft size={16} />
+            </button>
+            <button
+              type="button"
+              data-dialog-next
+              aria-label="Next video"
+              class="absolute right-2 z-10 flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-iron bg-coal/80 text-chalk transition-colors hover:border-battle hover:text-battle sm:right-5"
+            >
+              <FaChevronRight size={16} />
+            </button>
+          </>
+        )}
+
+        {items.map((item, index) => {
+          const { embed } = item
+          // The tap on the poster is the user gesture — autoplay is expected here.
+          const src = embed.platform === 'YouTube' ? `${embed.src}?autoplay=1&rel=0` : embed.src
+          return (
+            <figure
+              data-slide="pop"
+              data-dialog-content
+              data-label={item.label || 'Video'}
+              style="--pop-from: 0.95"
+              class="flex max-h-svh flex-col items-center gap-4 px-14 py-6 sm:px-20"
+            >
+              {/* Sized by format: vertical fills the height (phone-native feel),
+                  widescreen fills the width — both capped so nothing overflows. */}
+              <div
+                data-player
+                data-src={src}
+                data-title={item.label || `Video ${index + 1}`}
+                class={embed.vertical ? 'aspect-[9/16] h-[min(78svh,150vw)]' : 'aspect-video w-[min(92vw,138svh)]'}
+              />
+              <figcaption class="flex max-w-full items-center gap-3">
+                <span class="h-px w-6 shrink-0 bg-battle" />
+                <span class="truncate font-head text-sm font-semibold uppercase tracking-widest text-chalk">
+                  {item.label || `Round ${index + 1}`}
+                </span>
+                {many && <span class="shrink-0 font-head text-xs text-smoke">{`${index + 1} / ${items.length}`}</span>}
+              </figcaption>
+            </figure>
+          )
+        })}
+      </div>
+    </section>
+  )
+}
+
+<script>
+  import '../../scripts/videos.js'
+</script>

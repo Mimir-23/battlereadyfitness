@@ -1,0 +1,8 @@
+@import 'tailwindcss' source(none);
+@import './theme.css';
+
+/* Panel /admin: mismo sistema de diseño, pero sus utilidades se generan
+   aparte para no inflar el CSS del sitio público. */
+@source '../admin';
+@source '../content';
+@source '../layouts/AdminShell.astro';

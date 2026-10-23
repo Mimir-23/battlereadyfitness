@@ -1,0 +1,409 @@
+---
+import {
+  FaArrowRightLong,
+  FaClock,
+  FaWhatsapp,
+  FaBoltLightning,
+  FaLayerGroup,
+  FaMoon,
+  FaLock,
+  FaShieldHalved,
+} from 'react-icons/fa6'
+import BaseLayout from '../layouts/BaseLayout.astro'
+import PageBanner from '../components/ui/PageBanner.astro'
+import SectionHeading from '../components/ui/SectionHeading.astro'
+import CTAButton from '../components/ui/CTAButton.astro'
+import RecessEmbed from '../components/ui/RecessEmbed.astro'
+import { loadContent, cacheContentPage } from '../lib/content.js'
+import { fullBleedImage } from '../lib/images.js'
+import { getIcon } from '../content/icons.js'
+import { whatsappUrl } from '../content/defaults.js'
+import {
+  matches,
+  dayChip,
+  dayChipWithCount,
+  chipDot,
+  chipCount,
+  dayHeader,
+  dayHeaderSub,
+  dayCell,
+  classCell,
+  legendPill,
+} from '../lib/ui-state.js'
+
+const { content, live } = await loadContent()
+cacheContentPage(Astro, live)
+
+const { schedule, programs: PROGRAMS, hours: HOURS, brand } = content
+const SCHEDULE = schedule.rows || []
+const SCHEDULE_DAYS = schedule.days || []
+const WHATSAPP = whatsappUrl(brand)
+const iconFor = (name) => PROGRAMS.find((p) => matches(name, p.name))?.icon
+
+// Per-day class counts + overall stats.
+const dayStats = Object.fromEntries(SCHEDULE_DAYS.map((d) => [d, 0]))
+const types = new Set()
+for (const row of SCHEDULE) {
+  for (const d of SCHEDULE_DAYS) {
+    if (row.classes?.[d]) {
+      dayStats[d] += 1
+      types.add(row.classes[d])
+    }
+  }
+}
+const totalClasses = Object.values(dayStats).reduce((a, b) => a + b, 0)
+const trainingDays = SCHEDULE_DAYS.filter((d) => dayStats[d] > 0).length
+const stats = [
+  { icon: FaBoltLightning, value: totalClasses, label: 'Sessions / week' },
+  { icon: FaLayerGroup, value: types.size, label: 'Class types' },
+  { icon: FaClock, value: trainingDays, label: 'Training days' },
+]
+
+// Clicking a class loads that exact class in the booking terminal
+// (…/embed/checkout/class/<id>) when Recess sync gave it a single id;
+// otherwise it just scrolls down to the full calendar.
+const bookingOrigin = (() => {
+  try {
+    return new URL(brand.recessBookingUrl).origin
+  } catch {
+    return null
+  }
+})()
+const bookSrc = (row, day) => {
+  const ids = row.ids?.[day] || []
+  return ids.length === 1 && bookingOrigin
+    ? `${bookingOrigin}/embed/checkout/class/${encodeURIComponent(ids[0])}?hideMenu=true`
+    : ''
+}
+const splitTime = (time) => ({
+  clock: time.replace(/ ?(AM|PM)/i, ''),
+  period: /(AM|PM)/i.exec(time)?.[0] || '',
+})
+const banner = '/images/bootcamp.webp'
+---
+
+<BaseLayout content={content} title="Class Schedule" preloadImage={fullBleedImage(banner)}>
+  <PageBanner
+    kicker={`${SCHEDULE_DAYS.length} Days a Week · Hialeah`}
+    title="CLASS"
+    accent="SCHEDULE"
+    subtitle="Lock in your battle. Every slot below is a coached, high-intensity session — just show up ready to work."
+    image={banner}
+  />
+
+  <div data-schedule data-booking-url={brand.recessBookingUrl || ''}>
+    {/* Timetable */}
+    <section class="relative overflow-hidden bg-ink bg-grid py-24">
+      <div
+        class="pointer-events-none absolute -right-40 top-1/4 h-[440px] w-[440px] rounded-full bg-battle/10 blur-[140px]"
+      >
+      </div>
+
+      <div class="relative mx-auto max-w-7xl px-5 lg:px-8">
+        <SectionHeading number="01" kicker="Weekly Board" title="PICK YOUR" accent="SLOT" />
+
+        {/* Stats */}
+        <div data-reveal-group class="mt-12 grid grid-cols-3 gap-3 sm:gap-4">
+          {
+            stats.map((s) => {
+              const Icon = s.icon
+              return (
+                <div
+                  data-reveal
+                  data-reveal-item
+                  class="flex items-center gap-3 rounded-2xl border border-iron bg-coal px-4 py-4 sm:px-6"
+                >
+                  <span class="hidden h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-battle/10 text-battle sm:flex">
+                    <Icon size={18} />
+                  </span>
+                  <span>
+                    <span class="block font-display text-3xl leading-none text-battle sm:text-4xl">{s.value}</span>
+                    <span class="mt-1 block font-head text-[9px] font-semibold uppercase tracking-[0.15em] text-smoke sm:text-[10px]">
+                      {s.label}
+                    </span>
+                  </span>
+                </div>
+              )
+            })
+          }
+        </div>
+
+        {/* Day filter — controls both the desktop focus and the mobile agenda */}
+        <div data-reveal class="mt-8">
+          <div
+            class="-mx-5 flex snap-x gap-2 overflow-x-auto px-5 pb-1 sm:mx-0 sm:flex-wrap sm:justify-center sm:overflow-visible sm:px-0"
+          >
+            <button type="button" data-day-chip="all" class={dayChip(true)}>All week</button>
+            {
+              SCHEDULE_DAYS.map((d) => (
+                <button type="button" data-day-chip={d} class={dayChipWithCount(false)}>
+                  <span data-chip-dot hidden class={chipDot(false)} style="animation: var(--animate-blink)" />
+                  {d}
+                  <span data-chip-count class={chipCount(false)}>
+                    {dayStats[d] || '—'}
+                  </span>
+                </button>
+              ))
+            }
+          </div>
+        </div>
+
+        {/* Desktop / tablet grid */}
+        <div data-reveal class="mt-6 hidden overflow-hidden rounded-2xl border border-iron md:block">
+          <div class="grid" style={`grid-template-columns: 120px repeat(${SCHEDULE_DAYS.length}, minmax(0, 1fr))`}>
+            {/* header row */}
+            <div
+              class="flex flex-col justify-center border-b border-iron bg-coal px-4 py-4 font-head text-xs font-semibold uppercase tracking-[0.2em] text-smoke"
+            >
+              Time
+              <span class="mt-0.5 text-[9px] font-medium tracking-[0.15em] text-battle">Miami · ET</span>
+            </div>
+            {
+              SCHEDULE_DAYS.map((d) => (
+                <button type="button" data-day-head={d} class={dayHeader(false, false, false)}>
+                  {d}
+                  <span data-head-sub class={dayHeaderSub(false)}>
+                    {dayStats[d] ? `${dayStats[d]} classes` : 'Rest'}
+                  </span>
+                  <span data-today-bar hidden class="absolute inset-x-0 bottom-0 mx-auto block h-0.5 w-10 bg-battle" />
+                </button>
+              ))
+            }
+
+            {/* body rows */}
+            {
+              SCHEDULE.map((row, r) => (
+                <div class="contents">
+                  <div class="flex items-center gap-2 border-b border-iron bg-coal/60 px-4 py-3 font-head text-sm font-semibold text-chalk">
+                    <FaClock className="text-battle" size={12} />
+                    {row.time}
+                  </div>
+                  {SCHEDULE_DAYS.map((d) => {
+                    const name = row.classes?.[d]
+                    const iconName = iconFor(name)
+                    const Icon = iconName ? getIcon(iconName) : null
+                    return (
+                      <div data-day-cell={d} class={dayCell(false, false, false)}>
+                        {name ? (
+                          <a
+                            href="#book"
+                            data-class-cell
+                            data-class-name={name}
+                            data-book-src={bookSrc(row, d)}
+                            aria-label={`Book ${name}`}
+                            class={classCell(false)}
+                          >
+                            <div class="flex items-center gap-2">
+                              {Icon && (
+                                <span class="text-battle">
+                                  <Icon size={13} />
+                                </span>
+                              )}
+                              <span class="font-head text-[11px] font-semibold uppercase leading-tight tracking-wide text-chalk">
+                                {name}
+                              </span>
+                            </div>
+                          </a>
+                        ) : (
+                          <div class="flex h-full min-h-[58px] items-center justify-center rounded-lg border border-dashed border-iron/50">
+                            <span class="h-1 w-1 rounded-full bg-iron" />
+                          </div>
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
+              ))
+            }
+          </div>
+        </div>
+
+        {/* Mobile: the whole week, or the agenda of the chosen day */}
+        <div class="mt-6 md:hidden">
+          <div data-agenda="all" data-reveal-group class="space-y-4">
+            {
+              SCHEDULE.map((row) => (
+                <div data-reveal data-reveal-item class="rounded-2xl border border-iron bg-coal p-4">
+                  <div class="flex items-center gap-2 font-head text-sm font-semibold uppercase tracking-widest text-battle">
+                    <FaClock size={13} /> {row.time}
+                  </div>
+                  <div class="mt-3 grid grid-cols-2 gap-2">
+                    {SCHEDULE_DAYS.filter((d) => row.classes?.[d]).map((d) => (
+                      <a
+                        href="#book"
+                        data-class-name={row.classes[d]}
+                        data-book-src={bookSrc(row, d)}
+                        aria-label={`Book ${row.classes[d]}`}
+                        class="rounded-lg border border-iron bg-ink p-2.5 transition-colors hover:border-battle/50"
+                      >
+                        <div class="font-head text-[10px] uppercase tracking-[0.2em] text-smoke">{d}</div>
+                        <div class="mt-0.5 font-head text-xs font-semibold uppercase text-chalk">{row.classes[d]}</div>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              ))
+            }
+          </div>
+
+          {
+            SCHEDULE_DAYS.map((d) => {
+              const agendaRows = SCHEDULE.filter((r) => r.classes?.[d])
+              return agendaRows.length > 0 ? (
+                <div data-agenda={d} hidden data-reveal-group class="space-y-3">
+                  {agendaRows.map((row) => {
+                    const name = row.classes[d]
+                    const Icon = getIcon(iconFor(name))
+                    const t = splitTime(row.time)
+                    return (
+                      <a
+                        href="#book"
+                        data-reveal
+                        data-reveal-item
+                        data-class-name={name}
+                        data-book-src={bookSrc(row, d)}
+                        aria-label={`Book ${name}`}
+                        class="flex items-center gap-4 rounded-2xl border border-iron bg-coal p-4 transition-colors hover:border-battle/50"
+                      >
+                        <div class="flex w-20 shrink-0 flex-col">
+                          <span class="font-head text-sm font-bold text-chalk">{t.clock}</span>
+                          <span class="font-head text-[10px] uppercase tracking-wider text-smoke">{t.period}</span>
+                        </div>
+                        <span class="h-10 w-px shrink-0 bg-iron" />
+                        <div class="flex items-center gap-2.5">
+                          <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-battle/10 text-battle">
+                            <Icon size={16} />
+                          </span>
+                          <span class="font-head text-sm font-semibold uppercase tracking-wide text-chalk">{name}</span>
+                        </div>
+                      </a>
+                    )
+                  })}
+                </div>
+              ) : (
+                <div
+                  data-agenda={d}
+                  hidden
+                  class="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-iron bg-coal px-6 py-12 text-center"
+                >
+                  <FaMoon className="text-battle" size={22} />
+                  <div class="font-head text-sm font-semibold uppercase tracking-widest text-chalk">Rest &amp; Recover</div>
+                  <p class="max-w-xs text-sm text-smoke">No classes on {d}. Recharge for tomorrow&apos;s battle.</p>
+                </div>
+              )
+            })
+          }
+        </div>
+
+        {/* Legend */}
+        <div class="mt-10 flex flex-wrap items-center justify-center gap-3">
+          {
+            PROGRAMS.map((p) => {
+              const Icon = getIcon(p.icon)
+              return (
+                <button type="button" data-legend={p.name} class={legendPill(false)}>
+                  <Icon className="text-battle" size={12} /> {p.name}
+                </button>
+              )
+            })
+          }
+        </div>
+
+        <p class="mx-auto mt-8 max-w-2xl text-center text-sm text-smoke">
+          All times are gym local time — Miami, Eastern Time. Schedule may vary on holidays. Tap any class — or the
+          button below — to reserve your spot right here.
+        </p>
+
+        <div class="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <CTAButton href="#book">
+            Book a Class <FaArrowRightLong />
+          </CTAButton>
+          <CTAButton href={WHATSAPP} target="_blank" variant="ghost">
+            <FaWhatsapp size={16} /> Ask About Times
+          </CTAButton>
+        </div>
+      </div>
+    </section>
+
+    {/* Recess booking embed */}
+    {
+      brand.recessBookingUrl && (
+        <section id="book" class="relative overflow-hidden border-t border-iron bg-coal py-24">
+          <div class="pointer-events-none absolute -left-40 top-1/4 h-[440px] w-[440px] rounded-full bg-battle/10 blur-[140px]" />
+
+          <div class="relative mx-auto max-w-5xl px-5 lg:px-8">
+            <SectionHeading number="02" kicker="Reserve Your Spot" title="BOOK A" accent="CLASS" />
+            <p class="mx-auto mt-4 max-w-xl text-center text-fog">
+              Pick a day, pick a class and lock it in — bookings run right here through our Recess member portal.
+            </p>
+
+            <div data-reveal class="mt-12 overflow-hidden rounded-2xl border border-iron bg-ink shadow-2xl">
+              <div class="bg-hazard h-1.5" />
+
+              {/* terminal top bar */}
+              <div class="flex items-center justify-between gap-3 border-b border-iron bg-coal/60 px-4 py-3.5 sm:px-5">
+                <div class="flex items-center gap-3">
+                  <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-battle/10 text-battle">
+                    <FaLock size={15} />
+                  </span>
+                  <div class="leading-tight">
+                    <div class="font-head text-xs font-bold uppercase tracking-[0.2em] text-chalk">Class Booking</div>
+                    <div class="mt-0.5 font-head text-[10px] uppercase tracking-wider text-smoke">
+                      256-bit SSL · Powered by Recess
+                    </div>
+                  </div>
+                </div>
+                <span class="flex items-center gap-2 rounded-full border border-battle/40 bg-battle/10 px-3 py-1.5 font-head text-[10px] font-semibold uppercase tracking-wider text-battle">
+                  <FaShieldHalved size={11} /> <span class="hidden sm:inline">Encrypted</span>
+                </span>
+              </div>
+
+              {/* deep-link bar: which class the terminal is showing */}
+              <div
+                data-selected-bar
+                hidden
+                class="flex flex-wrap items-center justify-between gap-3 border-b border-iron bg-battle/5 px-4 py-3 sm:px-5"
+              >
+                <span class="min-w-0 truncate font-head text-xs font-semibold uppercase tracking-wider text-chalk">
+                  Booking: <span data-selected-name class="text-battle" />
+                </span>
+                <button
+                  type="button"
+                  data-clear-selection
+                  class="inline-flex shrink-0 cursor-pointer items-center gap-2 font-head text-[11px] font-semibold uppercase tracking-wider text-smoke transition-colors hover:text-battle"
+                >
+                  <FaArrowRightLong size={11} className="rotate-180" /> View full calendar
+                </button>
+              </div>
+
+              <RecessEmbed src={brand.recessBookingUrl} title="Battle Ready — Book a Class" minHeight={720} />
+            </div>
+          </div>
+        </section>
+      )
+    }
+
+    {/* Opening hours strip */}
+    <section class="border-y border-iron bg-coal py-16">
+      <div data-reveal-group class="mx-auto grid max-w-5xl gap-6 px-5 sm:grid-cols-3 lg:px-8">
+        {
+          HOURS.map(({ day, time }) => (
+            <div
+              data-reveal
+              data-reveal-item
+              data-spotlight
+              class="spotlight rounded-2xl border border-iron bg-ink p-6 text-center transition-colors duration-300 hover:border-battle/40"
+            >
+              <div class="font-head text-xs font-semibold uppercase tracking-[0.2em] text-battle">{day}</div>
+              <div class="mt-2 font-display text-2xl text-chalk">{time}</div>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<script>
+  import '../scripts/schedule.js'
+</script>
