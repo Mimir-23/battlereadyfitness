@@ -4,8 +4,10 @@ import '../styles/global.css'
 import Navbar from '../components/layout/Navbar.astro'
 import Footer from '../components/layout/Footer.astro'
 import FloatingActions from '../components/layout/FloatingActions.astro'
+import ConsentBanner from '../components/layout/ConsentBanner.astro'
 import { springCssVars } from '../lib/spring.js'
 import { SUPABASE_URL } from '../lib/supabaseEnv.js'
+import { DEFAULT_CONTENT } from '../content/defaults.js'
 
 /**
  * Public site shell: SEO tags, fonts, the boot script that picks the motion
@@ -111,6 +113,13 @@ const speculation = {
         try {
           if (document.referrer && new URL(document.referrer).origin === location.origin) d.classList.add('same-site')
         } catch {}
+        // Aviso de cookies y términos hasta que el visitante elija (v1).
+        try {
+          const c = JSON.parse(localStorage.getItem('br-consent') || 'null')
+          if (!c || c.v !== 1) d.classList.add('needs-consent')
+        } catch {
+          d.classList.add('needs-consent')
+        }
         // Tras un prerender, las intros arrancan cuando la página se muestra.
         const ready = () => d.classList.add('ready')
         if (document.prerendering) document.addEventListener('prerenderingchange', ready, { once: true })
@@ -148,8 +157,8 @@ const speculation = {
     <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
     <script is:inline type="speculationrules" set:html={JSON.stringify(speculation)} />
 
-    {/* Firebase Analytics, fuera del camino crítico: se carga cuando la
-        página ya terminó y el navegador está ocioso. La apiKey de un config
+    {/* Firebase Analytics, solo si el visitante acepta las cookies y fuera del
+        camino crítico (al terminar la carga). La apiKey de un config
         web de Firebase es un identificador público, no un secreto. */}
     <script is:inline>
       ;(() => {
@@ -174,9 +183,17 @@ const speculation = {
             .catch(() => {})
         const idle = () => (window.requestIdleCallback ? requestIdleCallback(start, { timeout: 4000 }) : setTimeout(start, 2000))
         const afterLoad = () => (document.readyState === 'complete' ? idle() : addEventListener('load', idle, { once: true }))
-        // Un prerender especulativo no es una visita: se mide al mostrarse.
-        if (document.prerendering) document.addEventListener('prerenderingchange', afterLoad, { once: true })
-        else afterLoad()
+        // Solo con consentimiento ("Accept all"), y nunca durante un prerender.
+        const consented = () => {
+          try {
+            return JSON.parse(localStorage.getItem('br-consent') || 'null')?.analytics === true
+          } catch {
+            return false
+          }
+        }
+        const begin = () => (document.prerendering ? document.addEventListener('prerenderingchange', afterLoad, { once: true }) : afterLoad())
+        if (consented()) begin()
+        else addEventListener('br:consent', (e) => e.detail?.analytics && begin(), { once: true })
       })()
     </script>
   </head>
@@ -208,6 +225,7 @@ const speculation = {
     </main>
     <Footer content={content} />
     <FloatingActions brand={content.brand} />
+    <ConsentBanner text={content.legal?.consentText || DEFAULT_CONTENT.legal.consentText} />
 
     <script>
       import '../scripts/site.js'

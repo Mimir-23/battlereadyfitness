@@ -347,6 +347,12 @@ export const SECTIONS = [
       { name: 'updated', label: 'Fecha de última actualización', type: 'text', help: 'Ej: October 2026' },
       { name: 'intro', label: 'Introducción', type: 'textarea' },
       {
+        name: 'consentText',
+        label: 'Aviso de cookies (primera visita)',
+        type: 'textarea',
+        help: 'Mensaje de la barra de la primera visita. Al final se añaden solos los enlaces «Terms & Conditions and Privacy Policy».',
+      },
+      {
         name: 'sections',
         label: 'Secciones',
         type: 'list',

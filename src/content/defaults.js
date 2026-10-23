@@ -338,6 +338,8 @@ DEFAULT_CONTENT.legal = {
   updated: 'October 2026',
   intro:
     'These terms and policies explain how memberships, classes and our facility work, and how we handle your information. By visiting this site, booking a class or training with us, you agree to them.',
+  consentText:
+    'We use cookies to run this site and, with your permission, to measure visits and improve it. By continuing you accept our',
   sections: [
     {
       title: 'Acceptance of Terms',

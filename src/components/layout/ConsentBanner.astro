@@ -1,0 +1,65 @@
+---
+import { FaCookieBite } from 'react-icons/fa6'
+
+/* First-visit consent: cookies + Terms & Conditions / Privacy Policy.
+   Shown by the boot script (class `needs-consent` on <html>) until the
+   visitor chooses; analytics only loads with "Accept all". */
+const { text } = Astro.props
+---
+
+<div
+  data-consent
+  role="region"
+  aria-label="Cookie consent"
+  class="consent fixed inset-x-3 bottom-3 z-[90] mx-auto max-w-3xl overflow-hidden rounded-2xl border border-iron bg-coal/95 shadow-[0_24px_60px_-20px_rgba(0,0,0,0.9)] backdrop-blur sm:inset-x-5 sm:bottom-5"
+>
+  <div class="bg-hazard h-1 opacity-80"></div>
+  <div class="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:gap-5">
+    <span class="hidden h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-battle/15 text-battle sm:flex">
+      <FaCookieBite size={18} />
+    </span>
+    <p class="flex-1 text-sm leading-relaxed text-fog">
+      {text}{' '}
+      <a href="/terms" class="font-semibold text-chalk underline decoration-battle/60 underline-offset-2 hover:text-battle"
+        >Terms &amp; Conditions</a
+      > and <a
+        href="/terms#privacy-policy"
+        class="font-semibold text-chalk underline decoration-battle/60 underline-offset-2 hover:text-battle"
+        >Privacy Policy</a
+      >.
+    </p>
+    <div class="flex shrink-0 gap-2">
+      <button
+        type="button"
+        data-consent-choice="essential"
+        class="cursor-pointer border border-iron bg-ink/40 px-4 py-2.5 font-head text-[11px] font-semibold uppercase tracking-widest text-chalk transition-colors hover:border-battle hover:text-battle"
+      >
+        Essential only
+      </button>
+      <button
+        type="button"
+        data-consent-choice="all"
+        class="cursor-pointer bg-battle px-4 py-2.5 font-head text-[11px] font-bold uppercase tracking-widest text-ink shadow-[0_8px_30px_-8px_rgba(255,210,0,0.6)] transition-transform hover:scale-[1.03] active:scale-95"
+      >
+        Accept all
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* Saves the choice (versioned, so a future policy change can ask again)
+     and tells the analytics loader in the layout. */
+  for (const btn of document.querySelectorAll('[data-consent-choice]')) {
+    btn.addEventListener('click', () => {
+      const analytics = btn.dataset.consentChoice === 'all'
+      try {
+        localStorage.setItem('br-consent', JSON.stringify({ v: 1, analytics, at: new Date().toISOString() }))
+      } catch {
+        /* sin almacenamiento: vale para esta visita */
+      }
+      document.documentElement.classList.remove('needs-consent')
+      dispatchEvent(new CustomEvent('br:consent', { detail: { analytics } }))
+    })
+  }
+</script>
