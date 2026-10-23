@@ -158,11 +158,19 @@ const hrefOf = (item) => item.to || `/${item.hash || ''}`
   {/* legal bar */}
   <div class="border-t border-iron">
     <div
-      class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-5 py-6 text-center sm:flex-row sm:text-left lg:px-8"
+      class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-5 py-6 text-center lg:flex-row lg:text-left lg:px-8"
     >
       <p class="text-xs uppercase tracking-widest text-smoke">
         © Copyright 2018 — Battle Ready Fitness Bootcamp — All Rights Reserved
       </p>
+      <nav aria-label="Legal" class="flex flex-wrap items-center justify-center gap-x-5 gap-y-1">
+        <a href="/terms" class="text-xs uppercase tracking-widest text-smoke transition-colors hover:text-battle">
+          Terms &amp; Conditions
+        </a>
+        <a href="/terms#privacy-policy" class="text-xs uppercase tracking-widest text-smoke transition-colors hover:text-battle">
+          Privacy Policy
+        </a>
+      </nav>
       <p class="text-xs uppercase tracking-widest text-smoke">Forged in Hialeah, Florida 🔥</p>
     </div>
   </div>

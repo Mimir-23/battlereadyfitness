@@ -332,6 +332,39 @@ export const SECTIONS = [
       { name: 'cta', label: 'Texto del botón', type: 'text', required: true },
     ],
   },
+
+  /* ---------- Términos y políticas ---------- */
+  {
+    key: 'legal',
+    label: 'Términos y políticas',
+    icon: 'FaScaleBalanced',
+    description: 'La página de Términos y Condiciones, con la política de privacidad y de cookies.',
+    shape: 'object',
+    fields: [
+      { name: 'kicker', label: 'Texto pequeño superior', type: 'text' },
+      { name: 'title', label: 'Título', type: 'text', required: true },
+      { name: 'accent', label: 'Título — parte destacada (amarilla)', type: 'text' },
+      { name: 'updated', label: 'Fecha de última actualización', type: 'text', help: 'Ej: October 2026' },
+      { name: 'intro', label: 'Introducción', type: 'textarea' },
+      {
+        name: 'sections',
+        label: 'Secciones',
+        type: 'list',
+        itemLabel: (it) => it.title || 'Sección',
+        newItem: () => ({ title: '', body: '' }),
+        item: [
+          { name: 'title', label: 'Título de la sección', type: 'text', required: true },
+          {
+            name: 'body',
+            label: 'Texto',
+            type: 'textarea',
+            required: true,
+            help: 'Deja una línea en blanco entre párrafos. Empieza una línea con "- " para hacer una lista.',
+          },
+        ],
+      },
+    ],
+  },
 ]
 
 /** Quick lookup by key. */

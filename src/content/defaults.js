@@ -328,6 +328,74 @@ export const DEFAULT_CONTENT = {
   ],
 }
 
+/* ---------- Términos, condiciones y políticas (página /terms) ----------
+   Cada sección tiene título y texto. En el texto, una línea en blanco
+   separa párrafos y las líneas que empiezan con "- " forman una lista. */
+DEFAULT_CONTENT.legal = {
+  kicker: 'Legal · Battle Ready Fitness',
+  title: 'TERMS &',
+  accent: 'CONDITIONS',
+  updated: 'October 2026',
+  intro:
+    'These terms and policies explain how memberships, classes and our facility work, and how we handle your information. By visiting this site, booking a class or training with us, you agree to them.',
+  sections: [
+    {
+      title: 'Acceptance of Terms',
+      body: 'By accessing battlereadyfitness.com, claiming a free pass, booking a class or purchasing a membership, you agree to these Terms & Conditions and to our Privacy Policy. If you do not agree, please do not use our services.',
+    },
+    {
+      title: 'Memberships & Payments',
+      body: 'Memberships, packages and class bookings are sold and processed through our member portal, Recess. Prices, billing periods, commitments and renewal terms are shown at checkout for each plan.\n\n- Recurring memberships renew automatically until cancelled.\n- Cancellations and freezes follow the terms of the plan you purchased.\n- Payments already processed are non-refundable unless the plan terms or applicable law state otherwise.',
+    },
+    {
+      title: 'Free Pass',
+      body: 'The 3-Day Free Pass is available to new members only, one per person. It gives access to regular group classes during three days and has no cash value. We may ask for a valid ID before your first session.',
+    },
+    {
+      title: 'Class Bookings & Attendance',
+      body: 'Class spots are limited and reserved through Recess. Please arrive on time; late arrivals may not be admitted for safety reasons. If you cannot attend, cancel your booking as early as possible so another member can take your spot. Schedules may change on holidays or for special events.',
+    },
+    {
+      title: 'Health, Safety & Assumption of Risk',
+      body: 'Physical exercise involves inherent risks. Consult your physician before starting any fitness program, especially if you have a medical condition, injury or are pregnant. You agree to inform your coach of any condition that may affect your training and to follow their instructions.\n\nYou participate voluntarily and assume the risks of training. Battle Ready Fitness is not liable for injuries, except where caused by our gross negligence as defined by law.',
+    },
+    {
+      title: 'Code of Conduct',
+      body: 'We are a community. Treat coaches and members with respect, use equipment properly and return it after use, and keep the facility clean.\n\n- Appropriate athletic clothing and closed training shoes are required.\n- Aggressive, discriminatory or unsafe behavior may result in suspension of your membership.\n- We are not responsible for lost or stolen personal belongings.',
+    },
+    {
+      title: 'Photos & Media',
+      body: 'We occasionally take photos and videos during classes for our website and social media. If you prefer not to appear, just tell a coach or write to us and we will respect it.',
+    },
+    {
+      title: 'Privacy Policy',
+      body: 'We only collect the information needed to serve you:\n\n- Contact details you share with us (for example by WhatsApp, phone or email).\n- Booking and payment information, processed securely by Recess under its own privacy policy. We never store card numbers.\n- Anonymous usage statistics of this website (Google Analytics / Firebase) to improve it.\n\nWe do not sell your personal information. We use it to manage your membership, answer your questions and, with your consent, share news and promotions. You can ask us at any time to access, correct or delete your information.',
+    },
+    {
+      title: 'Cookies',
+      body: 'This website uses essential cookies and analytics cookies that help us understand how visitors use it. Embedded services such as Recess, Google Maps, YouTube or Instagram may set their own cookies when you use them. You can block or delete cookies in your browser settings.',
+    },
+    {
+      title: 'Changes to These Terms',
+      body: 'We may update these terms and policies from time to time. The latest version is always published on this page with its update date.',
+    },
+    {
+      title: 'Contact',
+      body: 'Questions about these terms or your information? Reach us at contact@battlereadyfitness.com or visit us at 18600 NW 87th Avenue, Suite 116, Hialeah, Florida 33015.',
+    },
+  ],
+}
+
+/** URL-friendly anchor for a heading ("Privacy Policy" → "privacy-policy"). */
+export function slugify(text) {
+  return String(text || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+}
+
 /** Helper: build the full WhatsApp URL from brand fields. */
 export function whatsappUrl(brand) {
   const base = brand?.whatsappHref || 'https://wa.me/17862345399'

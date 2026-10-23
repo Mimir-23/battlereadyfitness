@@ -14,6 +14,7 @@ import {
   FaFacebookF,
 } from 'react-icons/fa6'
 import { resolveVideoEmbed } from '../../lib/videoEmbed'
+import { parseLegalBody } from '../../lib/legal'
 
 /* ------------------------------------------------------------------ */
 /*  Live previews — compact, brand-styled mirrors of each section that  */
@@ -574,7 +575,51 @@ function CoachesPreview({ d }) {
   )
 }
 
+function LegalPreview({ d }) {
+  const sections = d?.sections || []
+  return (
+    <Frame>
+      <div className="p-5">
+        {d?.kicker && (
+          <div className="font-head text-[10px] font-semibold uppercase tracking-[0.25em] text-battle">{d.kicker}</div>
+        )}
+        <div className="mt-1 font-display text-3xl leading-none text-chalk">
+          {d?.title} {d?.accent && <span className="text-battle">{d.accent}</span>}
+        </div>
+        {d?.updated && (
+          <div className="mt-2 font-head text-[10px] uppercase tracking-wider text-smoke">Last updated: {d.updated}</div>
+        )}
+        {d?.intro && <p className="mt-3 text-xs leading-relaxed text-fog">{d.intro}</p>}
+        <div className="mt-4 space-y-4">
+          {sections.map((s, i) => (
+            <div key={i} className="rounded-lg border border-iron bg-coal p-3">
+              <div className="flex items-baseline gap-2 font-head text-sm font-semibold uppercase tracking-wide text-chalk">
+                <span className="font-display text-base text-battle">{String(i + 1).padStart(2, '0')}</span>
+                {s.title}
+              </div>
+              <div className="mt-2 space-y-2 text-[11px] leading-relaxed text-fog">
+                {parseLegalBody(s.body).map((b, j) =>
+                  b.type === 'ul' ? (
+                    <ul key={j} className="list-disc space-y-1 pl-4 marker:text-battle">
+                      {b.items.map((it, k) => (
+                        <li key={k}>{it}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p key={j}>{b.text}</p>
+                  ),
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </Frame>
+  )
+}
+
 const MAP = {
+  legal: LegalPreview,
   hero: HeroPreview,
   coaches: CoachesPreview,
   videos: VideosPreview,

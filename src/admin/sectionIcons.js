@@ -15,6 +15,7 @@ import {
   FaVideo,
   FaUserNinja,
   FaLayerGroup,
+  FaScaleBalanced,
 } from 'react-icons/fa6'
 
 /* Maps the `icon` names used in content/schema.js to components. */
@@ -34,6 +35,7 @@ const MAP = {
   FaTags,
   FaVideo,
   FaUserNinja,
+  FaScaleBalanced,
 }
 
 export function sectionIcon(name) {

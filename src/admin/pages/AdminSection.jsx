@@ -43,6 +43,7 @@ const SITE_LINK = {
   hours: '/#contact',
   schedule: '/schedule',
   plans: '/memberships',
+  legal: '/terms',
 }
 
 export default function AdminSection() {
