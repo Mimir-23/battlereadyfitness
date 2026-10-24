@@ -72,6 +72,17 @@ function apply(prefs) {
   else delete root.dataset.cvd
 }
 
+// An option restyles the whole page at once. Without this, every element
+// with transition-all / transition-colors would animate the change — over
+// 300 transitions, many of them layout (font-size, padding…) — and the page
+// would stutter for most of a second. The new look is applied in one go and
+// transitions come back once it has been painted.
+function instantly(change) {
+  root.classList.add('a11y-switching')
+  change()
+  requestAnimationFrame(() => requestAnimationFrame(() => root.classList.remove('a11y-switching')))
+}
+
 function setStill(on) {
   if (on === root.classList.contains('a11y-still')) return
   if (on) {
@@ -115,8 +126,11 @@ if (dock) {
   const update = (changes) => {
     prefs = { ...prefs, ...changes }
     save(prefs)
-    apply(prefs)
+    instantly(() => apply(prefs))
     sync()
+    // Text size and font change the layout: smooth scroll and parallax
+    // measure again.
+    if ('text' in changes || 'font' in changes) dispatchEvent(new Event('resize'))
   }
 
   // Without speech synthesis the option can't work: say so instead.
@@ -165,9 +179,12 @@ if (dock) {
     }
     if (prefs.reader) setReader(false)
     prefs = defaults()
-    apply(prefs)
-    setStill(prefs.still)
+    instantly(() => {
+      apply(prefs)
+      setStill(prefs.still)
+    })
     sync()
+    dispatchEvent(new Event('resize'))
     announce('Accessibility options reset')
   })
 

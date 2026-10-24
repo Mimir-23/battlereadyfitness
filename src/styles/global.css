@@ -412,6 +412,14 @@ html.is-locked {
    aplicadas en <html> por el script de arranque antes del primer pintado.
    ============================================================ */
 
+/* Mientras se aplica una opción del panel, sin transiciones: el cambio es
+   instantáneo y no arranca cientos de animaciones a la vez (a11y.js). */
+.a11y-switching *,
+.a11y-switching *::before,
+.a11y-switching *::after {
+  transition: none !important;
+}
+
 /* Saltar al contenido: primer elemento enfocable de cada página. */
 .skip-link {
   position: fixed;

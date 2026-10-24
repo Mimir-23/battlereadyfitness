@@ -260,7 +260,17 @@ function highlight(el) {
   el?.setAttribute('data-reading', '')
 }
 
+// The page follows the reading until the visitor scrolls on their own:
+// from then on it never pulls them back (it keeps reading where it was).
+let follow = true
+const SCROLL_KEYS = new Set(['PageDown', 'PageUp', 'Home', 'End', 'ArrowDown', 'ArrowUp', ' '])
+function onUserScroll(e) {
+  if (e.type === 'keydown' && (!SCROLL_KEYS.has(e.key) || e.target.closest?.('input, textarea, select, button'))) return
+  follow = false
+}
+
 function bring(el) {
+  if (!follow) return
   const r = el.getBoundingClientRect()
   if (r.top > 90 && r.bottom < innerHeight - 100) return
   scrollToTarget(Math.max(0, scrollY + r.top - innerHeight * 0.3), { immediate: isStill(), duration: 0.8 })
@@ -301,6 +311,7 @@ export function togglePage() {
     setMode('paused')
     return
   }
+  follow = true
   if (mode === 'paused') {
     setMode('reading')
     readFrom(pos)
@@ -382,6 +393,7 @@ export function enable({ rate: value = 1, greet = false } = {}) {
   document.addEventListener('click', onClick)
   addEventListener('keydown', onKey)
   addEventListener('pagehide', hush)
+  for (const type of ['wheel', 'touchmove', 'keydown']) addEventListener(type, onUserScroll, { passive: true })
   if (status) observer.observe(status, { childList: true, characterData: true, subtree: true })
   playBtn?.addEventListener('click', togglePage)
   stopBtn?.addEventListener('click', stop)
@@ -401,6 +413,7 @@ export function disable() {
   document.removeEventListener('click', onClick)
   removeEventListener('keydown', onKey)
   removeEventListener('pagehide', hush)
+  for (const type of ['wheel', 'touchmove', 'keydown']) removeEventListener(type, onUserScroll, { passive: true })
   observer.disconnect()
   playBtn?.removeEventListener('click', togglePage)
   stopBtn?.removeEventListener('click', stop)
