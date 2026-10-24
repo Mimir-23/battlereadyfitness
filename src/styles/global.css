@@ -528,10 +528,12 @@ html[data-cvd='mono'] {
 /* Lector de pantalla integrado (src/scripts/reader.js): sus controles se
    muestran junto al botón de accesibilidad mientras está activo, y el
    bloque que se está leyendo queda marcado. */
-[data-reader-bar] {
+[data-reader-bar],
+[data-voice-row] {
   display: none;
 }
-.a11y-reader [data-reader-bar] {
+.a11y-reader [data-reader-bar],
+.a11y-reader [data-voice-row] {
   display: flex;
 }
 [data-reading] {

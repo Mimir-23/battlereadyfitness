@@ -1,4 +1,5 @@
 import { isStill, scrollToTarget } from './core.js'
+import { englishVoices } from './voices.js'
 
 /* ------------------------------------------------------------------ */
 /*  Screen reader mode (accessibility panel → "Screen reader"): the site */
@@ -12,7 +13,6 @@ import { isStill, scrollToTarget } from './core.js'
 /* ------------------------------------------------------------------ */
 
 const synth = window.speechSynthesis
-const root = document.documentElement
 const bar = document.querySelector('[data-reader-bar]')
 const playBtn = bar?.querySelector('[data-reader-play]')
 const stopBtn = bar?.querySelector('[data-reader-stop]')
@@ -23,18 +23,19 @@ const speakable = (text) => /[\p{L}\p{N}]/u.test(text)
 
 /* ---------- voice ---------- */
 let voice = null
+let preferred = ''
 let rate = 1
 
-// An English voice for the English site, preferably one installed on the
-// device (system voices don't send the text anywhere).
+// The voice picked in the panel, or the most natural English voice there is
+// (the site is in English; the system default may be another language).
 function pickVoice() {
-  const voices = synth.getVoices().filter((v) => /^en([-_]|$)/i.test(v.lang))
-  voice =
-    voices.find((v) => v.localService && /^en[-_]US/i.test(v.lang)) ||
-    voices.find((v) => v.localService) ||
-    voices.find((v) => /^en[-_]US/i.test(v.lang)) ||
-    voices[0] ||
-    null
+  const voices = englishVoices()
+  voice = voices.find((v) => v.name === preferred) || voices[0] || null
+}
+
+export function setVoice(name) {
+  preferred = name || ''
+  pickVoice()
 }
 
 // Every new utterance (or silence) invalidates the callbacks of the ones it
@@ -48,9 +49,10 @@ function say(text, { queue = false, onend } = {}) {
     return
   }
   if (!queue) hush()
+  if (!voice) pickVoice()
   const mine = token
   const u = new SpeechSynthesisUtterance(text)
-  u.lang = voice?.lang || root.lang || 'en'
+  u.lang = voice?.lang || 'en-US'
   if (voice) u.voice = voice
   u.rate = rate
   u.onend = () => mine === token && onend?.()
@@ -383,11 +385,11 @@ export function setRate(value) {
   rate = Number(value) || 1
 }
 
-export function enable({ rate: value = 1, greet = false } = {}) {
+export function enable({ rate: value = 1, voice: name = '', greet = false } = {}) {
   setRate(value)
+  setVoice(name)
   if (on) return
   on = true
-  pickVoice()
   synth.addEventListener?.('voiceschanged', pickVoice)
   document.addEventListener('focusin', onFocus)
   document.addEventListener('click', onClick)

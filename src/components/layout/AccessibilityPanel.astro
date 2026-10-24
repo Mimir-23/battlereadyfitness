@@ -136,6 +136,16 @@ const legend = 'font-head text-[0.6875rem] font-semibold uppercase tracking-[0.2
           </span>
           <input type="checkbox" role="switch" name="reader" class="a11y-switch" />
         </label>
+        {/* Voice picker, while the screen reader is on (filled by a11y.js). */}
+        <label data-voice-row class="mt-2 items-center justify-between gap-3 px-1">
+          <span class="text-sm text-fog">Voice</span>
+          <select
+            name="voice"
+            class="min-w-0 max-w-[13rem] cursor-pointer rounded-lg border border-iron bg-ink px-2.5 py-2 text-sm text-chalk"
+          >
+            <option value="">Automatic</option>
+          </select>
+        </label>
       </fieldset>
 
       <fieldset class="mt-5">

@@ -1,4 +1,5 @@
 import { announce } from './core.js'
+import { englishVoices, voiceLabel } from './voices.js'
 
 /* ------------------------------------------------------------------ */
 /*  Accessibility panel: reads/writes the visitor's preferences and     */
@@ -17,6 +18,7 @@ const RATES = ['0.75', '1', '1.25', '1.5']
 const defaults = () => ({
   reader: false,
   rate: '1',
+  voice: '',
   text: '1',
   contrast: matchMedia('(prefers-contrast: more)').matches,
   links: false,
@@ -101,8 +103,8 @@ function setStill(on) {
 let readerModule = null
 const loadReader = () => (readerModule ??= import('./reader.js'))
 
-function setReader(on, { rate, greet = false } = {}) {
-  if (on && canSpeak) loadReader().then((m) => m.enable({ rate, greet }))
+function setReader(on, { rate, voice, greet = false } = {}) {
+  if (on && canSpeak) loadReader().then((m) => m.enable({ rate, voice, greet }))
   else readerModule?.then((m) => m.disable())
 }
 
@@ -111,7 +113,22 @@ if (dock) {
   const panel = dock.querySelector('[data-a11y-panel]')
   const readerBar = dock.querySelector('[data-reader-bar]')
   const rateBtn = dock.querySelector('[data-reader-rate]')
+  const voiceSelect = panel.querySelector('select[name="voice"]')
   let prefs = read()
+
+  // The best English voices of this device (they load asynchronously).
+  const fillVoices = () => {
+    const voices = englishVoices().slice(0, 15)
+    voiceSelect.replaceChildren(
+      new Option('Automatic', ''),
+      ...voices.map((v) => new Option(voiceLabel(v), v.name)),
+    )
+    voiceSelect.value = voices.some((v) => v.name === prefs.voice) ? prefs.voice : ''
+  }
+  if (canSpeak) {
+    fillVoices()
+    speechSynthesis.addEventListener?.('voiceschanged', fillVoices)
+  }
 
   const sync = () => {
     for (const input of panel.querySelectorAll('input')) {
@@ -141,17 +158,24 @@ if (dock) {
     root.classList.remove('a11y-reader')
   }
   sync()
-  if (prefs.reader) setReader(true, { rate: prefs.rate })
+  if (prefs.reader) setReader(true, { rate: prefs.rate, voice: prefs.voice })
 
   panel.addEventListener('change', (e) => {
     const input = e.target
+    if (input === voiceSelect) {
+      update({ voice: input.value })
+      readerModule?.then((m) => m.setVoice(input.value))
+      // Heard in the new voice.
+      announce(`Voice: ${input.selectedOptions[0].textContent.split(' · ')[0]}`)
+      return
+    }
     if (!(input instanceof HTMLInputElement)) return
     const value = input.type === 'checkbox' ? input.checked : input.value
     update({ [input.name]: value })
     if (input.name === 'still') setStill(value)
 
     // The screen reader greets (or says goodbye) with its own voice.
-    if (input.name === 'reader') setReader(value, { rate: prefs.rate, greet: true })
+    if (input.name === 'reader') setReader(value, { rate: prefs.rate, voice: prefs.voice, greet: true })
     else if (input.name === 'text') announce(`Text size ${Math.round(Number(value) * 100)}%`)
     else if (input.name === 'cvd') announce(CVD_LABELS[value])
     else if (input.name === 'still' && !value) announce('Animations on. Scroll effects return on the next page.')
@@ -179,6 +203,7 @@ if (dock) {
     }
     if (prefs.reader) setReader(false)
     prefs = defaults()
+    voiceSelect.value = ''
     instantly(() => {
       apply(prefs)
       setStill(prefs.still)
