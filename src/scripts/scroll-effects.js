@@ -178,3 +178,20 @@ export function initScrollEffects() {
   addEventListener('resize', schedule, { passive: true })
   update()
 }
+
+/* ---------- looping animations only while they can be seen ---------- */
+// Embers, marquees, pulses and scanners loop forever. Sections far from the
+// screen pause theirs, so the browser isn't animating ~40 things it can't
+// show (lighter first load, smoother scrolling, less battery). Runs on every
+// device; the margin resumes them well before they scroll into view.
+export function initOffscreenPause() {
+  const blocks = document.querySelectorAll('main > *')
+  if (!blocks.length || !('IntersectionObserver' in window)) return
+  const io = new IntersectionObserver(
+    (entries) => {
+      for (const { target, isIntersecting } of entries) target.toggleAttribute('data-offscreen', !isIntersecting)
+    },
+    { rootMargin: '300px 0px' },
+  )
+  blocks.forEach((el) => io.observe(el))
+}

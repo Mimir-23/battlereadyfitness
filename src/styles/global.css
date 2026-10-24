@@ -412,6 +412,14 @@ html.is-locked {
    aplicadas en <html> por el script de arranque antes del primer pintado.
    ============================================================ */
 
+/* Secciones lejos de la pantalla: sus animaciones en bucle quedan en pausa
+   (scroll-effects.js → initOffscreenPause). */
+[data-offscreen] *,
+[data-offscreen] *::before,
+[data-offscreen] *::after {
+  animation-play-state: paused !important;
+}
+
 /* Mientras se aplica una opción del panel, sin transiciones: el cambio es
    instantáneo y no arranca cientos de animaciones a la vez (a11y.js). */
 .a11y-switching *,
