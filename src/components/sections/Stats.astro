@@ -13,7 +13,9 @@ const { stats = [] } = Astro.props
       stats.map((s) => (
         <div data-reveal data-reveal-item data-lift-soft class="group text-center lg:px-8">
           <div class="font-display text-5xl text-battle transition-[text-shadow] duration-300 group-hover:[text-shadow:0_0_28px_rgba(255,210,0,0.45)] lg:text-6xl">
-            <span data-counter={Number(s.value) || 0} data-suffix={s.suffix || ''}>{`${Number(s.value) || 0}${s.suffix || ''}`}</span>
+            {/* Counts up on screen; screen readers get the final figure. */}
+            <span aria-hidden="true" data-counter={Number(s.value) || 0} data-suffix={s.suffix || ''}>{`${Number(s.value) || 0}${s.suffix || ''}`}</span>
+            <span class="sr-only">{`${Number(s.value) || 0}${s.suffix || ''}`}</span>
           </div>
           <div class="mt-2 font-head text-xs font-medium uppercase tracking-[0.2em] text-smoke">{s.label}</div>
         </div>

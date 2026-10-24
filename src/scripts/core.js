@@ -149,3 +149,22 @@ export function unlockScroll() {
 export function setClassName(el, value) {
   el.className = el.classList.contains('is-in') ? `${value} is-in` : value
 }
+
+/* ---------- accessibility ---------- */
+
+/** The visitor turned on "Stop animations" in the accessibility panel. */
+export const isStill = () => document.documentElement.classList.contains('a11y-still')
+
+/** Runs `fn` when "Stop animations" is switched on during the visit. */
+export const onStill = (fn) => addEventListener('br:still', fn)
+
+/** Politely announces a short message to screen readers. */
+export function announce(message) {
+  const region = document.getElementById('a11y-status')
+  if (!region) return
+  // Clear first so repeating the same message is announced again.
+  region.textContent = ''
+  setTimeout(() => {
+    region.textContent = message
+  }, 60)
+}

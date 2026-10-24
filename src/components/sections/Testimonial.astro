@@ -1,5 +1,5 @@
 ---
-import { FaStar, FaChevronLeft, FaChevronRight, FaQuoteLeft } from 'react-icons/fa6'
+import { FaStar, FaChevronLeft, FaChevronRight, FaQuoteLeft, FaPause, FaPlay } from 'react-icons/fa6'
 import { responsiveImage } from '../../lib/images.js'
 import { quoteDot } from '../../lib/ui-state.js'
 
@@ -21,7 +21,12 @@ const bg = t?.image ? responsiveImage(t.image, { sizes: '100vw', widths: [640, 8
 
 {
   items.length > 0 && (
-    <section data-testimonials class="relative overflow-hidden border-y border-iron py-24 sm:py-28">
+    <section
+      data-testimonials
+      aria-roledescription="carousel"
+      aria-labelledby="reviews-title"
+      class="relative overflow-hidden border-y border-iron py-24 sm:py-28"
+    >
       {bg && (
         <div data-parallax="-44,44" data-parallax-target="section" class="absolute inset-x-0 -inset-y-12">
           <img {...bg} alt="" aria-hidden="true" class="h-full w-full object-cover" loading="lazy" decoding="async" />
@@ -33,37 +38,52 @@ const bg = t?.image ? responsiveImage(t.image, { sizes: '100vw', widths: [640, 8
 
       {/* giant watermark quote glyph — parallax drift on a deeper plane */}
       <div data-parallax="34,-34" aria-hidden="true" class="pointer-events-none absolute left-1/2 top-14">
-        <FaQuoteLeft className="-translate-x-1/2 text-battle/[0.07]" size={180} />
+        <FaQuoteLeft aria-hidden="true" className="-translate-x-1/2 text-battle/[0.07]" size={180} />
       </div>
 
       <div class="relative mx-auto max-w-4xl px-5 text-center lg:px-8">
         <div data-reveal>
-          <span class="inline-flex items-center gap-2 rounded-full border border-iron bg-ink/60 px-4 py-1.5 font-head text-[11px] font-semibold uppercase tracking-[0.25em] text-smoke backdrop-blur-sm">
-            <span class="flex text-battle">
+          <span class="inline-flex items-center gap-2 rounded-full border border-iron bg-ink/60 px-4 py-1.5 font-head text-[0.6875rem] font-semibold uppercase tracking-[0.25em] text-smoke backdrop-blur-sm">
+            <span class="flex text-battle" aria-hidden="true">
               {[0, 1, 2, 3, 4].map(() => (
-                <FaStar size={11} />
+                <FaStar aria-hidden="true" size={11} />
               ))}
             </span>
-            Warrior Reviews
+            <span id="reviews-title">Warrior Reviews</span>
           </span>
 
           {/* Fixed-height stage so quotes of different lengths don't jump the page */}
-          <div data-quote-stage class="mt-8 flex min-h-[300px] flex-col items-center justify-center sm:min-h-[260px]">
+          <div
+            data-quote-stage
+            aria-live={many ? 'off' : undefined}
+            class="mt-8 flex min-h-[300px] flex-col items-center justify-center sm:min-h-[260px]"
+          >
             {items.map((q, i) => (
-              <figure data-quote data-active={i === 0 ? '' : undefined}>
-                <blockquote class="font-head text-2xl font-medium leading-snug text-chalk sm:text-3xl lg:text-4xl">
-                  &ldquo;{q.quote} {q.highlight && <span class="text-battle">{q.highlight}</span>}&rdquo;
-                </blockquote>
-                <figcaption class="mt-8 flex items-center justify-center gap-3">
-                  <div class="flex h-12 w-12 items-center justify-center rounded-full bg-battle font-head text-lg font-bold text-ink">
-                    {initials(q.author)}
-                  </div>
-                  <div class="text-left">
-                    <div class="font-head font-semibold uppercase tracking-wide text-chalk">{q.author}</div>
-                    <div class="text-xs uppercase tracking-widest text-smoke">{q.role}</div>
-                  </div>
-                </figcaption>
-              </figure>
+              <div
+                data-quote
+                data-active={i === 0 ? '' : undefined}
+                role={many ? 'group' : undefined}
+                aria-roledescription={many ? 'slide' : undefined}
+                aria-label={many ? `${i + 1} of ${items.length}` : undefined}
+              >
+                <figure>
+                  <blockquote class="font-head text-2xl font-medium leading-snug text-chalk sm:text-3xl lg:text-4xl">
+                    &ldquo;{q.quote} {q.highlight && <span class="text-battle">{q.highlight}</span>}&rdquo;
+                  </blockquote>
+                  <figcaption class="mt-8 flex items-center justify-center gap-3">
+                    <div
+                      aria-hidden="true"
+                      class="flex h-12 w-12 items-center justify-center rounded-full bg-battle font-head text-lg font-bold text-ink"
+                    >
+                      {initials(q.author)}
+                    </div>
+                    <div class="text-left">
+                      <div class="font-head font-semibold uppercase tracking-wide text-chalk">{q.author}</div>
+                      <div class="text-xs uppercase tracking-widest text-smoke">{q.role}</div>
+                    </div>
+                  </figcaption>
+                </figure>
+              </div>
             ))}
           </div>
 
@@ -76,17 +96,20 @@ const bg = t?.image ? responsiveImage(t.image, { sizes: '100vw', widths: [640, 8
                 aria-label="Previous review"
                 class="flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-iron text-fog transition-colors hover:border-battle/60 hover:text-battle"
               >
-                <FaChevronLeft size={14} />
+                <FaChevronLeft aria-hidden="true" size={14} />
               </button>
-              <div class="flex items-center gap-2">
+              {/* Each dot sits in a 24px touch target (WCAG 2.5.8). */}
+              <div class="flex items-center">
                 {items.map((_, i) => (
                   <button
                     type="button"
                     data-quote-dot={i}
                     aria-label={`Go to review ${i + 1}`}
                     aria-current={i === 0 ? 'true' : 'false'}
-                    class={quoteDot(i === 0)}
-                  />
+                    class="group/dot flex h-6 cursor-pointer items-center px-[9px]"
+                  >
+                    <span class={quoteDot(i === 0)} />
+                  </button>
                 ))}
               </div>
               <button
@@ -95,7 +118,21 @@ const bg = t?.image ? responsiveImage(t.image, { sizes: '100vw', widths: [640, 8
                 aria-label="Next review"
                 class="flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-iron text-fog transition-colors hover:border-battle/60 hover:text-battle"
               >
-                <FaChevronRight size={14} />
+                <FaChevronRight aria-hidden="true" size={14} />
+              </button>
+              {/* Auto-rotation can be paused (WCAG 2.2.2). */}
+              <button
+                type="button"
+                data-quote-pause
+                aria-label="Pause automatic rotation"
+                class="flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-iron text-fog transition-colors hover:border-battle/60 hover:text-battle"
+              >
+                <span data-icon-pause class="block">
+                  <FaPause aria-hidden="true" size={12} />
+                </span>
+                <span data-icon-play class="block" hidden>
+                  <FaPlay aria-hidden="true" size={12} />
+                </span>
               </button>
             </div>
           )}

@@ -328,6 +328,118 @@ export const DEFAULT_CONTENT = {
   ],
 }
 
+/* ---------- Términos, condiciones y políticas (página /terms) ----------
+   Cada sección tiene título y texto. En el texto, una línea en blanco
+   separa párrafos y las líneas que empiezan con "- " forman una lista. */
+DEFAULT_CONTENT.legal = {
+  kicker: 'Legal · Battle Ready Fitness',
+  title: 'TERMS &',
+  accent: 'CONDITIONS',
+  updated: 'October 2026',
+  intro:
+    'These terms and policies explain how memberships, classes and our facility work, and how we handle your information. By visiting this site, booking a class or training with us, you agree to them.',
+  consentText:
+    'We use cookies to run this site and, with your permission, to measure visits and improve it. By continuing you accept our',
+  sections: [
+    {
+      title: 'Acceptance of Terms',
+      body: 'By accessing battlereadyfitness.com, claiming a free pass, booking a class or purchasing a membership, you agree to these Terms & Conditions and to our Privacy Policy. If you do not agree, please do not use our services.',
+    },
+    {
+      title: 'Memberships & Payments',
+      body: 'Memberships, packages and class bookings are sold and processed through our member portal, Recess. Prices, billing periods, commitments and renewal terms are shown at checkout for each plan.\n\n- Recurring memberships renew automatically until cancelled.\n- Cancellations and freezes follow the terms of the plan you purchased.\n- Payments already processed are non-refundable unless the plan terms or applicable law state otherwise.',
+    },
+    {
+      title: 'Free Pass',
+      body: 'The 3-Day Free Pass is available to new members only, one per person. It gives access to regular group classes during three days and has no cash value. We may ask for a valid ID before your first session.',
+    },
+    {
+      title: 'Class Bookings & Attendance',
+      body: 'Class spots are limited and reserved through Recess. Please arrive on time; late arrivals may not be admitted for safety reasons. If you cannot attend, cancel your booking as early as possible so another member can take your spot. Schedules may change on holidays or for special events.',
+    },
+    {
+      title: 'Health, Safety & Assumption of Risk',
+      body: 'Physical exercise involves inherent risks. Consult your physician before starting any fitness program, especially if you have a medical condition, injury or are pregnant. You agree to inform your coach of any condition that may affect your training and to follow their instructions.\n\nYou participate voluntarily and assume the risks of training. Battle Ready Fitness is not liable for injuries, except where caused by our gross negligence as defined by law.',
+    },
+    {
+      title: 'Code of Conduct',
+      body: 'We are a community. Treat coaches and members with respect, use equipment properly and return it after use, and keep the facility clean.\n\n- Appropriate athletic clothing and closed training shoes are required.\n- Aggressive, discriminatory or unsafe behavior may result in suspension of your membership.\n- We are not responsible for lost or stolen personal belongings.',
+    },
+    {
+      title: 'Photos & Media',
+      body: 'We occasionally take photos and videos during classes for our website and social media. If you prefer not to appear, just tell a coach or write to us and we will respect it.',
+    },
+    {
+      title: 'Privacy Policy',
+      body: 'We only collect the information needed to serve you:\n\n- Contact details you share with us (for example by WhatsApp, phone or email).\n- Booking and payment information, processed securely by Recess under its own privacy policy. We never store card numbers.\n- Anonymous usage statistics of this website (Google Analytics / Firebase) to improve it.\n\nWe do not sell your personal information. We use it to manage your membership, answer your questions and, with your consent, share news and promotions. You can ask us at any time to access, correct or delete your information.',
+    },
+    {
+      title: 'Cookies',
+      body: 'This website uses essential cookies and analytics cookies that help us understand how visitors use it. Embedded services such as Recess, Google Maps, YouTube or Instagram may set their own cookies when you use them. You can block or delete cookies in your browser settings.',
+    },
+    {
+      title: 'Changes to These Terms',
+      body: 'We may update these terms and policies from time to time. The latest version is always published on this page with its update date.',
+    },
+    {
+      title: 'Contact',
+      body: 'Questions about these terms or your information? Reach us at contact@battlereadyfitness.com or visit us at 18600 NW 87th Avenue, Suite 116, Hialeah, Florida 33015.',
+    },
+  ],
+}
+
+/* ---------- Declaración de accesibilidad (página /accessibility) ----------
+   Mismo formato que los términos: una línea en blanco separa párrafos y las
+   líneas que empiezan con "- " forman una lista. */
+DEFAULT_CONTENT.accessibility = {
+  kicker: 'Accessibility · Battle Ready Fitness',
+  title: 'ACCESS FOR',
+  accent: 'EVERY WARRIOR',
+  updated: 'October 2026',
+  intro:
+    'Everyone deserves a place on the battleground. We want this website to work for you whether you use a screen reader, navigate with a keyboard, see colors differently, or are Deaf or hard of hearing.',
+  sections: [
+    {
+      title: 'Our Commitment',
+      body: 'We design and test this site against the Web Content Accessibility Guidelines (WCAG) 2.2, level AA. Accessibility is ongoing work: we check new content and features as we add them, and we fix the problems you tell us about.',
+    },
+    {
+      title: 'Accessibility Options',
+      body: 'Open the accessibility button (the person icon at the bottom left of every page) to adjust the site. Your choices are saved on your device and apply to every page.\n\n- Screen reader: the site reads itself aloud with your device\'s voice. It speaks whatever you reach with the Tab key or tap, and "Read page" reads everything from where you are, highlighting each part. Press Ctrl to silence it.\n- Text size: up to 150%, without breaking the layout.\n- High contrast: brighter text and stronger borders. It also turns on by itself if your device asks for more contrast.\n- Underline links: find links without relying on color.\n- Readable font: plain letters and normal spacing instead of the condensed display type.\n- Stop animations: no motion, sliding carousels, parallax or moving video previews. It also turns on by itself if your device is set to reduce motion.\n- Video captions: subtitles on whenever the video has them.\n- Color vision: correction filters for protanopia, deuteranopia and tritanopia, and a grayscale mode.',
+    },
+    {
+      title: 'Blind & Low-Vision Visitors',
+      body: 'The site works with screen readers such as VoiceOver, NVDA, JAWS and TalkBack, and entirely with a keyboard. No screen reader on this device? Turn on "Screen reader" in the accessibility options and the site reads itself aloud.\n\n- "Skip to content" is the first link on every page, and "Accessibility options" the second.\n- Pages are organized with landmarks and headings, and the menu tells you which page you are on.\n- Every button and link has a clear name, and meaningful images have text descriptions.\n- The class schedule is a real table: you hear the day and time of each class.\n- Changes on the page (filters, carousels, the class you picked) are announced.\n- Photo and video viewers keep focus inside while open, close with Escape and move with the arrow keys.\n- The focus outline is always visible and never hidden behind the top menu.',
+    },
+    {
+      title: 'Color-Blind Visitors',
+      body: 'Information on this site never depends on color alone: links, selected days, plans and states also change in text, shape or position. Text meets WCAG contrast ratios on our dark background, and the color vision filters in the accessibility options can make the yellow and red accents easier to tell apart.',
+    },
+    {
+      title: 'Deaf & Hard-of-Hearing Visitors',
+      body: 'Nothing on the website relies on sound, and every way to reach us works in writing.\n\n- Turn on "Video captions" to show subtitles in our YouTube videos whenever they are available.\n- Videos can include a written transcript, shown under the player. If one is missing, ask us for it.\n- Message us on WhatsApp or by email to ask questions, book or get help — no phone call needed.\n- Planning your first class? Write to us beforehand and tell us what works best for you.',
+    },
+    {
+      title: 'Third-Party Content',
+      body: 'Class booking and checkout are provided by our member portal, Recess, and some videos are hosted on YouTube, Instagram, TikTok or Facebook. We choose accessible options where we can, but we do not control those services. If any of them gets in your way, message us and we will book you or answer your question directly.',
+    },
+    {
+      title: 'Feedback & Contact',
+      body: 'Found a barrier, or need information in another format? Tell us what page you were on and what happened, and we will get back to you as soon as possible. Reach us on WhatsApp, at contact@battlereadyfitness.com, or visit us at 18600 NW 87th Avenue, Suite 116, Hialeah, Florida 33015.',
+    },
+  ],
+}
+
+/** URL-friendly anchor for a heading ("Privacy Policy" → "privacy-policy"). */
+export function slugify(text) {
+  return String(text || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+}
+
 /** Helper: build the full WhatsApp URL from brand fields. */
 export function whatsappUrl(brand) {
   const base = brand?.whatsappHref || 'https://wa.me/17862345399'

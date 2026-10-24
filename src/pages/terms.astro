@@ -1,0 +1,37 @@
+---
+import { FaScaleBalanced } from 'react-icons/fa6'
+import BaseLayout from '../layouts/BaseLayout.astro'
+import PageBanner from '../components/ui/PageBanner.astro'
+import PolicyDocument from '../components/ui/PolicyDocument.astro'
+import { loadContent, cacheContentPage } from '../lib/content.js'
+import { fullBleedImage } from '../lib/images.js'
+
+/* Terms & Conditions with the privacy and cookie policies — editable from
+   the panel (section "Términos y políticas"). */
+const { content, live } = await loadContent()
+cacheContentPage(Astro, live)
+
+const legal = content.legal
+const banner = '/images/g3.webp'
+---
+
+<BaseLayout
+  content={content}
+  title="Terms & Conditions"
+  description="Terms & Conditions, Privacy Policy and Cookie Policy of Battle Ready Fitness Bootcamp in Hialeah, Florida."
+  preloadImage={fullBleedImage(banner)}
+>
+  <PageBanner
+    kicker={legal.kicker}
+    title={legal.title}
+    accent={legal.accent}
+    subtitle={legal.updated ? `Last updated: ${legal.updated}` : undefined}
+    image={banner}
+  />
+  <PolicyDocument
+    doc={legal}
+    brand={content.brand}
+    icon={FaScaleBalanced}
+    question="Questions about these terms or your information?"
+  />
+</BaseLayout>
