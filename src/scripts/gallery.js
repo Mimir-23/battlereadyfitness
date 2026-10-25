@@ -1,4 +1,4 @@
-import { reducedMotion, setClassName } from './core.js'
+import { reducedMotion, setClassName, isStill, onStill } from './core.js'
 import { galleryTile } from '../lib/ui-state.js'
 import { createSlideDialog } from './dialog.js'
 
@@ -36,7 +36,7 @@ if (section) {
 
   const sync = () => {
     clearInterval(timer)
-    if (!inView || reducedMotion || paused || !tiles.length) return
+    if (!inView || reducedMotion || isStill() || paused || !tiles.length) return
     timer = setInterval(() => setActive((active + 1) % tiles.length), 2400)
   }
 
@@ -63,7 +63,18 @@ if (section) {
       paused = false
       sync()
     })
+    // Keyboard: focusing a photo locks the scanner on it, like hovering.
+    tile.addEventListener('focusin', () => {
+      paused = true
+      setActive(i)
+      sync()
+    })
+    tile.addEventListener('focusout', () => {
+      paused = false
+      sync()
+    })
   })
+  onStill(sync)
 
   const dialog = section.querySelector('[data-lightbox]')
   const lightbox = createSlideDialog(dialog, {

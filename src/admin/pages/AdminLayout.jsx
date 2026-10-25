@@ -87,7 +87,7 @@ export default function AdminLayout() {
           <div className="flex items-center justify-between border-b border-iron px-5 py-4">
             <div>
               <div className="font-display text-2xl leading-none text-chalk">BATTLE READY</div>
-              <div className="font-head text-[10px] uppercase tracking-[0.2em] text-battle">
+              <div className="font-head text-[0.625rem] uppercase tracking-[0.2em] text-battle">
                 Panel de contenido
               </div>
             </div>
@@ -100,7 +100,7 @@ export default function AdminLayout() {
             </button>
           </div>
 
-          <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
+          <nav aria-label="Secciones del panel" className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
             {SECTIONS.map((s) => {
               const Icon = sectionIcon(s.icon)
               return (
@@ -131,7 +131,7 @@ export default function AdminLayout() {
             >
               <FaArrowUpRightFromSquare size={14} /> Ver el sitio
             </Link>
-            <div className="px-3 pb-2 pt-1 text-[11px] text-smoke">{user?.email}</div>
+            <div className="px-3 pb-2 pt-1 text-[0.6875rem] text-smoke">{user?.email}</div>
             <button
               onClick={guardedSignOut}
               className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-fog hover:bg-ink hover:text-alert"
@@ -143,7 +143,9 @@ export default function AdminLayout() {
       </aside>
 
       {menuOpen && (
+        // Tapping outside closes the menu; keyboard users have its close button.
         <div
+          role="presentation"
           className="fixed inset-0 z-30 bg-ink/60 lg:hidden"
           onClick={() => setMenuOpen(false)}
         />

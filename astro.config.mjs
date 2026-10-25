@@ -57,15 +57,17 @@ const LATIN = [
   'U+FEFF',
   'U+FFFD',
 ]
-const localFont = (name, cssVariable, file, weight, fallbacks) => ({
+// Fallbacks end in `system-ui` so Astro generates metric-matched local
+// fallbacks for every platform (Roboto on Android, Segoe UI on Windows,
+// Helvetica Neue on macOS, Arial): with `sans-serif` alone it only makes the
+// Arial one, which Android doesn't have, and text jumps when the font lands.
+const localFont = (name, cssVariable, file, weight, display = 'swap') => ({
   provider: fontProviders.local(),
   name,
   cssVariable,
-  fallbacks,
+  fallbacks: ['sans-serif', 'system-ui'],
   options: {
-    variants: [
-      { src: [`./src/assets/fonts/${file}`], weight, style: 'normal', display: 'swap', unicodeRange: LATIN },
-    ],
+    variants: [{ src: [`./src/assets/fonts/${file}`], weight, style: 'normal', display, unicodeRange: LATIN }],
   },
 })
 
@@ -92,9 +94,13 @@ export default defineConfig({
   // no se usa, así que se deja sin sharp y la función pesa ~18 MB menos.
   image: { service: passthroughImageService() },
   fonts: [
-    localFont('Bebas Neue', '--font-bebas', 'bebas-neue.woff2', '400', ['sans-serif']),
-    localFont('Oswald', '--font-oswald', 'oswald-var.woff2', '400 700', ['sans-serif']),
-    localFont('Inter', '--font-inter', 'inter-var.woff2', '400 700', ['system-ui', 'sans-serif']),
+    // Bebas sets the all-caps headlines, whose line breaks no fallback can
+    // match (the hero title went from 3 to 4 lines and pushed the hero:
+    // CLS 0.22 on a phone). It is preloaded and ~14 KB: `optional` uses it
+    // when it's there for the first paint and never swaps it in later.
+    localFont('Bebas Neue', '--font-bebas', 'bebas-neue.woff2', '400', 'optional'),
+    localFont('Oswald', '--font-oswald', 'oswald-var.woff2', '400 700'),
+    localFont('Inter', '--font-inter', 'inter-var.woff2', '400 700'),
   ],
   build: {
     // El CSS completo pesa ~10 KB comprimido: ir dentro del HTML ahorra un

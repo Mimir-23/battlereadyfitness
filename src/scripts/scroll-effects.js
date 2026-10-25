@@ -1,4 +1,4 @@
-import { fx, Spring, onFrame, clamp, mapRange } from './core.js'
+import { fx, Spring, onFrame, clamp, mapRange, isStill, onStill } from './core.js'
 
 /* ------------------------------------------------------------------ */
 /*  Scroll-linked effects. The progress bar runs everywhere; parallax,  */
@@ -68,7 +68,7 @@ export function initScrollEffects() {
   let heroScale = 1
 
   const writeHero = () => {
-    if (!heroParts) return
+    if (!heroParts || isStill()) return
     const bgX = mapRange(pointer.x.value, -0.5, 0.5, 14, -14)
     const bgY = mapRange(pointer.y.value, -0.5, 0.5, 10, -10)
     const orbX = mapRange(pointer.x.value, -0.5, 0.5, -40, 40)
@@ -80,6 +80,7 @@ export function initScrollEffects() {
   if (hero) {
     let pointerRunning = false
     hero.addEventListener('mousemove', (e) => {
+      if (isStill()) return
       pointer.x.target = e.clientX / innerWidth - 0.5
       pointer.y.target = e.clientY / innerHeight - 0.5
       if (pointerRunning) return
@@ -101,7 +102,7 @@ export function initScrollEffects() {
   let lastY = scrollY
   let skewRunning = false
   const runSkew = () => {
-    if (skewRunning || !skews.length) return
+    if (skewRunning || !skews.length || isStill()) return
     skewRunning = true
     onFrame((dt) => {
       const y = scrollY
@@ -118,10 +119,26 @@ export function initScrollEffects() {
     })
   }
 
+  // "Stop animations": every layer back to its resting place, for good.
+  const settle = () => {
+    for (const l of layers) l.el.style.transform = ''
+    for (const el of skews) el.style.transform = ''
+    if (heroParts) {
+      for (const part of Object.values(heroParts)) if (part) part.style.transform = ''
+      if (heroParts.content) heroParts.content.style.opacity = ''
+    }
+    if (bannerParts) {
+      for (const part of Object.values(bannerParts)) if (part) part.style.transform = ''
+      if (bannerParts.content) bannerParts.content.style.opacity = ''
+    }
+  }
+  onStill(settle)
+
   let scheduled = false
   const update = () => {
     scheduled = false
     readProgress()
+    if (isStill()) return
     const vh = innerHeight
     // Read every rect first, then write — no layout thrashing.
     const layerRects = layers.map((l) => l.target.getBoundingClientRect())
@@ -160,4 +177,21 @@ export function initScrollEffects() {
   addEventListener('scroll', schedule, { passive: true })
   addEventListener('resize', schedule, { passive: true })
   update()
+}
+
+/* ---------- looping animations only while they can be seen ---------- */
+// Embers, marquees, pulses and scanners loop forever. Sections far from the
+// screen pause theirs, so the browser isn't animating ~40 things it can't
+// show (lighter first load, smoother scrolling, less battery). Runs on every
+// device; the margin resumes them well before they scroll into view.
+export function initOffscreenPause() {
+  const blocks = document.querySelectorAll('main > *')
+  if (!blocks.length || !('IntersectionObserver' in window)) return
+  const io = new IntersectionObserver(
+    (entries) => {
+      for (const { target, isIntersecting } of entries) target.toggleAttribute('data-offscreen', !isIntersecting)
+    },
+    { rootMargin: '300px 0px' },
+  )
+  blocks.forEach((el) => io.observe(el))
 }

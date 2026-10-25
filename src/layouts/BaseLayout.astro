@@ -4,8 +4,12 @@ import '../styles/global.css'
 import Navbar from '../components/layout/Navbar.astro'
 import Footer from '../components/layout/Footer.astro'
 import FloatingActions from '../components/layout/FloatingActions.astro'
+import ConsentBanner from '../components/layout/ConsentBanner.astro'
+import AccessibilityPanel from '../components/layout/AccessibilityPanel.astro'
 import { springCssVars } from '../lib/spring.js'
 import { SUPABASE_URL } from '../lib/supabaseEnv.js'
+import { imagesViaCdn } from '../lib/images.js'
+import { DEFAULT_CONTENT } from '../content/defaults.js'
 
 /**
  * Public site shell: SEO tags, fonts, the boot script that picks the motion
@@ -27,14 +31,16 @@ const BASE = 'Battle Ready Fitness Bootcamp'
 const fullTitle = title ? `${title} — ${BASE}` : `${BASE} — We're Simply Unique`
 const desc =
   description ??
-  'Battle Ready Fitness Bootcamp — high-intensity boot-camp gym in Hialeah, Florida. Personal Training, Bootcamp, Kickboxing, HIIT, Zumba & more. Claim your 3-day free pass.'
+  'Battle Ready Fitness Bootcamp — high-intensity boot-camp gym in Hialeah, Florida. Personal Training, Bootcamp, Kickboxing, HIIT, Zumba & more. Claim your 2-day free pass.'
 const site = Astro.site ?? new URL(Astro.url.origin)
 const canonical = new URL(Astro.url.pathname, site).href
 const absolute = (src) => (src ? new URL(src, site).href : undefined)
 const ogImage = absolute(image ?? content.hero?.image)
 
 // Fotos subidas desde el panel: conexión anticipada con Supabase Storage.
-const usesSupabase = !!SUPABASE_URL && JSON.stringify(content).includes(SUPABASE_URL)
+// Only worth a preconnect when photos come straight from Supabase (local
+// builds); on Vercel they go through this site's image CDN.
+const usesSupabase = !imagesViaCdn && !!SUPABASE_URL && JSON.stringify(content).includes(SUPABASE_URL)
 
 // Datos estructurados (Google): ficha del gimnasio con dirección y contacto.
 const { brand } = content
@@ -102,7 +108,20 @@ const speculation = {
       ;(() => {
         const d = document.documentElement
         const mq = (q) => matchMedia(q).matches
-        const reduced = mq('(prefers-reduced-motion: reduce)')
+        // Preferencias del panel de accesibilidad (texto, contraste, color…).
+        let a = {}
+        try {
+          a = JSON.parse(localStorage.getItem('br-a11y') || '{}') || {}
+        } catch {}
+        const reduced = a.still ?? mq('(prefers-reduced-motion: reduce)')
+        if (a.reader) d.classList.add('a11y-reader')
+        if (a.text && a.text !== '1') d.style.fontSize = `${Number(a.text) * 100}%`
+        if (a.contrast ?? mq('(prefers-contrast: more)')) d.classList.add('a11y-contrast')
+        if (a.links) d.classList.add('a11y-links')
+        if (a.font) d.classList.add('a11y-font')
+        if (a.captions) d.classList.add('a11y-captions')
+        if (a.cvd && a.cvd !== 'none') d.dataset.cvd = a.cvd
+        if (reduced) d.classList.add('a11y-still')
         d.classList.add('js')
         if (!reduced) d.classList.add('motion')
         if (!reduced && mq('(hover: hover) and (pointer: fine)')) d.classList.add('fx')
@@ -111,6 +130,13 @@ const speculation = {
         try {
           if (document.referrer && new URL(document.referrer).origin === location.origin) d.classList.add('same-site')
         } catch {}
+        // Aviso de cookies y términos hasta que el visitante elija (v1).
+        try {
+          const c = JSON.parse(localStorage.getItem('br-consent') || 'null')
+          if (!c || c.v !== 1) d.classList.add('needs-consent')
+        } catch {
+          d.classList.add('needs-consent')
+        }
         // Tras un prerender, las intros arrancan cuando la página se muestra.
         const ready = () => d.classList.add('ready')
         if (document.prerendering) document.addEventListener('prerenderingchange', ready, { once: true })
@@ -148,8 +174,8 @@ const speculation = {
     <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
     <script is:inline type="speculationrules" set:html={JSON.stringify(speculation)} />
 
-    {/* Firebase Analytics, fuera del camino crítico: se carga cuando la
-        página ya terminó y el navegador está ocioso. La apiKey de un config
+    {/* Firebase Analytics, solo si el visitante acepta las cookies y fuera del
+        camino crítico (al terminar la carga). La apiKey de un config
         web de Firebase es un identificador público, no un secreto. */}
     <script is:inline>
       ;(() => {
@@ -174,13 +200,37 @@ const speculation = {
             .catch(() => {})
         const idle = () => (window.requestIdleCallback ? requestIdleCallback(start, { timeout: 4000 }) : setTimeout(start, 2000))
         const afterLoad = () => (document.readyState === 'complete' ? idle() : addEventListener('load', idle, { once: true }))
-        // Un prerender especulativo no es una visita: se mide al mostrarse.
-        if (document.prerendering) document.addEventListener('prerenderingchange', afterLoad, { once: true })
-        else afterLoad()
+        // Solo con consentimiento ("Accept all"), y nunca durante un prerender.
+        const consented = () => {
+          try {
+            return JSON.parse(localStorage.getItem('br-consent') || 'null')?.analytics === true
+          } catch {
+            return false
+          }
+        }
+        const begin = () => (document.prerendering ? document.addEventListener('prerenderingchange', afterLoad, { once: true }) : afterLoad())
+        if (consented()) begin()
+        else addEventListener('br:consent', (e) => e.detail?.analytics && begin(), { once: true })
       })()
     </script>
   </head>
   <body>
+    <a href="#main" class="skip-link">Skip to content</a>
+    <a href="#a11y-panel" class="skip-link" data-a11y-open>Accessibility options</a>
+    {/* Anuncios para lectores de pantalla (cambios de estado, carruseles…). */}
+    <div id="a11y-status" role="status" aria-live="polite" class="sr-only"></div>
+    {/* Filtros de corrección para daltonismo (panel de accesibilidad). */}
+    <svg aria-hidden="true" focusable="false" width="0" height="0" class="absolute">
+      <filter id="br-cvd-protan" color-interpolation-filters="linearRGB">
+        <feColorMatrix type="matrix" values="1 0 0 0 0  0.4789 0.4769 0.0442 0 0  0.5973 -0.6887 1.0914 0 0  0 0 0 1 0" />
+      </filter>
+      <filter id="br-cvd-deutan" color-interpolation-filters="linearRGB">
+        <feColorMatrix type="matrix" values="1 0 0 0 0  0.1628 0.725 0.1122 0 0  0.4547 -0.6454 1.1907 0 0  0 0 0 1 0" />
+      </filter>
+      <filter id="br-cvd-tritan" color-interpolation-filters="linearRGB">
+        <feColorMatrix type="matrix" values="0.7412 -0.4072 0.666 0 0  0.0751 0.5852 0.3397 0 0  0 0 1 0 0  0 0 0 1 0" />
+      </filter>
+    </svg>
     <div class="grain" aria-hidden="true"></div>
     <div
       data-scroll-progress
@@ -203,11 +253,13 @@ const speculation = {
     </div>
 
     <Navbar content={content} />
-    <main>
+    <main id="main" tabindex="-1">
       <slot />
     </main>
     <Footer content={content} />
     <FloatingActions brand={content.brand} />
+    <AccessibilityPanel brand={content.brand} />
+    <ConsentBanner text={content.legal?.consentText || DEFAULT_CONTENT.legal.consentText} />
 
     <script>
       import '../scripts/site.js'
