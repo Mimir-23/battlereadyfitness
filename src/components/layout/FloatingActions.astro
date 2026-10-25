@@ -51,7 +51,7 @@ const placed = links.map((l, i) => {
     aria-label="Back to top"
     class="flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-iron bg-coal text-chalk shadow-lg transition-colors hover:border-battle hover:text-battle"
   >
-    <FaArrowUp aria-hidden="true" size={16} />
+    <FaArrowUp size={16} />
   </button>
 
   {/* Invisible backdrop: tapping anywhere outside closes the fan. */}
@@ -68,18 +68,18 @@ const placed = links.map((l, i) => {
               href={l.href}
               target="_blank"
               rel="noreferrer"
-              aria-label={`${l.label} (opens in a new tab)`}
+              aria-label={l.label}
               data-fan-link
               style={`--x:${l.x}px;--y:${l.y}px;--in-delay:${l.inDelay}s;--out-delay:${l.outDelay}s`}
               class="group absolute left-1/2 top-1/2 -ml-6 -mt-6 flex items-center"
             >
-              <span class="pointer-events-none absolute right-full mr-2.5 whitespace-nowrap rounded-full bg-coal px-3 py-1.5 font-head text-[0.6875rem] font-semibold uppercase tracking-wider text-chalk opacity-0 shadow-lg transition-opacity duration-200 group-hover:opacity-100">
+              <span class="pointer-events-none absolute right-full mr-2.5 whitespace-nowrap rounded-full bg-coal px-3 py-1.5 font-head text-[11px] font-semibold uppercase tracking-wider text-chalk opacity-0 shadow-lg transition-opacity duration-200 group-hover:opacity-100">
                 {l.label}
               </span>
               <span
                 class={`flex h-12 w-12 items-center justify-center rounded-full text-white transition-transform duration-200 group-hover:scale-110 ${l.cls}`}
               >
-                <Icon aria-hidden="true" size={22} />
+                <Icon size={22} />
               </span>
             </a>
           )
@@ -107,8 +107,8 @@ const placed = links.map((l, i) => {
       >
         <span data-fab-ping class="absolute inset-0 animate-ping rounded-full bg-battle opacity-40"></span>
         <span data-fab-icon class="relative">
-          <span data-icon-open class="block"><FaCommentDots aria-hidden="true" size={24} /></span>
-          <span data-icon-close class="block" hidden><FaXmark aria-hidden="true" size={24} /></span>
+          <span data-icon-open class="block"><FaCommentDots size={24} /></span>
+          <span data-icon-close class="block" hidden><FaXmark size={24} /></span>
         </span>
       </span>
     </button>

@@ -1,25 +1,14 @@
 ---
-/**
- * Five "jump rope" bars that bounce in sequence — small brand loader/accent.
- * With a `label` it is a real loading indicator announced to screen readers;
- * without one it is decoration and stays out of the accessibility tree.
- */
-const { label } = Astro.props
+/** Five "jump rope" bars that bounce in sequence — small brand loader/accent. */
 ---
 
-<div
-  class="flex items-end gap-1.5"
-  role={label ? 'status' : undefined}
-  aria-hidden={label ? undefined : 'true'}
->
+<div class="flex items-end gap-1.5" aria-label="Loading">
   {
     [0, 1, 2, 3, 4].map((i) => (
       <span
-        aria-hidden="true"
         class="block w-1.5 rounded-full bg-battle"
         style={`height: 28px; animation: var(--animate-rope); animation-delay: ${i * 0.12}s`}
       />
     ))
   }
-  {label && <span class="sr-only">{label}</span>}
 </div>

@@ -35,7 +35,7 @@ const WHATSAPP = whatsappUrl(brand)
 
         {/* tactical status chip */}
         <div
-          class="absolute right-4 top-4 z-10 flex items-center gap-2 rounded-full border border-iron bg-ink/85 px-3.5 py-1.5 font-head text-[0.625rem] font-semibold uppercase tracking-[0.2em] text-fog backdrop-blur-sm"
+          class="absolute right-4 top-4 z-10 flex items-center gap-2 rounded-full border border-iron bg-ink/85 px-3.5 py-1.5 font-head text-[10px] font-semibold uppercase tracking-[0.2em] text-fog backdrop-blur-sm"
         >
           <span class="h-1.5 w-1.5 rounded-full bg-battle" style="animation: var(--animate-blink)"></span>
           Hialeah · FL
@@ -52,7 +52,7 @@ const WHATSAPP = whatsappUrl(brand)
           <div class="bg-hazard h-1 opacity-80"></div>
           <div class="flex items-center gap-3 px-5 py-4">
             <div class="font-display text-4xl text-battle">100%</div>
-            <div class="font-head text-[0.6875rem] uppercase leading-tight tracking-wider text-fog">
+            <div class="font-head text-[11px] uppercase leading-tight tracking-wider text-fog">
               Results<br />Guaranteed
             </div>
           </div>
@@ -84,7 +84,7 @@ const WHATSAPP = whatsappUrl(brand)
                 <span class="absolute inset-y-0 left-0 w-1 origin-top scale-y-0 bg-battle transition-transform duration-300 group-hover:scale-y-100" />
 
                 <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-battle/10 text-battle transition-colors duration-300 group-hover:bg-battle group-hover:text-ink">
-                  <Icon aria-hidden="true" size={19} />
+                  <Icon size={19} />
                 </span>
 
                 <span class="min-w-0 flex-1">
@@ -93,11 +93,9 @@ const WHATSAPP = whatsappUrl(brand)
                 </span>
 
                 {/* stencil index */}
-                <span
-                  aria-hidden="true"
-                  data-n={String(i + 1).padStart(2, '0')}
-                  class="pointer-events-none absolute -right-1 -top-2 font-display text-5xl leading-none text-stroke-chalk opacity-15 transition-opacity duration-300 before:content-[attr(data-n)] group-hover:opacity-40"
-                />
+                <span class="pointer-events-none absolute -right-1 -top-2 font-display text-5xl leading-none text-stroke-chalk opacity-15 transition-opacity duration-300 group-hover:opacity-40">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
               </div>
             )
           })
@@ -107,18 +105,18 @@ const WHATSAPP = whatsappUrl(brand)
       <div data-reveal class="mt-9">
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
           <CTAButton href="/memberships">
-            Start Your Transformation <FaArrowRightLong aria-hidden="true" />
+            Start Your Transformation <FaArrowRightLong />
           </CTAButton>
           <CTAButton href={WHATSAPP} target="_blank" variant="ghost">
-            <FaWhatsapp aria-hidden="true" size={16} /> Ask Us Anything
+            <FaWhatsapp size={16} /> Ask Us Anything
           </CTAButton>
         </div>
         {/* friction killers right where the decision happens */}
         <ul class="mt-5 flex flex-wrap gap-x-6 gap-y-2">
           {
-            ['2-day free pass', 'No contracts', 'All levels welcome'].map((t) => (
-              <li class="flex items-center gap-2 font-head text-[0.6875rem] font-semibold uppercase tracking-wider text-smoke">
-                <FaCheck aria-hidden="true" size={11} className="text-battle" /> {t}
+            ['3-day free pass', 'No contracts', 'All levels welcome'].map((t) => (
+              <li class="flex items-center gap-2 font-head text-[11px] font-semibold uppercase tracking-wider text-smoke">
+                <FaCheck size={11} className="text-battle" /> {t}
               </li>
             ))
           }

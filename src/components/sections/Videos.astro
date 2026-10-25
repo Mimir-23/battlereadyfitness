@@ -76,9 +76,9 @@ const pad = (n) => String(n).padStart(2, '0')
                   data-reveal
                   data-reveal-item
                   data-open-video={index}
+                  aria-label={`Play video: ${item.label || embed.platform}`}
                   class={`group relative w-[calc(50%-0.5rem)] cursor-pointer sm:w-auto sm:max-w-80 sm:grow sm:basis-52 ${tilted} ${offset} transition-transform duration-300 hover:z-10 hover:rotate-0 hover:scale-[1.05] focus-visible:rotate-0`}
                 >
-                  <span class="sr-only">Play video: </span>
                   {/* pieces of tape holding the poster to the wall */}
                   <span class="pointer-events-none absolute -left-3 -top-2 z-10 h-4 w-12 -rotate-[38deg] bg-chalk/20 shadow-sm backdrop-blur-[1px]" />
                   <span class="pointer-events-none absolute -right-3 -top-2 z-10 h-4 w-12 rotate-[38deg] bg-chalk/20 shadow-sm backdrop-blur-[1px]" />
@@ -87,12 +87,7 @@ const pad = (n) => String(n).padStart(2, '0')
                     <div class="bg-hazard h-1.5 opacity-80" />
 
                     {/* poster art */}
-                    <div
-                      data-poster
-                      data-preview-src={previewSrc || undefined}
-                      aria-hidden="true"
-                      class="relative aspect-[4/5] overflow-hidden"
-                    >
+                    <div data-poster data-preview-src={previewSrc || undefined} class="relative aspect-[4/5] overflow-hidden">
                       {posterImg ? (
                         <img
                           {...posterImg}
@@ -103,7 +98,7 @@ const pad = (n) => String(n).padStart(2, '0')
                         />
                       ) : (
                         <div class="h-full w-full bg-gradient-to-br from-coal via-ink to-coal bg-[repeating-linear-gradient(-45deg,transparent,transparent_12px,rgba(255,210,0,0.05)_12px,rgba(255,210,0,0.05)_24px)]">
-                          <Icon aria-hidden="true"
+                          <Icon
                             size={44}
                             className={`absolute left-1/2 top-[38%] -translate-x-1/2 -translate-y-1/2 ${p?.tint || 'text-battle'} opacity-70 transition-transform duration-500 group-hover:scale-110`}
                           />
@@ -120,16 +115,16 @@ const pad = (n) => String(n).padStart(2, '0')
 
                       {/* platform "rubber stamp" */}
                       <span
-                        class={`absolute left-2.5 top-2.5 inline-flex -rotate-6 items-center gap-1 border-2 px-1.5 py-0.5 font-head text-[0.5625rem] font-bold uppercase tracking-[0.15em] opacity-90 ${p?.stamp || 'border-battle/70 text-battle'}`}
+                        class={`absolute left-2.5 top-2.5 inline-flex -rotate-6 items-center gap-1 border-2 px-1.5 py-0.5 font-head text-[9px] font-bold uppercase tracking-[0.15em] opacity-90 ${p?.stamp || 'border-battle/70 text-battle'}`}
                       >
-                        <Icon aria-hidden="true" size={9} /> {embed.platform}
+                        <Icon size={9} /> {embed.platform}
                       </span>
 
                       {/* play control */}
                       <span class="absolute inset-x-0 bottom-3 flex justify-center">
                         <span class="relative flex h-12 w-12 items-center justify-center rounded-full bg-battle text-ink shadow-[0_8px_24px_-6px_rgba(255,210,0,0.7)] transition-transform duration-300 group-hover:scale-110">
                           <span class="absolute inset-0 hidden animate-ping rounded-full bg-battle opacity-30 group-hover:block" />
-                          <FaPlay aria-hidden="true" size={15} className="relative translate-x-px" />
+                          <FaPlay size={15} className="relative translate-x-px" />
                         </span>
                       </span>
 
@@ -139,7 +134,7 @@ const pad = (n) => String(n).padStart(2, '0')
                         hidden
                         class="absolute bottom-3.5 right-2.5 flex h-6 w-6 items-center justify-center rounded-full bg-ink/70 text-chalk backdrop-blur-sm"
                       >
-                        <FaVolumeXmark aria-hidden="true" size={10} />
+                        <FaVolumeXmark size={10} />
                       </span>
                     </div>
 
@@ -148,11 +143,7 @@ const pad = (n) => String(n).padStart(2, '0')
                       <div class="line-clamp-1 font-head text-xs font-semibold uppercase tracking-wide text-chalk">
                         {item.label || `Round ${index + 1}`}
                       </div>
-                      <span class="sr-only">{`, ${embed.platform}${item.transcript ? ', transcript available' : ''}`}</span>
-                      <div
-                        aria-hidden="true"
-                        class="mt-0.5 flex items-center justify-between font-head text-[0.5625rem] uppercase tracking-[0.25em] text-smoke"
-                      >
+                      <div class="mt-0.5 flex items-center justify-between font-head text-[9px] uppercase tracking-[0.25em] text-smoke">
                         <span>{`Tape ${pad(index + 1)}`}</span>
                         <span class="flex gap-px" aria-hidden="true">
                           {/* barcode detail */}
@@ -169,7 +160,7 @@ const pad = (n) => String(n).padStart(2, '0')
           </div>
         </div>
 
-        <p class="mt-6 text-center font-head text-[0.625rem] font-semibold uppercase tracking-[0.35em] text-smoke">
+        <p class="mt-6 text-center font-head text-[10px] font-semibold uppercase tracking-[0.35em] text-smoke">
           — Press play. Feel the battle. —
         </p>
       </div>
@@ -189,7 +180,7 @@ const pad = (n) => String(n).padStart(2, '0')
           aria-label="Close"
           class="absolute right-4 top-4 z-10 flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-iron bg-coal/80 text-chalk transition-colors hover:border-battle hover:text-battle"
         >
-          <FaXmark aria-hidden="true" size={18} />
+          <FaXmark size={18} />
         </button>
 
         {many && (
@@ -200,7 +191,7 @@ const pad = (n) => String(n).padStart(2, '0')
               aria-label="Previous video"
               class="absolute left-2 z-10 flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-iron bg-coal/80 text-chalk transition-colors hover:border-battle hover:text-battle sm:left-5"
             >
-              <FaChevronLeft aria-hidden="true" size={16} />
+              <FaChevronLeft size={16} />
             </button>
             <button
               type="button"
@@ -208,7 +199,7 @@ const pad = (n) => String(n).padStart(2, '0')
               aria-label="Next video"
               class="absolute right-2 z-10 flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-iron bg-coal/80 text-chalk transition-colors hover:border-battle hover:text-battle sm:right-5"
             >
-              <FaChevronRight aria-hidden="true" size={16} />
+              <FaChevronRight size={16} />
             </button>
           </>
         )}
@@ -240,22 +231,6 @@ const pad = (n) => String(n).padStart(2, '0')
                 </span>
                 {many && <span class="shrink-0 font-head text-xs text-smoke">{`${index + 1} / ${items.length}`}</span>}
               </figcaption>
-              {/* Deaf and hard-of-hearing visitors: the spoken content, as text. */}
-              {item.transcript && (
-                <details class="w-full max-w-2xl rounded-xl border border-iron bg-coal/90 text-left">
-                  <summary class="cursor-pointer px-4 py-3 font-head text-xs font-semibold uppercase tracking-widest text-battle">
-                    Read transcript
-                  </summary>
-                  <div class="max-h-[30svh] space-y-3 overflow-y-auto px-4 pb-4 text-sm leading-relaxed text-fog" data-lenis-prevent>
-                    {String(item.transcript)
-                      .split(/\n\s*\n/)
-                      .filter((p) => p.trim())
-                      .map((p) => (
-                        <p>{p.trim()}</p>
-                      ))}
-                  </div>
-                </details>
-              )}
             </figure>
           )
         })}

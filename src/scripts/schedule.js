@@ -11,7 +11,6 @@ import {
   legendPill,
 } from '../lib/ui-state.js'
 import { setRecessSrc } from './recess.js'
-import { announce } from './core.js'
 
 /* Class schedule: day filter (desktop focus + mobile agenda), today marker,
    class highlight from the legend/hover, and picking a class to load it
@@ -32,16 +31,12 @@ if (root) {
 
   let activeDay = 'all'
   let hoverClass = null
-  // A legend pill pressed (click, Enter or Space) keeps its program
-  // highlighted; hovering or focusing previews another one.
-  let pinnedClass = null
 
   const render = () => {
     const focus = activeDay !== 'all'
     for (const chip of chips) {
       const d = chip.dataset.dayChip
       const isActive = activeDay === d
-      chip.setAttribute('aria-pressed', String(isActive))
       if (d === 'all') {
         chip.className = dayChip(isActive)
         continue
@@ -56,7 +51,6 @@ if (root) {
       const d = head.dataset.dayHead
       const isActive = d === activeDay
       head.className = dayHeader(isActive, d === TODAY, focus && !isActive)
-      head.setAttribute('aria-pressed', String(isActive))
       head.querySelector('[data-head-sub]').className = dayHeaderSub(isActive)
       head.querySelector('[data-today-bar]').hidden = !(d === TODAY && !isActive)
     }
@@ -70,18 +64,10 @@ if (root) {
     for (const list of agendas) list.hidden = list.dataset.agenda !== activeDay
   }
 
-  const DAY_NAMES = { Mon: 'Monday', Tue: 'Tuesday', Wed: 'Wednesday', Thu: 'Thursday', Fri: 'Friday', Sat: 'Saturday', Sun: 'Sunday' }
-  const countFor = (d) => classCells.filter((a) => a.closest('[data-day-cell]').dataset.dayCell === d).length
-
   const setDay = (d) => {
     // Guard against a custom day list that doesn't contain the selection.
     activeDay = d === 'all' || days.includes(d) ? d : 'all'
     render()
-    if (activeDay === 'all') announce('Showing the whole week')
-    else {
-      const n = countFor(activeDay)
-      announce(`${DAY_NAMES[activeDay] || activeDay}: ${n ? `${n} ${n === 1 ? 'class' : 'classes'}` : 'rest day, no classes'}`)
-    }
   }
   const setHover = (name) => {
     if (name === hoverClass) return
@@ -89,7 +75,6 @@ if (root) {
     for (const a of classCells) a.className = classCell(matches(a.dataset.className, hoverClass))
     for (const pill of legends) pill.className = legendPill(matches(hoverClass, pill.dataset.legend))
   }
-  const release = () => setHover(pinnedClass)
 
   chips.forEach((chip) => chip.addEventListener('click', () => setDay(chip.dataset.dayChip)))
   heads.forEach((head) =>
@@ -98,21 +83,11 @@ if (root) {
   cells.forEach((cell) => {
     const name = cell.querySelector('[data-class-cell]')?.dataset.className
     cell.addEventListener('mouseenter', () => name && setHover(name))
-    cell.addEventListener('mouseleave', release)
+    cell.addEventListener('mouseleave', () => setHover(null))
   })
   legends.forEach((pill) => {
-    const name = pill.dataset.legend
-    pill.addEventListener('mouseenter', () => setHover(name))
-    pill.addEventListener('mouseleave', release)
-    pill.addEventListener('focus', () => setHover(name))
-    pill.addEventListener('blur', release)
-    pill.addEventListener('click', () => {
-      pinnedClass = pinnedClass === name ? null : name
-      legends.forEach((p) => p.setAttribute('aria-pressed', String(p.dataset.legend === pinnedClass)))
-      setHover(pinnedClass ?? name)
-      const n = classCells.filter((a) => matches(a.dataset.className, name)).length
-      announce(pinnedClass ? `${name} highlighted: ${n} ${n === 1 ? 'session' : 'sessions'} a week` : `${name} highlight off`)
-    })
+    pill.addEventListener('mouseenter', () => setHover(pill.dataset.legend))
+    pill.addEventListener('mouseleave', () => setHover(null))
   })
 
   /* ---------- booking: the terminal loads the class that was picked ---------- */
@@ -125,7 +100,6 @@ if (root) {
     if (!embed) return
     bar.hidden = !picked
     if (picked) booking.querySelector('[data-selected-name]').textContent = picked.name
-    announce(picked ? `Booking calendar showing ${picked.name}` : 'Booking calendar showing all classes')
     setRecessSrc(
       embed,
       picked ? picked.src : fullCalendar,

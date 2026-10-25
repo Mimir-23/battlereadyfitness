@@ -1,5 +1,5 @@
 import { initSmoothScroll, initNavbar, initFloatingActions } from './chrome.js'
-import { initScrollEffects, initOffscreenPause } from './scroll-effects.js'
+import { initScrollEffects } from './scroll-effects.js'
 import { initReveals, initCounters } from './reveal.js'
 import { initPointerEffects } from './pointer.js'
 
@@ -18,7 +18,7 @@ try {
 }
 
 // Each feature is independent: one failing doesn't take down the rest.
-for (const init of [initNavbar, initFloatingActions, initCounters, initScrollEffects, initPointerEffects, initOffscreenPause]) {
+for (const init of [initNavbar, initFloatingActions, initCounters, initScrollEffects, initPointerEffects]) {
   try {
     init()
   } catch (err) {

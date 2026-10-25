@@ -81,12 +81,12 @@ const socials = [
             <div class="font-display text-3xl leading-none text-chalk">
               BATTLE <span class="text-battle">HQ</span>
             </div>
-            <div class="mt-1.5 font-head text-[0.625rem] font-semibold uppercase tracking-[0.25em] text-smoke">
+            <div class="mt-1.5 font-head text-[10px] font-semibold uppercase tracking-[0.25em] text-smoke">
               {brand.city}
             </div>
           </div>
           <span
-            class="flex items-center gap-2 rounded-full border border-iron bg-coal px-3 py-1.5 font-head text-[0.625rem] font-semibold uppercase tracking-[0.2em] text-fog"
+            class="flex items-center gap-2 rounded-full border border-iron bg-coal px-3 py-1.5 font-head text-[10px] font-semibold uppercase tracking-[0.2em] text-fog"
           >
             <span class="h-1.5 w-1.5 rounded-full bg-battle" style="animation: var(--animate-blink)"></span>
             Ready
@@ -106,15 +106,15 @@ const socials = [
                   class="group/row flex cursor-pointer items-center gap-4 px-6 py-4 transition-colors duration-200 hover:bg-battle/5"
                 >
                   <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-battle/10 text-battle transition-colors duration-300 group-hover/row:bg-battle group-hover/row:text-ink">
-                    <Icon aria-hidden="true" size={17} />
+                    <Icon size={17} />
                   </span>
                   <span class="min-w-0 flex-1">
-                    <span class="block font-head text-[0.625rem] font-semibold uppercase tracking-[0.2em] text-smoke">
+                    <span class="block font-head text-[10px] font-semibold uppercase tracking-[0.2em] text-smoke">
                       {r.label}
                     </span>
                     <span class="mt-0.5 block truncate text-sm text-chalk">{r.value}</span>
                   </span>
-                  <FaArrowRightLong aria-hidden="true"
+                  <FaArrowRightLong
                     size={13}
                     className="shrink-0 text-smoke transition-all duration-300 group-hover/row:translate-x-1 group-hover/row:text-battle"
                   />
@@ -125,16 +125,15 @@ const socials = [
         </div>
 
         {/* primary action + socials */}
-        <div class="flex flex-wrap items-center gap-3 border-t border-iron p-5">
+        <div class="flex items-center gap-3 border-t border-iron p-5">
           <a
             href={WHATSAPP}
             target="_blank"
             rel="noreferrer"
             class="group/cta inline-flex flex-1 cursor-pointer items-center justify-center gap-2 bg-battle px-5 py-3.5 font-head text-xs font-bold uppercase tracking-widest text-ink shadow-[0_8px_30px_-8px_rgba(255,210,0,0.6)] transition-transform duration-200 hover:scale-[1.02] active:scale-95"
           >
-            <FaWhatsapp aria-hidden="true" size={16} /> Chat on WhatsApp
-            <span class="sr-only"> (opens in a new tab)</span>
-            <FaArrowRightLong aria-hidden="true" className="transition-transform group-hover/cta:translate-x-1" size={12} />
+            <FaWhatsapp size={16} /> Chat on WhatsApp
+            <FaArrowRightLong className="transition-transform group-hover/cta:translate-x-1" size={12} />
           </a>
           {
             socials.map((s) => {
@@ -144,10 +143,10 @@ const socials = [
                   href={s.href}
                   target="_blank"
                   rel="noreferrer"
-                  aria-label={`${s.label} (opens in a new tab)`}
+                  aria-label={s.label}
                   class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-iron text-fog transition-colors duration-300 hover:border-battle hover:bg-battle hover:text-ink"
                 >
-                  <Icon aria-hidden="true" size={15} />
+                  <Icon size={15} />
                 </a>
               )
             })
@@ -169,17 +168,18 @@ const socials = [
             <button
               type="button"
               data-map-load={mapSrc}
+              aria-label="Load interactive map"
               class="absolute inset-0 flex cursor-pointer flex-col items-center justify-center gap-4 bg-coal bg-grid pb-24"
             >
-              <span aria-hidden="true" class="pointer-events-none absolute left-1/2 top-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-battle/10 blur-[90px]" />
-              <span aria-hidden="true" class="relative flex h-16 w-16 items-center justify-center rounded-full bg-battle text-ink shadow-[0_10px_36px_-8px_rgba(255,210,0,0.7)]">
+              <span class="pointer-events-none absolute left-1/2 top-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-battle/10 blur-[90px]" />
+              <span class="relative flex h-16 w-16 items-center justify-center rounded-full bg-battle text-ink shadow-[0_10px_36px_-8px_rgba(255,210,0,0.7)]">
                 <span class="absolute inset-0 animate-ping rounded-full bg-battle opacity-30" />
-                <FaLocationDot aria-hidden="true" size={24} className="relative" />
+                <FaLocationDot size={24} className="relative" />
               </span>
               <span class="relative font-head text-xs font-bold uppercase tracking-[0.25em] text-chalk">
                 Tap to load the map
               </span>
-              <span class="relative font-head text-[0.625rem] uppercase tracking-[0.2em] text-smoke">
+              <span class="relative font-head text-[10px] uppercase tracking-[0.2em] text-smoke">
                 Interactive · Google Maps
               </span>
             </button>
@@ -192,7 +192,7 @@ const socials = [
             <div class="absolute inset-x-3 bottom-3 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-iron bg-ink/90 p-4 backdrop-blur-sm sm:inset-x-4 sm:bottom-4">
               <div class="flex min-w-0 items-center gap-3">
                 <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-battle text-ink">
-                  <FaLocationDot aria-hidden="true" size={16} />
+                  <FaLocationDot size={16} />
                 </span>
                 <div class="min-w-0">
                   <div class="truncate text-sm font-medium text-chalk">{brand.address}</div>
@@ -203,10 +203,9 @@ const socials = [
                 href={directionsUrl}
                 target="_blank"
                 rel="noreferrer"
-                class="inline-flex shrink-0 cursor-pointer items-center gap-2 border border-battle/60 bg-battle/10 px-4 py-2.5 font-head text-[0.6875rem] font-bold uppercase tracking-widest text-battle transition-colors duration-200 hover:bg-battle hover:text-ink"
+                class="inline-flex shrink-0 cursor-pointer items-center gap-2 border border-battle/60 bg-battle/10 px-4 py-2.5 font-head text-[11px] font-bold uppercase tracking-widest text-battle transition-colors duration-200 hover:bg-battle hover:text-ink"
               >
-                Get Directions <FaArrowUpRightFromSquare aria-hidden="true" size={10} />
-                <span class="sr-only"> (opens in a new tab)</span>
+                Get Directions <FaArrowUpRightFromSquare size={10} />
               </a>
             </div>
           </div>
@@ -221,7 +220,7 @@ const socials = [
           <div class="flex flex-col gap-4 rounded-2xl border border-iron bg-ink p-6 sm:flex-row sm:items-center">
             <div class="flex items-center gap-3 sm:pr-6">
               <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-battle/10 text-battle">
-                <FaClock aria-hidden="true" size={20} />
+                <FaClock size={20} />
               </div>
               <div class="font-head text-xs font-semibold uppercase tracking-[0.2em] text-smoke">
                 Opening
@@ -254,9 +253,6 @@ const socials = [
       frame.className = 'absolute inset-0 h-full w-full grayscale transition-all duration-500 group-hover:grayscale-0'
       frame.referrerPolicy = 'no-referrer-when-downgrade'
       btn.replaceWith(frame)
-      // Keyboard and screen-reader users continue inside the map they asked
-      // for (the button they pressed no longer exists).
-      frame.focus({ preventScroll: true })
     })
   }
 </script>

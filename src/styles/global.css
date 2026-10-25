@@ -15,7 +15,7 @@
    .fx     → escritorio con mouse y sin "reducir movimiento":
              revelados al hacer scroll, parallax, intro del hero…
    .motion → sin "reducir movimiento" (cualquier dispositivo)
-   .fine   → puntero preciso (botones magnéticos, spotlight)
+   .fine   → puntero preciso (cursor, magnético, spotlight)
    .ready  → la página ya es visible (tras un prerender, al activarse)
    Sin JavaScript no se aplica ninguna: todo queda visible y quieto.
    ============================================================ */
@@ -358,6 +358,20 @@ html.is-locked {
   }
 }
 
+/* Cursor: sobre elementos interactivos la mancuerna "hace repeticiones". */
+@keyframes reps {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+.cursor-reps {
+  animation: reps 0.55s ease-in-out infinite;
+}
+
 /* Imagen con parallax (escritorio): sobra un 10% arriba y abajo para que
    el desplazamiento nunca descubra el fondo. */
 .fx [data-parallax-img] {
@@ -375,216 +389,4 @@ html.is-locked {
     var(--reveal-anim, reveal-up) var(--reveal-dur, 0.45s) var(--reveal-ease, var(--ease-power))
       var(--reveal-delay, 0s) both,
     var(--animate-glow);
-}
-
-/* Aviso de cookies y términos: solo hasta que el visitante elija. */
-@keyframes consent-in {
-  from {
-    opacity: 0;
-    transform: translateY(24px);
-  }
-}
-.consent {
-  display: none;
-}
-.needs-consent .consent {
-  display: block;
-  animation: consent-in 0.5s var(--ease-power) 0.4s both;
-}
-
-/* ============================================================
-   ACCESIBILIDAD
-   Preferencias del panel (src/components/layout/AccessibilityPanel.astro),
-   aplicadas en <html> por el script de arranque antes del primer pintado.
-   ============================================================ */
-
-/* Secciones lejos de la pantalla: sus animaciones en bucle quedan en pausa
-   (scroll-effects.js → initOffscreenPause). */
-[data-offscreen] *,
-[data-offscreen] *::before,
-[data-offscreen] *::after {
-  animation-play-state: paused !important;
-}
-
-/* Mientras se aplica una opción del panel, sin transiciones: el cambio es
-   instantáneo y no arranca cientos de animaciones a la vez (a11y.js). */
-.a11y-switching *,
-.a11y-switching *::before,
-.a11y-switching *::after {
-  transition: none !important;
-}
-
-/* Saltar al contenido: primer elemento enfocable de cada página. */
-.skip-link {
-  position: fixed;
-  top: 0.75rem;
-  left: 0.75rem;
-  z-index: 200;
-  transform: translateY(-200%);
-  border-radius: 0.5rem;
-  background: var(--color-battle);
-  color: var(--color-ink);
-  padding: 0.75rem 1.25rem;
-  font-family: var(--font-oswald);
-  font-weight: 700;
-  font-size: 0.875rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.8);
-}
-.skip-link:focus {
-  transform: none;
-}
-main:focus {
-  outline: none;
-}
-
-/* Alto contraste (también si el sistema lo pide con prefers-contrast). */
-.a11y-contrast {
-  --color-smoke: #d4d4d8;
-  --color-fog: #f4f4f5;
-  --color-iron: #71717a;
-  --color-chalk: #ffffff;
-  --color-coal: #050506;
-  --color-steel: #0e0e10;
-}
-.a11y-contrast .grain {
-  display: none;
-}
-.a11y-contrast .bg-grid {
-  background-image: none;
-}
-.a11y-contrast .text-stroke,
-.a11y-contrast .text-stroke-chalk {
-  -webkit-text-stroke-color: #ffffff;
-}
-.a11y-contrast :focus-visible {
-  outline-width: 4px;
-}
-
-/* Subrayar enlaces: identificarlos sin depender del color. */
-.a11y-links a {
-  text-decoration-line: underline !important;
-  text-decoration-thickness: 2px !important;
-  text-underline-offset: 3px !important;
-}
-
-/* Fuente legible: sin letras condensadas ni espaciado extremo. */
-html.a11y-font {
-  --font-bebas: var(--font-inter);
-  --font-oswald: var(--font-inter);
-}
-.a11y-font body * {
-  letter-spacing: normal !important;
-}
-.a11y-font .font-display {
-  font-weight: 800;
-  line-height: 1.05;
-}
-
-/* Detener animaciones: nada se mueve, rota ni parpadea. Igual que con
-   "reducir movimiento" del sistema (theme.css): cada animación salta a su
-   estado final y los avisos de fin siguen llegando a los scripts. */
-.a11y-still *,
-.a11y-still *::before,
-.a11y-still *::after {
-  animation-duration: 0.001ms !important;
-  animation-iteration-count: 1 !important;
-  animation-delay: 0s !important;
-  transition-duration: 0.001ms !important;
-  transition-delay: 0s !important;
-  scroll-behavior: auto !important;
-}
-.a11y-still .route-wipe,
-.a11y-still .ember-field,
-.a11y-still [style*='animate-scan'] {
-  display: none !important;
-}
-
-/* Visión de color: corrección para cada tipo de daltonismo (filtros SVG
-   definidos en el layout) o escala de grises. En <html> el filtro no
-   afecta a los elementos fijos (barra, botones flotantes). */
-html[data-cvd='protan'] {
-  filter: url('#br-cvd-protan');
-}
-html[data-cvd='deutan'] {
-  filter: url('#br-cvd-deutan');
-}
-html[data-cvd='tritan'] {
-  filter: url('#br-cvd-tritan');
-}
-html[data-cvd='mono'] {
-  filter: grayscale(1);
-}
-
-/* Lector de pantalla integrado (src/scripts/reader.js): sus controles se
-   muestran junto al botón de accesibilidad mientras está activo, y el
-   bloque que se está leyendo queda marcado. */
-[data-reader-bar],
-[data-voice-row] {
-  display: none;
-}
-.a11y-reader [data-reader-bar],
-.a11y-reader [data-voice-row] {
-  display: flex;
-}
-[data-reading] {
-  outline: 3px dashed var(--color-battle) !important;
-  outline-offset: 4px;
-}
-
-/* Las bandas de lemas se detienen bajo el puntero (WCAG 2.2.2). */
-.marquee:hover .marquee-track {
-  animation-play-state: paused !important;
-}
-
-/* Interruptor del panel de accesibilidad (checkbox nativo con estilo). */
-.a11y-switch {
-  appearance: none;
-  position: relative;
-  flex-shrink: 0;
-  width: 2.75rem;
-  height: 1.5rem;
-  border-radius: 999px;
-  background: var(--color-iron);
-  border: 1px solid var(--color-smoke);
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-.a11y-switch::after {
-  content: '';
-  position: absolute;
-  top: 0.1875rem;
-  left: 0.1875rem;
-  width: 1rem;
-  height: 1rem;
-  border-radius: 999px;
-  background: var(--color-chalk);
-  transition: transform 0.2s;
-}
-.a11y-switch:checked {
-  background: var(--color-battle);
-  border-color: var(--color-battle);
-}
-.a11y-switch:checked::after {
-  transform: translateX(1.25rem);
-  background: var(--color-ink);
-}
-.a11y-switch:disabled {
-  cursor: not-allowed;
-  opacity: 0.4;
-}
-
-/* Modo de alto contraste de Windows: los controles conservan sus bordes. */
-@media (forced-colors: active) {
-  .a11y-switch,
-  .a11y-switch::after {
-    border: 1px solid CanvasText;
-  }
-  .a11y-switch:checked {
-    background: Highlight;
-  }
-  .skip-link {
-    border: 2px solid CanvasText;
-  }
 }

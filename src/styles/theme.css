@@ -252,6 +252,25 @@ html.lenis body {
   overflow: hidden;
 }
 
+/* ---------- Custom tactical cursor ---------- */
+/* Hide native cursor only on precise pointers when JS cursor is active */
+@media (pointer: fine) {
+  body.has-cursor,
+  body.has-cursor * {
+    cursor: none !important;
+  }
+}
+.cursor-dot,
+.cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  pointer-events: none;
+  mix-blend-mode: difference;
+  will-change: transform;
+}
+
 /* SplitType reveal: clip chars per line */
 .reveal-mask {
   overflow: hidden;
@@ -381,42 +400,11 @@ html.lenis body {
   opacity: 1;
 }
 
-/* ---------- Reflow ---------- */
-/* With large text (accessibility panel or browser zoom) a word wider than
-   its column — a long email address, a display headline in the readable
-   font — breaks instead of pushing the page sideways (WCAG 1.4.10). It
-   changes nothing while everything fits. */
-@layer base {
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    overflow-wrap: anywhere;
-  }
-  p,
-  li,
-  dd,
-  dt,
-  blockquote,
-  figcaption,
-  address {
-    overflow-wrap: break-word;
-  }
-}
-
 /* ---------- Accessible focus ring ---------- */
-/* Two tones (yellow outline over a dark halo) so it reads on any background,
-   yellow buttons included. It follows each element's own rounding, and lives
-   in the base layer so a component can adapt it with utilities (e.g. an
-   inset ring where a parent clips with overflow-hidden). */
-@layer base {
-  :focus-visible {
-    outline: 3px solid var(--color-battle);
-    outline-offset: 3px;
-    box-shadow: 0 0 0 6px rgba(10, 10, 11, 0.85);
-  }
+:focus-visible {
+  outline: 2px solid var(--color-battle);
+  outline-offset: 2px;
+  border-radius: 2px;
 }
 /* Don't double up the native outline when we draw our own */
 a:focus:not(:focus-visible),

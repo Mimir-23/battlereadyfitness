@@ -1,7 +1,7 @@
 /* Sitemap of the public pages (the panel and the API stay out). */
 export const prerender = true
 
-const PAGES = ['/', '/schedule', '/memberships', '/terms', '/accessibility']
+const PAGES = ['/', '/schedule', '/memberships']
 
 export function GET({ site }) {
   const urls = PAGES.map((p) => `  <url><loc>${new URL(p, site).href}</loc></url>`).join('\n')

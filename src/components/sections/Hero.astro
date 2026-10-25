@@ -58,7 +58,7 @@ const logo = logoImage()
 
   {/* tactical readout (top-right) */}
   <div
-    class="pointer-events-none absolute right-8 top-28 hidden flex-col items-end gap-1 font-head text-[0.625rem] uppercase tracking-[0.25em] text-smoke xl:flex"
+    class="pointer-events-none absolute right-8 top-28 hidden flex-col items-end gap-1 font-head text-[10px] uppercase tracking-[0.25em] text-smoke xl:flex"
   >
     <span class="flex items-center gap-2">
       <span class="h-1.5 w-1.5 rounded-full bg-battle" style="animation: var(--animate-blink)"></span>
@@ -85,7 +85,7 @@ const logo = logoImage()
         <span
           class="inline-flex items-center gap-2 rounded-full border border-battle/40 bg-battle/10 px-4 py-1.5 font-head text-xs font-medium uppercase tracking-[0.2em] text-battle backdrop-blur-sm"
         >
-          <FaLocationDot aria-hidden="true" size={12} />
+          <FaLocationDot size={12} />
           {hero.badge}
         </span>
       </div>
@@ -122,7 +122,7 @@ const logo = logoImage()
 
       <div data-hero-item style="--i:4" class="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
         <CTAButton href={WHATSAPP} target="_blank">
-          Claim Your 2-Day Free Pass <FaArrowRightLong aria-hidden="true" />
+          Claim Your 3-Day Free Pass <FaArrowRightLong />
         </CTAButton>
         <CTAButton href="/memberships" variant="ghost">View Memberships</CTAButton>
       </div>
@@ -132,7 +132,7 @@ const logo = logoImage()
           {
             [0, 1, 2, 3, 4].map((i) => (
               <span data-star style={`--i:${i}`}>
-                <FaStar aria-hidden="true" size={16} />
+                <FaStar size={16} />
               </span>
             ))
           }
@@ -144,6 +144,6 @@ const logo = logoImage()
 
   <div class="absolute bottom-8 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-3 lg:flex">
     <RopeLoader />
-    <span class="font-head text-[0.625rem] uppercase tracking-[0.3em] text-smoke">Scroll</span>
+    <span class="font-head text-[10px] uppercase tracking-[0.3em] text-smoke">Scroll</span>
   </div>
 </section>
