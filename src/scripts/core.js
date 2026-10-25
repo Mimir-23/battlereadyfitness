@@ -7,7 +7,7 @@ const root = document.documentElement.classList
 
 /** Mouse/desktop and motion allowed: parallax, reveals, showpiece effects. */
 export const fx = root.contains('fx')
-/** Precise pointer and motion allowed: magnetic CTAs, spotlight tilt. */
+/** Precise pointer and motion allowed: cursor, magnetic CTAs, spotlight tilt. */
 export const fine = root.contains('fine')
 /** The visitor asked the OS for reduced motion. */
 export const reducedMotion = !root.contains('motion')
@@ -148,23 +148,4 @@ export function unlockScroll() {
 /** Replaces an element's state classes, keeping a pending reveal (`is-in`). */
 export function setClassName(el, value) {
   el.className = el.classList.contains('is-in') ? `${value} is-in` : value
-}
-
-/* ---------- accessibility ---------- */
-
-/** The visitor turned on "Stop animations" in the accessibility panel. */
-export const isStill = () => document.documentElement.classList.contains('a11y-still')
-
-/** Runs `fn` when "Stop animations" is switched on during the visit. */
-export const onStill = (fn) => addEventListener('br:still', fn)
-
-/** Politely announces a short message to screen readers. */
-export function announce(message) {
-  const region = document.getElementById('a11y-status')
-  if (!region) return
-  // Clear first so repeating the same message is announced again.
-  region.textContent = ''
-  setTimeout(() => {
-    region.textContent = message
-  }, 60)
 }

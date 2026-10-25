@@ -70,14 +70,14 @@ const banner = '/images/cta.webp'
                 {plan.featured && (
                   <>
                     <div class="bg-hazard absolute inset-x-0 top-0 h-2 opacity-80" />
-                    <span class="absolute right-5 top-5 rounded-full bg-battle px-3 py-1 font-head text-[0.625rem] font-bold uppercase tracking-[0.2em] text-ink">
+                    <span class="absolute right-5 top-5 rounded-full bg-battle px-3 py-1 font-head text-[10px] font-bold uppercase tracking-[0.2em] text-ink">
                       Most Popular
                     </span>
                   </>
                 )}
 
                 <h3 class="font-head text-xl font-semibold uppercase tracking-wide text-chalk">{plan.name}</h3>
-                <div class="mt-4 flex flex-wrap items-end gap-x-2">
+                <div class="mt-4 flex items-end gap-2">
                   <span class="font-display text-5xl text-battle">{plan.price}</span>
                   <span class="mb-1.5 text-sm text-smoke">{plan.period}</span>
                 </div>
@@ -91,7 +91,7 @@ const banner = '/images/cta.webp'
                       class="flex items-center gap-3 text-sm text-fog"
                     >
                       <span class="flex h-5 w-5 items-center justify-center rounded-full bg-battle/15 text-battle">
-                        <FaCheck aria-hidden="true" size={10} />
+                        <FaCheck size={10} />
                       </span>
                       {perk}
                     </li>
@@ -109,7 +109,6 @@ const banner = '/images/cta.webp'
                     data-plan-name={plan.name}
                   >
                     {plan.cta}
-                    <span class="sr-only">{`: ${plan.name}`}</span>
                   </CTAButton>
                 </div>
               </div>
@@ -139,19 +138,19 @@ const banner = '/images/cta.webp'
           <div class="flex items-center justify-between gap-3 border-b border-iron bg-coal/60 px-4 py-3.5 sm:px-5">
             <div class="flex items-center gap-3">
               <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-battle/10 text-battle">
-                <FaLock aria-hidden="true" size={15} />
+                <FaLock size={15} />
               </span>
               <div class="leading-tight">
                 <div class="font-head text-xs font-bold uppercase tracking-[0.2em] text-chalk">Secure Checkout</div>
-                <div class="mt-0.5 font-head text-[0.625rem] uppercase tracking-wider text-smoke">
+                <div class="mt-0.5 font-head text-[10px] uppercase tracking-wider text-smoke">
                   256-bit SSL · Powered by Recess
                 </div>
               </div>
             </div>
             <span
-              class="flex items-center gap-2 rounded-full border border-battle/40 bg-battle/10 px-3 py-1.5 font-head text-[0.625rem] font-semibold uppercase tracking-wider text-battle"
+              class="flex items-center gap-2 rounded-full border border-battle/40 bg-battle/10 px-3 py-1.5 font-head text-[10px] font-semibold uppercase tracking-wider text-battle"
             >
-              <FaShieldHalved aria-hidden="true" size={11} /> <span class="hidden sm:inline">Encrypted</span>
+              <FaShieldHalved size={11} /> <span class="hidden sm:inline">Encrypted</span>
             </span>
           </div>
 
@@ -167,9 +166,9 @@ const banner = '/images/cta.webp'
             <button
               type="button"
               data-clear-selection
-              class="inline-flex shrink-0 cursor-pointer items-center gap-2 font-head text-[0.6875rem] font-semibold uppercase tracking-wider text-smoke transition-colors hover:text-battle"
+              class="inline-flex shrink-0 cursor-pointer items-center gap-2 font-head text-[11px] font-semibold uppercase tracking-wider text-smoke transition-colors hover:text-battle"
             >
-              <FaArrowLeftLong aria-hidden="true" size={11} /> View all packages
+              <FaArrowLeftLong size={11} /> View all packages
             </button>
           </div>
 
@@ -188,8 +187,8 @@ const banner = '/images/cta.webp'
               const Icon = b.icon
               return (
                 <div class="flex items-center gap-2.5 rounded-xl border border-iron bg-ink px-4 py-3">
-                  <Icon aria-hidden="true" size={15} className="shrink-0 text-battle" />
-                  <span class="font-head text-[0.6875rem] font-semibold uppercase tracking-wider text-fog">{b.label}</span>
+                  <Icon size={15} className="shrink-0 text-battle" />
+                  <span class="font-head text-[11px] font-semibold uppercase tracking-wider text-fog">{b.label}</span>
                 </div>
               )
             })
@@ -199,7 +198,7 @@ const banner = '/images/cta.webp'
         <div class="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <p class="text-sm text-smoke">Prefer to talk it through first?</p>
           <CTAButton href={WHATSAPP} target="_blank" variant="ghost">
-            <FaWhatsapp aria-hidden="true" size={16} /> Message a Coach <FaArrowRightLong aria-hidden="true" size={14} />
+            <FaWhatsapp size={16} /> Message a Coach <FaArrowRightLong size={14} />
           </CTAButton>
         </div>
       </div>
@@ -209,7 +208,6 @@ const banner = '/images/cta.webp'
 
 <script>
   import { setRecessSrc } from '../scripts/recess.js'
-  import { announce } from '../scripts/core.js'
 
   /* Picking a plan loads that exact package in the checkout below; plans
      without a Recess id (e.g. the free pass) show the full list. */
@@ -221,7 +219,6 @@ const banner = '/images/cta.webp'
     if (!embed) return
     bar.hidden = !picked
     if (picked) root.querySelector('[data-selected-name]').textContent = picked.name
-    announce(picked ? `Checkout showing ${picked.name}` : 'Checkout showing all packages')
     setRecessSrc(
       embed,
       picked ? picked.src : root.dataset.checkoutUrl,

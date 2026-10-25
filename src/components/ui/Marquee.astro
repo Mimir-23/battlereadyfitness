@@ -6,20 +6,17 @@ const { words = [], reverse = false } = Astro.props
 const items = [...words, ...words]
 ---
 
-{/* Decorative slogan band (each word repeats for the loop): hidden from
-    screen readers. It pauses under the pointer, and stops with "reduce
-    motion" or the accessibility panel's "Stop animations". */}
-<div aria-hidden="true" class={`marquee relative overflow-hidden border-y border-iron py-4 ${reverse ? 'bg-ink' : 'bg-battle'}`}>
+<div class={`relative overflow-hidden border-y border-iron py-4 ${reverse ? 'bg-ink' : 'bg-battle'}`}>
   <div data-skew class="w-max">
     <div
-      class="marquee-track flex w-max items-center gap-8 whitespace-nowrap"
+      class="flex w-max items-center gap-8 whitespace-nowrap"
       style={`animation: ${reverse ? 'var(--animate-marquee-rev)' : 'var(--animate-marquee)'}`}
     >
       {
         items.map((word) => (
           <span class="flex items-center gap-8">
             <span class={`font-display text-2xl tracking-wide ${reverse ? 'text-stroke-chalk' : 'text-ink'}`}>{word}</span>
-            <FaFire aria-hidden="true" className={reverse ? 'text-battle' : 'text-ink/70'} size={18} />
+            <FaFire className={reverse ? 'text-battle' : 'text-ink/70'} size={18} />
           </span>
         ))
       }

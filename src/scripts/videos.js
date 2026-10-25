@@ -1,4 +1,4 @@
-import { fx, onStill } from './core.js'
+import { fx } from './core.js'
 import { createSlideDialog } from './dialog.js'
 
 /* Video wall: muted YouTube previews while a poster is near the screen
@@ -37,12 +37,6 @@ if (section) {
       { rootMargin: '80px' },
     )
     section.querySelectorAll('[data-preview-src]').forEach((poster) => io.observe(poster))
-    // "Stop animations": no moving previews either.
-    onStill(() => {
-      io.disconnect()
-      section.querySelectorAll('iframe[data-live]').forEach((f) => f.remove())
-      section.querySelectorAll('[data-muted]').forEach((b) => (b.hidden = true))
-    })
   }
 
   const dialog = section.querySelector('[data-video-dialog]')
@@ -54,12 +48,7 @@ if (section) {
       const box = slide.querySelector('[data-player]')
       const frame = document.createElement('iframe')
       frame.title = box.dataset.title
-      let src = box.dataset.src
-      // "Video captions" (accessibility panel): YouTube shows its subtitles.
-      if (document.documentElement.classList.contains('a11y-captions') && /youtube(-nocookie)?\.com\/embed\//.test(src)) {
-        src += `${src.includes('?') ? '&' : '?'}cc_load_policy=1&cc_lang_pref=en`
-      }
-      frame.src = src
+      frame.src = box.dataset.src
       frame.className = 'h-full w-full rounded-xl border border-iron bg-black'
       frame.allow =
         'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share'

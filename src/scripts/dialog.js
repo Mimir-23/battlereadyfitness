@@ -1,4 +1,4 @@
-import { lockScroll, unlockScroll, announce } from './core.js'
+import { lockScroll, unlockScroll } from './core.js'
 
 /* ------------------------------------------------------------------ */
 /*  Full-screen dialog with pre-rendered slides (coach profiles, gallery */
@@ -18,9 +18,6 @@ import { lockScroll, unlockScroll, announce } from './core.js'
  */
 export function createSlideDialog(dialog, { animateOnOpen = true, wait = false, swipe = 48, onShow, onClose } = {}) {
   const slides = [...dialog.querySelectorAll('[data-slide]')]
-  // Directly under <body>, so everything else can be made inert while open.
-  document.body.append(dialog)
-  let inerted = []
   const many = slides.length > 1
   let index = -1
   let returnFocus = null
@@ -34,9 +31,6 @@ export function createSlideDialog(dialog, { animateOnOpen = true, wait = false, 
     })
     index = next
     onShow?.(next, slides[next], opening)
-    // Opening moves focus inside (that is the announcement); moving between
-    // slides tells screen readers where they landed.
-    if (!opening && many) announce(`${slides[next].dataset.label || ''}, ${next + 1} of ${slides.length}`)
   }
 
   const show = (next, { animate = true, opening = false } = {}) => {
@@ -77,12 +71,6 @@ export function createSlideDialog(dialog, { animateOnOpen = true, wait = false, 
       dialog.setAttribute('data-open', '')
       lockScroll()
       addEventListener('keydown', onKey)
-      // Modal for keyboard and assistive tech: the rest of the page can't be
-      // reached until it closes (the status region keeps announcing).
-      inerted = [...document.body.children].filter(
-        (el) => el !== dialog && el.id !== 'a11y-status' && !el.inert && el.tagName !== 'SCRIPT',
-      )
-      inerted.forEach((el) => (el.inert = true))
     }
     show(i, { animate: animateOnOpen, opening: true })
     if (!wasOpen) dialog.querySelector('[data-dialog-close]')?.focus({ preventScroll: true })
@@ -92,8 +80,6 @@ export function createSlideDialog(dialog, { animateOnOpen = true, wait = false, 
     if (!dialog.hasAttribute('data-open') || dialog.hasAttribute('data-closing')) return
     removeEventListener('keydown', onKey)
     dialog.setAttribute('data-closing', '')
-    inerted.forEach((el) => (el.inert = false))
-    inerted = []
     closeTimer = setTimeout(() => {
       dialog.removeAttribute('data-open')
       dialog.removeAttribute('data-closing')
