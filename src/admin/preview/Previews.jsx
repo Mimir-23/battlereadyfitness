@@ -50,7 +50,7 @@ function HeroPreview({ d }) {
           <p className="mt-3 text-xs text-fog">{d.paragraph}</p>
           <div className="mt-4 flex flex-wrap gap-2">
             <span className="bg-battle px-3 py-1.5 font-head text-[0.625rem] font-bold uppercase tracking-wider text-ink">
-              Claim Your 3-Day Free Pass
+              Claim Your 2-Day Free Pass
             </span>
             <span className="border border-iron bg-ink/40 px-3 py-1.5 font-head text-[0.625rem] font-semibold uppercase tracking-wider text-chalk">
               <FaWhatsapp className="mr-1 inline" size={10} /> WhatsApp

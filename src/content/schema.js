@@ -280,7 +280,7 @@ export const SECTIONS = [
     key: 'cta',
     label: 'Llamado a la acción',
     icon: 'FaBullhorn',
-    description: 'La franja amarilla del “3-Day Free Pass”.',
+    description: 'La franja amarilla del “2-Day Free Pass”.',
     shape: 'object',
     fields: [
       { name: 'image', label: 'Imagen de fondo', type: 'image' },

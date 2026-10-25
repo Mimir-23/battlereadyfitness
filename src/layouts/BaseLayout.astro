@@ -31,7 +31,7 @@ const BASE = 'Battle Ready Fitness Bootcamp'
 const fullTitle = title ? `${title} — ${BASE}` : `${BASE} — We're Simply Unique`
 const desc =
   description ??
-  'Battle Ready Fitness Bootcamp — high-intensity boot-camp gym in Hialeah, Florida. Personal Training, Bootcamp, Kickboxing, HIIT, Zumba & more. Claim your 3-day free pass.'
+  'Battle Ready Fitness Bootcamp — high-intensity boot-camp gym in Hialeah, Florida. Personal Training, Bootcamp, Kickboxing, HIIT, Zumba & more. Claim your 2-day free pass.'
 const site = Astro.site ?? new URL(Astro.url.origin)
 const canonical = new URL(Astro.url.pathname, site).href
 const absolute = (src) => (src ? new URL(src, site).href : undefined)

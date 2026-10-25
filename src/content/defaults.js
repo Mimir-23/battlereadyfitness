@@ -13,7 +13,7 @@ export const DEFAULT_CONTENT = {
     phoneHref: 'tel:3059742079',
     whatsappNumber: '786-234-5399',
     whatsappHref: 'https://wa.me/17862345399',
-    whatsappText: 'Hi! I want to claim my 3-Day Free Pass 💪',
+    whatsappText: 'Hi! I want to claim my 2-Day Free Pass 💪',
     email: 'contact@battlereadyfitness.com',
     address: '18600 NW 87th Avenue, Suite 116',
     city: 'Hialeah, Florida 33015',
@@ -299,7 +299,7 @@ export const DEFAULT_CONTENT = {
   /* ---------- Planes / Membresías ---------- */
   plans: [
     {
-      name: '3-Day Free Pass',
+      name: '2-Day Free Pass',
       price: 'Free',
       period: 'no card needed',
       desc: 'Walk in, train hard, feel the difference. Your first three days are on us.',
@@ -351,7 +351,7 @@ DEFAULT_CONTENT.legal = {
     },
     {
       title: 'Free Pass',
-      body: 'The 3-Day Free Pass is available to new members only, one per person. It gives access to regular group classes during three days and has no cash value. We may ask for a valid ID before your first session.',
+      body: 'The 2-Day Free Pass is available to new members only, one per person. It gives access to regular group classes during two days and has no cash value. We may ask for a valid ID before your first session.',
     },
     {
       title: 'Class Bookings & Attendance',
