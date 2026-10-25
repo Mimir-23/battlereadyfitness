@@ -15,7 +15,7 @@
    .fx     → escritorio con mouse y sin "reducir movimiento":
              revelados al hacer scroll, parallax, intro del hero…
    .motion → sin "reducir movimiento" (cualquier dispositivo)
-   .fine   → puntero preciso (cursor, magnético, spotlight)
+   .fine   → puntero preciso (botones magnéticos, spotlight)
    .ready  → la página ya es visible (tras un prerender, al activarse)
    Sin JavaScript no se aplica ninguna: todo queda visible y quieto.
    ============================================================ */
@@ -358,20 +358,6 @@ html.is-locked {
   }
 }
 
-/* Cursor: sobre elementos interactivos la mancuerna "hace repeticiones". */
-@keyframes reps {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-6px);
-  }
-}
-.cursor-reps {
-  animation: reps 0.55s ease-in-out infinite;
-}
-
 /* Imagen con parallax (escritorio): sobra un 10% arriba y abajo para que
    el desplazamiento nunca descubra el fondo. */
 .fx [data-parallax-img] {
@@ -509,8 +495,6 @@ html.a11y-font {
   transition-delay: 0s !important;
   scroll-behavior: auto !important;
 }
-.a11y-still .cursor-dot,
-.a11y-still .cursor-ring,
 .a11y-still .route-wipe,
 .a11y-still .ember-field,
 .a11y-still [style*='animate-scan'] {

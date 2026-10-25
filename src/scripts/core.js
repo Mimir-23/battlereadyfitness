@@ -7,7 +7,7 @@ const root = document.documentElement.classList
 
 /** Mouse/desktop and motion allowed: parallax, reveals, showpiece effects. */
 export const fx = root.contains('fx')
-/** Precise pointer and motion allowed: cursor, magnetic CTAs, spotlight tilt. */
+/** Precise pointer and motion allowed: magnetic CTAs, spotlight tilt. */
 export const fine = root.contains('fine')
 /** The visitor asked the OS for reduced motion. */
 export const reducedMotion = !root.contains('motion')

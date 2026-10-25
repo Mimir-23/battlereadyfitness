@@ -252,25 +252,6 @@ html.lenis body {
   overflow: hidden;
 }
 
-/* ---------- Custom tactical cursor ---------- */
-/* Hide native cursor only on precise pointers when JS cursor is active */
-@media (pointer: fine) {
-  body.has-cursor,
-  body.has-cursor * {
-    cursor: none !important;
-  }
-}
-.cursor-dot,
-.cursor-ring {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 9999;
-  pointer-events: none;
-  mix-blend-mode: difference;
-  will-change: transform;
-}
-
 /* SplitType reveal: clip chars per line */
 .reveal-mask {
   overflow: hidden;

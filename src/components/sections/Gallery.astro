@@ -29,7 +29,7 @@ const many = gallery.length > 1
             widths: big ? [640, 828, 1080, 1280] : [384, 640, 828],
           })
           return (
-            <figure data-reveal data-reveal-item data-tile={i} data-span={g.span || ''} data-cursor class={k.figure}>
+            <figure data-reveal data-reveal-item data-tile={i} data-span={g.span || ''} class={k.figure}>
               <img {...img} alt={g.label} loading="lazy" decoding="async" data-part="img" class={k.img} />
               <div class="absolute inset-0 bg-gradient-to-t from-ink/90 via-transparent to-transparent" />
 
