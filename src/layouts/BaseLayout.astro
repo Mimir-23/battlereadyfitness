@@ -8,6 +8,7 @@ import ConsentBanner from '../components/layout/ConsentBanner.astro'
 import AccessibilityPanel from '../components/layout/AccessibilityPanel.astro'
 import { springCssVars } from '../lib/spring.js'
 import { SUPABASE_URL } from '../lib/supabaseEnv.js'
+import { imagesViaCdn } from '../lib/images.js'
 import { DEFAULT_CONTENT } from '../content/defaults.js'
 
 /**
@@ -37,7 +38,9 @@ const absolute = (src) => (src ? new URL(src, site).href : undefined)
 const ogImage = absolute(image ?? content.hero?.image)
 
 // Fotos subidas desde el panel: conexión anticipada con Supabase Storage.
-const usesSupabase = !!SUPABASE_URL && JSON.stringify(content).includes(SUPABASE_URL)
+// Only worth a preconnect when photos come straight from Supabase (local
+// builds); on Vercel they go through this site's image CDN.
+const usesSupabase = !imagesViaCdn && !!SUPABASE_URL && JSON.stringify(content).includes(SUPABASE_URL)
 
 // Datos estructurados (Google): ficha del gimnasio con dirección y contacto.
 const { brand } = content

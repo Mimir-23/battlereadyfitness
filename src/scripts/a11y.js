@@ -253,16 +253,22 @@ if (dock) {
   /* ---------- first visit: stay above the consent bar ---------- */
   // On phones the consent bar covers the bottom of the screen; until the
   // visitor answers it, the button (and the reader controls) sit above it.
+  // It moves with `translate`, which doesn't shift the layout (no CLS), and
+  // glides along with the bar's own entrance and exit.
   const consent = document.querySelector('[data-consent]')
   const place = () => {
-    dock.style.bottom = ''
-    if (!consent || !root.classList.contains('needs-consent')) return
-    const right = Math.max(toggle.getBoundingClientRect().right, readerBar.getBoundingClientRect().right)
-    if (consent.getBoundingClientRect().left > right + 8) return
-    const offset = parseFloat(getComputedStyle(consent).bottom) || 0
-    dock.style.bottom = `${offset + consent.offsetHeight + 12}px`
+    let lift = 0
+    if (consent && root.classList.contains('needs-consent')) {
+      const right = Math.max(toggle.getBoundingClientRect().right, readerBar.getBoundingClientRect().right)
+      if (consent.getBoundingClientRect().left <= right + 8) {
+        const gap = parseFloat(getComputedStyle(consent).bottom) || 0
+        lift = gap + consent.offsetHeight + 12 - (parseFloat(getComputedStyle(dock).bottom) || 0)
+      }
+    }
+    dock.style.translate = lift > 0 ? `0 ${-lift}px` : ''
   }
   if (consent && root.classList.contains('needs-consent')) {
+    dock.style.transition = 'translate 0.5s var(--ease-power)'
     place()
     new ResizeObserver(place).observe(consent)
     addEventListener('resize', place)
