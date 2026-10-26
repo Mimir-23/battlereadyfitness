@@ -11,6 +11,9 @@ const logo = logoImage()
 
 /** Route entries link to their page; hash entries always resolve on home. */
 const hrefOf = (item) => item.to || `/${item.hash || ''}`
+/** Screen readers announce which page of the menu the visitor is on. */
+const path = Astro.url.pathname.replace(/\/$/, '') || '/'
+const current = (item) => (item.to && item.to === path ? 'page' : undefined)
 
 const desktopLink =
   'group relative font-head text-sm font-medium uppercase tracking-widest text-fog transition-colors hover:text-chalk'
@@ -23,7 +26,7 @@ const mobileLink =
   data-intro="nav"
   class="fixed inset-x-0 top-0 z-50 transition-colors duration-300 border-b border-transparent bg-transparent"
 >
-  <nav class="mx-auto flex max-w-7xl items-center justify-between px-5 py-3 lg:px-8">
+  <nav aria-label="Main" class="mx-auto flex max-w-7xl items-center justify-between px-5 py-3 lg:px-8">
     <a href="/" class="group flex items-center gap-2 py-1" aria-label="Battle Ready Fitness — home">
       <img
         {...logo}
@@ -39,9 +42,9 @@ const mobileLink =
       {
         NAV.map((item) => (
           <li>
-            <a href={hrefOf(item)} class={desktopLink}>
+            <a href={hrefOf(item)} aria-current={current(item)} class={desktopLink}>
               {item.label}
-              <span class="absolute -bottom-1.5 left-0 h-0.5 w-0 bg-battle transition-all duration-300 group-hover:w-full" />
+              <span class="absolute -bottom-1.5 left-0 h-0.5 w-0 bg-battle transition-all duration-300 group-hover:w-full group-aria-[current=page]:w-full" />
             </a>
           </li>
         ))
@@ -53,12 +56,12 @@ const mobileLink =
         href={WHATSAPP}
         target="_blank"
         rel="noreferrer"
-        aria-label="WhatsApp"
+        aria-label="WhatsApp (opens in a new tab)"
         class="flex h-11 w-11 items-center justify-center rounded-full border border-iron text-fog transition-colors hover:border-[#25D366] hover:text-[#25D366]"
       >
-        <FaWhatsapp size={18} />
+        <FaWhatsapp aria-hidden="true" size={18} />
       </a>
-      <CTAButton href={WHATSAPP} target="_blank" small>3-Day Free Pass</CTAButton>
+      <CTAButton href={WHATSAPP} target="_blank" small>2-Day Free Pass</CTAButton>
     </div>
 
     <div class="flex items-center gap-1 lg:hidden">
@@ -66,10 +69,10 @@ const mobileLink =
         href={WHATSAPP}
         target="_blank"
         rel="noreferrer"
-        aria-label="WhatsApp"
+        aria-label="WhatsApp (opens in a new tab)"
         class="flex h-11 w-11 items-center justify-center rounded-full text-fog transition-colors hover:text-[#25D366]"
       >
-        <FaWhatsapp size={20} />
+        <FaWhatsapp aria-hidden="true" size={20} />
       </a>
       <button
         type="button"
@@ -79,30 +82,30 @@ const mobileLink =
         aria-controls="mobile-menu"
         class="cursor-pointer p-2 text-chalk"
       >
-        <span data-icon-open class="block"><FaBars size={24} /></span>
-        <span data-icon-close class="block" hidden><FaXmark size={24} /></span>
+        <span data-icon-open class="block"><FaBars aria-hidden="true" size={24} /></span>
+        <span data-icon-close class="block" hidden><FaXmark aria-hidden="true" size={24} /></span>
       </button>
     </div>
   </nav>
 
   <div id="mobile-menu" data-menu inert class="lg:hidden">
     <div>
-      <div class="border-t border-iron bg-coal">
+      <nav aria-label="Main menu" class="border-t border-iron bg-coal">
         <ul class="flex flex-col gap-1 px-5 py-4">
           {
             NAV.map((item) => (
               <li>
-                <a href={hrefOf(item)} class={mobileLink}>
+                <a href={hrefOf(item)} aria-current={current(item)} class={mobileLink}>
                   {item.label}
                 </a>
               </li>
             ))
           }
           <li class="mt-2">
-            <CTAButton href={WHATSAPP} target="_blank" full>Claim 3-Day Free Pass</CTAButton>
+            <CTAButton href={WHATSAPP} target="_blank" full>Claim 2-Day Free Pass</CTAButton>
           </li>
         </ul>
-      </div>
+      </nav>
     </div>
   </div>
 </header>

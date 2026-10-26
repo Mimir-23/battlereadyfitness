@@ -43,6 +43,8 @@ const SITE_LINK = {
   hours: '/#contact',
   schedule: '/schedule',
   plans: '/memberships',
+  legal: '/terms',
+  accessibility: '/accessibility',
 }
 
 export default function AdminSection() {
@@ -258,7 +260,7 @@ function SectionEditor({ sectionKey, section, initial }) {
             href={SITE_LINK[key] || '/'}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-1.5 rounded-lg border border-iron px-2.5 py-1.5 font-head text-[11px] font-semibold uppercase tracking-wider text-smoke transition-colors hover:border-battle/50 hover:text-battle"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-iron px-2.5 py-1.5 font-head text-[0.6875rem] font-semibold uppercase tracking-wider text-smoke transition-colors hover:border-battle/50 hover:text-battle"
           >
             <FaArrowUpRightFromSquare size={10} /> Ver en el sitio
           </a>
@@ -540,14 +542,14 @@ function RecessSyncPanel({ settingKey, what, activeText, pausedText, sectionKey,
       </div>
 
       <div className="mt-3 flex flex-wrap items-center justify-between gap-3 border-t border-iron pt-3">
-        <span className="text-[11px] text-smoke">
+        <span className="text-[0.6875rem] text-smoke">
           Corre sola cada día a las 12 de la noche (hora de Miami).
         </span>
         <button
           type="button"
           onClick={syncNow}
           disabled={syncing}
-          className="inline-flex items-center gap-2 rounded-lg border border-battle/50 bg-battle/10 px-3 py-2 font-head text-[11px] font-bold uppercase tracking-wider text-battle transition-colors hover:bg-battle hover:text-ink disabled:opacity-50"
+          className="inline-flex items-center gap-2 rounded-lg border border-battle/50 bg-battle/10 px-3 py-2 font-head text-[0.6875rem] font-bold uppercase tracking-wider text-battle transition-colors hover:bg-battle hover:text-ink disabled:opacity-50"
         >
           {syncing ? (
             <Spinner className="h-3.5 w-3.5 border-battle/40 border-t-battle" />

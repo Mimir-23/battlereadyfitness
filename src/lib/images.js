@@ -12,6 +12,8 @@ import { IMAGE_WIDTHS } from './image-widths.js'
 
 /* global __VERCEL_IMAGES__, __SUPABASE_HOST__ */
 const ENABLED = typeof __VERCEL_IMAGES__ !== 'undefined' && __VERCEL_IMAGES__
+/** Photos are served from this site (through the CDN), not from Supabase. */
+export const imagesViaCdn = !!ENABLED
 const SUPABASE_HOST = typeof __SUPABASE_HOST__ !== 'undefined' ? __SUPABASE_HOST__ : ''
 
 const RASTER = /\.(webp|jpe?g|png|avif|gif)$/i

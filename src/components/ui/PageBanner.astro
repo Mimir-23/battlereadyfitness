@@ -35,7 +35,7 @@ let i = 0
         <span
           class="inline-flex items-center gap-2 rounded-full border border-battle/40 bg-battle/10 px-4 py-1.5 font-head text-xs font-medium uppercase tracking-[0.2em] text-battle backdrop-blur-sm"
         >
-          <FaLocationDot size={12} />
+          <FaLocationDot aria-hidden="true" size={12} />
           {kicker}
         </span>
       </div>
@@ -62,9 +62,15 @@ let i = 0
         aria-label="Breadcrumb"
         class="mt-7 flex items-center gap-2 font-head text-xs uppercase tracking-[0.2em] text-smoke"
       >
-        <a href="/" class="transition-colors hover:text-battle">Home</a>
-        <span class="text-iron">/</span>
-        <span class="text-chalk">{accent ? `${title} ${accent}` : title}</span>
+        <ol class="flex items-center gap-2">
+          <li class="flex items-center gap-2">
+            <a href="/" class="inline-block py-1 transition-colors hover:text-battle">Home</a>
+            <span aria-hidden="true" class="text-iron">/</span>
+          </li>
+          <li>
+            <span aria-current="page" class="text-chalk">{accent ? `${title} ${accent}` : title}</span>
+          </li>
+        </ol>
       </nav>
     </div>
   </div>

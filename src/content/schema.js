@@ -223,7 +223,7 @@ export const SECTIONS = [
         label: 'Videos',
         type: 'list',
         itemLabel: (it) => it.label || it.url || 'Video',
-        newItem: () => ({ url: '', label: '', thumb: '' }),
+        newItem: () => ({ url: '', label: '', thumb: '', transcript: '' }),
         item: [
           {
             name: 'url',
@@ -238,6 +238,12 @@ export const SECTIONS = [
             label: 'Miniatura (imagen de portada)',
             type: 'image',
             help: 'Para Instagram, TikTok y Facebook sube una captura del video. YouTube la obtiene solo.',
+          },
+          {
+            name: 'transcript',
+            label: 'Transcripción (accesibilidad)',
+            type: 'textarea',
+            help: 'Lo que se dice o se escucha en el video, para personas sordas. Se muestra bajo el reproductor.',
           },
         ],
       },
@@ -274,7 +280,7 @@ export const SECTIONS = [
     key: 'cta',
     label: 'Llamado a la acción',
     icon: 'FaBullhorn',
-    description: 'La franja amarilla del “3-Day Free Pass”.',
+    description: 'La franja amarilla del “2-Day Free Pass”.',
     shape: 'object',
     fields: [
       { name: 'image', label: 'Imagen de fondo', type: 'image' },
@@ -330,6 +336,78 @@ export const SECTIONS = [
       { name: 'perks', label: 'Beneficios', type: 'string-list', itemLabel: 'Beneficio' },
       { name: 'featured', label: 'Destacar este plan', type: 'boolean' },
       { name: 'cta', label: 'Texto del botón', type: 'text', required: true },
+    ],
+  },
+
+  /* ---------- Términos y políticas ---------- */
+  {
+    key: 'legal',
+    label: 'Términos y políticas',
+    icon: 'FaScaleBalanced',
+    description: 'La página de Términos y Condiciones, con la política de privacidad y de cookies.',
+    shape: 'object',
+    fields: [
+      { name: 'kicker', label: 'Texto pequeño superior', type: 'text' },
+      { name: 'title', label: 'Título', type: 'text', required: true },
+      { name: 'accent', label: 'Título — parte destacada (amarilla)', type: 'text' },
+      { name: 'updated', label: 'Fecha de última actualización', type: 'text', help: 'Ej: October 2026' },
+      { name: 'intro', label: 'Introducción', type: 'textarea' },
+      {
+        name: 'consentText',
+        label: 'Aviso de cookies (primera visita)',
+        type: 'textarea',
+        help: 'Mensaje de la barra de la primera visita. Al final se añaden solos los enlaces «Terms & Conditions and Privacy Policy».',
+      },
+      {
+        name: 'sections',
+        label: 'Secciones',
+        type: 'list',
+        itemLabel: (it) => it.title || 'Sección',
+        newItem: () => ({ title: '', body: '' }),
+        item: [
+          { name: 'title', label: 'Título de la sección', type: 'text', required: true },
+          {
+            name: 'body',
+            label: 'Texto',
+            type: 'textarea',
+            required: true,
+            help: 'Deja una línea en blanco entre párrafos. Empieza una línea con "- " para hacer una lista.',
+          },
+        ],
+      },
+    ],
+  },
+
+  /* ---------- Declaración de accesibilidad ---------- */
+  {
+    key: 'accessibility',
+    label: 'Accesibilidad',
+    icon: 'FaUniversalAccess',
+    description: 'La página de accesibilidad: qué ofrece el sitio a personas ciegas, con daltonismo o sordas, y cómo contactarlos.',
+    shape: 'object',
+    fields: [
+      { name: 'kicker', label: 'Texto pequeño superior', type: 'text' },
+      { name: 'title', label: 'Título', type: 'text', required: true },
+      { name: 'accent', label: 'Título — parte destacada (amarilla)', type: 'text' },
+      { name: 'updated', label: 'Fecha de última actualización', type: 'text', help: 'Ej: October 2026' },
+      { name: 'intro', label: 'Introducción', type: 'textarea' },
+      {
+        name: 'sections',
+        label: 'Secciones',
+        type: 'list',
+        itemLabel: (it) => it.title || 'Sección',
+        newItem: () => ({ title: '', body: '' }),
+        item: [
+          { name: 'title', label: 'Título de la sección', type: 'text', required: true },
+          {
+            name: 'body',
+            label: 'Texto',
+            type: 'textarea',
+            required: true,
+            help: 'Deja una línea en blanco entre párrafos. Empieza una línea con "- " para hacer una lista.',
+          },
+        ],
+      },
     ],
   },
 ]
