@@ -164,14 +164,24 @@ const hrefOf = (item) => item.to || `/${item.hash || ''}`
       <p class="text-xs uppercase tracking-widest text-smoke">
         © Copyright 2018 — Battle Ready Fitness Bootcamp — All Rights Reserved
       </p>
-      <nav aria-label="Legal" class="flex flex-wrap items-center justify-center gap-x-5 gap-y-1">
-        <a href="/terms" class="text-xs uppercase tracking-widest text-smoke transition-colors hover:text-battle">
+      <nav aria-label="Legal" class="flex flex-wrap items-center justify-center gap-x-5 gap-y-0.5">
+        <a href="/terms" class="inline-block py-1 text-xs uppercase tracking-widest text-smoke transition-colors hover:text-battle">
           Terms &amp; Conditions
         </a>
-        <a href="/terms#privacy-policy" class="text-xs uppercase tracking-widest text-smoke transition-colors hover:text-battle">
+        <a href="/terms#privacy-policy" class="inline-block py-1 text-xs uppercase tracking-widest text-smoke transition-colors hover:text-battle">
           Privacy Policy
         </a>
-        <a href="/accessibility" class="text-xs uppercase tracking-widest text-smoke transition-colors hover:text-battle">
+        <a href="/terms#cookie-policy" class="inline-block py-1 text-xs uppercase tracking-widest text-smoke transition-colors hover:text-battle">
+          Cookie Policy
+        </a>
+        <button
+          type="button"
+          data-consent-open
+          class="inline-block cursor-pointer py-1 text-xs uppercase tracking-widest text-smoke transition-colors hover:text-battle"
+        >
+          Cookie Settings
+        </button>
+        <a href="/accessibility" class="inline-block py-1 text-xs uppercase tracking-widest text-smoke transition-colors hover:text-battle">
           Accessibility
         </a>
       </nav>

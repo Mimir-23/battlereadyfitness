@@ -356,7 +356,7 @@ export const SECTIONS = [
         name: 'consentText',
         label: 'Aviso de cookies (primera visita)',
         type: 'textarea',
-        help: 'Mensaje de la barra de la primera visita. Al final se añaden solos los enlaces «Terms & Conditions and Privacy Policy».',
+        help: 'Mensaje de la barra de la primera visita. Al final se añaden solos los enlaces «Terms & Conditions, Privacy Policy and Cookie Policy».',
       },
       {
         name: 'sections',
