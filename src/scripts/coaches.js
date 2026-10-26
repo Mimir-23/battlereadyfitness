@@ -8,9 +8,10 @@ import { runCounter } from './reveal.js'
    profile; a click opens the full profile dialog. */
 
 const AUTOPLAY_MS = 4200
-const section = document.querySelector('[data-coaches]')
+export function initCoaches() {
+  const section = document.querySelector('[data-coaches]')
+  if (!section) return
 
-if (section) {
   const wall = section.querySelector('[data-coach-wall]')
   const strips = [...wall.querySelectorAll('[data-coach-strip]')]
   const dialog = section.querySelector('[data-coach-dialog]')

@@ -17,9 +17,10 @@ import { announce } from './core.js'
    class highlight from the legend/hover, and picking a class to load it
    straight into the booking terminal. */
 
-const root = document.querySelector('[data-schedule]')
+export function initSchedule() {
+  const root = document.querySelector('[data-schedule]')
+  if (!root) return
 
-if (root) {
   /** Today's three-letter label (Sun–Sat), in the visitor's local time. */
   const TODAY = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][new Date().getDay()]
   const chips = [...root.querySelectorAll('[data-day-chip]')]

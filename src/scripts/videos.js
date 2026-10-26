@@ -5,9 +5,10 @@ import { createSlideDialog } from './dialog.js'
    (desktop only — several players at once saturate a phone's CPU), and the
    full-screen player, whose iframe only exists while it's showing. */
 
-const section = document.querySelector('[data-videos]')
+export function initVideos() {
+  const section = document.querySelector('[data-videos]')
+  if (!section) return
 
-if (section) {
   if (fx) {
     // Only run a preview while its poster is near the viewport, so a long
     // wall never keeps a dozen players running off screen.
