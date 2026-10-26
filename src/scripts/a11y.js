@@ -267,11 +267,12 @@ if (dock) {
     }
     dock.style.translate = lift > 0 ? `0 ${-lift}px` : ''
   }
-  if (consent && root.classList.contains('needs-consent')) {
+  if (consent) {
     dock.style.transition = 'translate 0.5s var(--ease-power)'
     place()
     new ResizeObserver(place).observe(consent)
     addEventListener('resize', place)
     addEventListener('br:consent', place)
+    addEventListener('br:consent-open', place)
   }
 }

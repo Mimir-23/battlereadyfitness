@@ -337,45 +337,45 @@ DEFAULT_CONTENT.legal = {
   accent: 'CONDITIONS',
   updated: 'October 2026',
   intro:
-    'These terms and policies explain how memberships, classes and our facility work, and how we handle your information. By visiting this site, booking a class or training with us, you agree to them.',
+    'These terms and policies apply to every program, class and service of Evision Fitness LLC, DBA Battle Ready Fitness Bootcamp, and to the use of this website. They include our Release and Waiver of Liability, our class policies and how we handle your information and cookies.',
   consentText:
     'We use cookies to run this site and, with your permission, to measure visits and improve it. By continuing you accept our',
   sections: [
     {
-      title: 'Acceptance of Terms',
-      body: 'By accessing battlereadyfitness.com, claiming a free pass, booking a class or purchasing a membership, you agree to these Terms & Conditions and to our Privacy Policy. If you do not agree, please do not use our services.',
+      title: 'Release and Waiver of Liability',
+      body: 'I desire to engage voluntarily in any, and all, of Evision Fitness LLC, DBA Battle Ready Fitness Bootcamp programs in order to improve my physical fitness. I understand and am aware that the program may consist of strenuous physical activity including, but not limited to, plyometrics, isometrics, interval training, aerobic dance, weight training, stationary bicycling, suspension training, boxing, kickboxing, strenuous cardiovascular activity, running, exercise machines, Pilates, yoga, and various aerobic conditioning machinery offered by Evision Fitness LLC, DBA Battle Ready Fitness Bootcamp. I fully understand that injury may occur as a result of my participation, and hereby release Evision Fitness LLC, DBA Battle Ready Fitness Bootcamp from any liability in the future including, but not limited to; heart attacks, muscle strains, pulls or tears, broken bones, shin splints, heat strokes, knee/foot/lower back injuries, rhabdomyolysis and other illness, soreness, or death; accidental or otherwise, during or arising in any way, from my participation in the program.\n\nI affirm that I am in good physical condition and do not suffer from any disability that could prevent or limit my participation in the program. In addition, I understand that I am responsible for monitoring my own condition throughout the exercise program; should any unusual symptoms occur, I will cease my participation and inform my fitness professional. If modifications are needed, I will be responsible for seeking specialized instruction. In the event that a medical clearance must be obtained prior to my participation in the program, I agree to consult my physician and obtain written permission from my physician to participate in this exercise program.',
+    },
+    {
+      title: 'Limitation of Liability & Full Release',
+      body: 'Client, his or her heirs, assigns and next of kin, agree to fully release Evision Fitness LLC, DBA Battle Ready Fitness Bootcamp, its owners, employees, any related entities or other authorized agents, including independent contractors from any and all liability, claims and/or litigation or other actions that client may have for injuries, disability or death or other damages of any kind, including but not limited to, direct, special, incidental, indirect, punitive or consequential damages, whether arising in tort, contract, breach of warranty or arising out of participation in the Services, including, but not limited to the physical activities, even if caused by the negligence of fault of Evision Fitness LLC, DBA Battle Ready Fitness Bootcamp, its owners, employees, any related entities or other authorized agents, including independent contractors.',
+    },
+    {
+      title: 'Health Questionnaire Not Medical Advice',
+      body: 'Client acknowledges that Evision Fitness LLC, DBA Battle Ready Fitness Bootcamp does not diagnose health problems, does not provide medical advice nor a substitute for medical attention and Evision Fitness LLC, DBA Battle Ready Fitness Bootcamp has advised client to discuss the appropriateness of the services with the client’s doctor. Evision Fitness LLC, DBA Battle Ready Fitness Bootcamp health questionnaire and par-q (given to client) is nothing more than guidance for deciding client’s goals. The fact that Evision Fitness LLC, DBA Battle Ready Fitness Bootcamp agrees to provide services to client based on the questionnaire and clients representations is not a medical judgement that client is medically, physically or mentally able to receive the services. The services should not replace any dietary restrictions or medical recommendations from client’s doctor. If client has a history of heart disease, he/she should consult a physician before joining the program.',
+    },
+    {
+      title: 'Media Policy',
+      body: 'Classes are regularly recorded by employees as well as members for use in social media. Due to the wide use of video cell phones and video recording devices, it’s impossible for Evision Fitness LLC, DBA Battle Ready Fitness Bootcamp to guarantee the Client will not be recorded at some point by staff or members. This release also allows the studio, Evision Fitness LLC, DBA Battle Ready Fitness Bootcamp, to use my likeness for various reasons including for use in marketing/advertising, and Internet website as well as social media forums such as, but not limited to: Facebook, Twitter, Instagram, Tumblr. This release and assumption of risk run to my successors, assigns, heirs, administrators, executors, and any and all members of my family.',
+    },
+    {
+      title: 'No Show/Late Cancellation Policy',
+      body: 'Cancelling a Class. You must cancel a reserved class at least 4 hours prior to the start of the class. This is so members on a waitlist can get ample notification of available spots. If you cancel within the four hour window, you will be marked as a “Late Cancel”. If you Fail to inform us entirely, you will be marked as a “No Show”. Class Package members, trial memberships and limited memberships will have a class deducted per occurrence.',
+    },
+    {
+      title: 'Acceptance',
+      body: 'By booking a class, purchasing a membership or package, or participating in any of our programs, you confirm that you have read and agree to this Release and Waiver of Liability and to these policies.',
     },
     {
       title: 'Memberships & Payments',
-      body: 'Memberships, packages and class bookings are sold and processed through our member portal, Recess. Prices, billing periods, commitments and renewal terms are shown at checkout for each plan.\n\n- Recurring memberships renew automatically until cancelled.\n- Cancellations and freezes follow the terms of the plan you purchased.\n- Payments already processed are non-refundable unless the plan terms or applicable law state otherwise.',
-    },
-    {
-      title: 'Free Pass',
-      body: 'The 2-Day Free Pass is available to new members only, one per person. It gives access to regular group classes during two days and has no cash value. We may ask for a valid ID before your first session.',
-    },
-    {
-      title: 'Class Bookings & Attendance',
-      body: 'Class spots are limited and reserved through Recess. Please arrive on time; late arrivals may not be admitted for safety reasons. If you cannot attend, cancel your booking as early as possible so another member can take your spot. Schedules may change on holidays or for special events.',
-    },
-    {
-      title: 'Health, Safety & Assumption of Risk',
-      body: 'Physical exercise involves inherent risks. Consult your physician before starting any fitness program, especially if you have a medical condition, injury or are pregnant. You agree to inform your coach of any condition that may affect your training and to follow their instructions.\n\nYou participate voluntarily and assume the risks of training. Battle Ready Fitness is not liable for injuries, except where caused by our gross negligence as defined by law.',
-    },
-    {
-      title: 'Code of Conduct',
-      body: 'We are a community. Treat coaches and members with respect, use equipment properly and return it after use, and keep the facility clean.\n\n- Appropriate athletic clothing and closed training shoes are required.\n- Aggressive, discriminatory or unsafe behavior may result in suspension of your membership.\n- We are not responsible for lost or stolen personal belongings.',
-    },
-    {
-      title: 'Photos & Media',
-      body: 'We occasionally take photos and videos during classes for our website and social media. If you prefer not to appear, just tell a coach or write to us and we will respect it.',
+      body: 'Memberships, class packages and class bookings are sold and processed through our member portal, Recess. The price, billing period and terms of each plan are shown at checkout before you pay, and Recess handles your payment details: we never see or store card numbers.',
     },
     {
       title: 'Privacy Policy',
-      body: 'We only collect the information needed to serve you:\n\n- Contact details you share with us (for example by WhatsApp, phone or email).\n- Booking and payment information, processed securely by Recess under its own privacy policy. We never store card numbers.\n- Anonymous usage statistics of this website (Google Analytics / Firebase) to improve it.\n\nWe do not sell your personal information. We use it to manage your membership, answer your questions and, with your consent, share news and promotions. You can ask us at any time to access, correct or delete your information.',
+      body: 'Evision Fitness LLC, DBA Battle Ready Fitness Bootcamp collects only the information needed to serve you:\n\n- Contact details you share with us, for example by WhatsApp, phone or email.\n- Your membership, bookings and payments, managed through Recess under its own privacy policy.\n- The health questionnaire (PAR-Q) you complete, used only to plan your training.\n- If you choose "Accept all" in the cookie notice, statistics about how this website is used (Google Analytics).\n\nThis website has no accounts or forms and does not collect your name or contact details. We use your information to manage your membership and bookings, answer your questions and, if you agree, send you news and promotions. We do not sell your personal information. It is shared only with the providers that run our services (Recess for bookings and payments, Google for website statistics, Vercel for hosting), and when the law requires it. You can ask us at any time to access, correct or delete your information.',
     },
     {
-      title: 'Cookies',
-      body: 'This website uses essential cookies and analytics cookies that help us understand how visitors use it. Embedded services such as Recess, Google Maps, YouTube or Instagram may set their own cookies when you use them. You can block or delete cookies in your browser settings.',
+      title: 'Cookie Policy',
+      body: 'Cookies and similar browser storage are small pieces of information a website keeps on your device. This is what this site uses:\n\n- Essential (always on): your cookie choice ("br-consent") and your accessibility options ("br-a11y"). They stay in your browser and are never sent to us.\n- Statistics (only with "Accept all"): Google Analytics cookies ("_ga" and "_ga_*") count visits and show which pages are used, so we can improve the site. They last up to 2 years.\n- Third-party content: the Recess booking and checkout on the Schedule and Memberships pages, videos from YouTube (in privacy-enhanced mode), Instagram, TikTok or Facebook, and Google Maps (only after you tap it) may set their own cookies under their own policies.\n\nTo change your choice at any time, use "Cookie Settings" at the bottom of every page; choosing "Essential only" also deletes the statistics cookies. You can also block or delete cookies in your browser settings.',
     },
     {
       title: 'Changes to These Terms',
@@ -383,7 +383,7 @@ DEFAULT_CONTENT.legal = {
     },
     {
       title: 'Contact',
-      body: 'Questions about these terms or your information? Reach us at contact@battlereadyfitness.com or visit us at 18600 NW 87th Avenue, Suite 116, Hialeah, Florida 33015.',
+      body: 'Questions about these terms or your information? Contact Evision Fitness LLC, DBA Battle Ready Fitness Bootcamp at contact@battlereadyfitness.com or visit us at 18600 NW 87th Avenue, Suite 116, Hialeah, Florida 33015.',
     },
   ],
 }

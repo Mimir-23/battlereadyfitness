@@ -130,10 +130,12 @@ const speculation = {
         try {
           if (document.referrer && new URL(document.referrer).origin === location.origin) d.classList.add('same-site')
         } catch {}
-        // Aviso de cookies y términos hasta que el visitante elija (v1).
+        // Aviso de cookies y términos hasta que el visitante elija. La versión
+        // sube cuando cambian las políticas (v2: exención de responsabilidad)
+        // y así se vuelve a pedir la aceptación. Igual en ConsentBanner.astro.
         try {
           const c = JSON.parse(localStorage.getItem('br-consent') || 'null')
-          if (!c || c.v !== 1) d.classList.add('needs-consent')
+          if (!c || c.v !== 2) d.classList.add('needs-consent')
         } catch {
           d.classList.add('needs-consent')
         }
@@ -203,7 +205,8 @@ const speculation = {
         // Solo con consentimiento ("Accept all"), y nunca durante un prerender.
         const consented = () => {
           try {
-            return JSON.parse(localStorage.getItem('br-consent') || 'null')?.analytics === true
+            const c = JSON.parse(localStorage.getItem('br-consent') || 'null')
+            return c?.v === 2 && c.analytics === true
           } catch {
             return false
           }
