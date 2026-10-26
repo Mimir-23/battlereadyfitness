@@ -37,11 +37,11 @@ export default function AdminLogin() {
   }
 
   return (
-    <div className="flex min-h-svh items-center justify-center bg-ink bg-grid px-5">
+    <main className="flex min-h-svh items-center justify-center bg-ink bg-grid px-5">
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-battle text-ink">
-            <FaLock size={22} />
+            <FaLock aria-hidden="true" size={22} />
           </div>
           <h1 className="font-display text-4xl text-chalk">PANEL DE CONTROL</h1>
           <p className="mt-1 text-sm text-smoke">Battle Ready Fitness — Administración</p>
@@ -52,15 +52,18 @@ export default function AdminLogin() {
           className="space-y-4 rounded-2xl border border-iron bg-coal p-6"
         >
           {session && isAdmin === false && (
-            <p className="rounded-lg border border-alert/40 bg-alert/10 px-3 py-2 text-sm text-chalk">
+            <p role="alert" className="rounded-lg border border-alert/40 bg-alert/10 px-3 py-2 text-sm text-chalk">
               Esta cuenta no tiene permiso de administrador.
             </p>
           )}
           <div>
-            <label className="mb-1 block font-head text-xs font-semibold uppercase tracking-wider text-fog">
+            <label htmlFor="login-email" className="mb-1 block font-head text-xs font-semibold uppercase tracking-wider text-fog">
               Correo
             </label>
             <input
+              id="login-email"
+              aria-invalid={error ? true : undefined}
+              aria-describedby={error ? 'login-error' : undefined}
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -69,11 +72,14 @@ export default function AdminLogin() {
             />
           </div>
           <div>
-            <label className="mb-1 block font-head text-xs font-semibold uppercase tracking-wider text-fog">
+            <label htmlFor="login-password" className="mb-1 block font-head text-xs font-semibold uppercase tracking-wider text-fog">
               Contraseña
             </label>
             <div className="relative">
               <input
+                id="login-password"
+                aria-invalid={error ? true : undefined}
+                aria-describedby={error ? 'login-error' : undefined}
                 type={showPass ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -86,23 +92,27 @@ export default function AdminLogin() {
                 aria-label={showPass ? 'Ocultar contraseña' : 'Mostrar contraseña'}
                 className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1.5 text-smoke hover:text-chalk"
               >
-                {showPass ? <FaEyeSlash size={14} /> : <FaEye size={14} />}
+                {showPass ? <FaEyeSlash aria-hidden="true" size={14} /> : <FaEye aria-hidden="true" size={14} />}
               </button>
             </div>
           </div>
 
-          {error && <p className="text-sm text-alert">{error}</p>}
+          {error && (
+            <p id="login-error" role="alert" className="text-sm text-alert-bright">
+              {error}
+            </p>
+          )}
 
           <button
             type="submit"
             disabled={busy}
             className="flex w-full items-center justify-center gap-2 rounded-lg bg-battle px-4 py-3 font-head text-sm font-bold uppercase tracking-widest text-ink transition-transform hover:scale-[1.02] active:scale-95 disabled:opacity-60"
           >
-            {busy ? <Spinner /> : <>Entrar <FaArrowRightLong /></>}
+            {busy ? <Spinner /> : <>Entrar <FaArrowRightLong aria-hidden="true" /></>}
           </button>
         </form>
       </div>
-    </div>
+    </main>
   )
 }
 

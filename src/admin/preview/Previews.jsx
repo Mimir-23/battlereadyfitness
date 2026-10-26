@@ -14,6 +14,7 @@ import {
   FaFacebookF,
 } from 'react-icons/fa6'
 import { resolveVideoEmbed } from '../../lib/videoEmbed'
+import { parseLegalBody } from '../../lib/legal'
 
 /* ------------------------------------------------------------------ */
 /*  Live previews — compact, brand-styled mirrors of each section that  */
@@ -37,7 +38,7 @@ function HeroPreview({ d }) {
         <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/80 to-transparent" />
         <div className="relative max-w-md">
           {d.badge && (
-            <span className="inline-block rounded-full border border-battle/40 bg-battle/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-battle">
+            <span className="inline-block rounded-full border border-battle/40 bg-battle/10 px-3 py-1 text-[0.625rem] font-semibold uppercase tracking-wider text-battle">
               {d.badge}
             </span>
           )}
@@ -48,10 +49,10 @@ function HeroPreview({ d }) {
           </div>
           <p className="mt-3 text-xs text-fog">{d.paragraph}</p>
           <div className="mt-4 flex flex-wrap gap-2">
-            <span className="bg-battle px-3 py-1.5 font-head text-[10px] font-bold uppercase tracking-wider text-ink">
-              Claim Your 3-Day Free Pass
+            <span className="bg-battle px-3 py-1.5 font-head text-[0.625rem] font-bold uppercase tracking-wider text-ink">
+              Claim Your 2-Day Free Pass
             </span>
-            <span className="border border-iron bg-ink/40 px-3 py-1.5 font-head text-[10px] font-semibold uppercase tracking-wider text-chalk">
+            <span className="border border-iron bg-ink/40 px-3 py-1.5 font-head text-[0.625rem] font-semibold uppercase tracking-wider text-chalk">
               <FaWhatsapp className="mr-1 inline" size={10} /> WhatsApp
             </span>
           </div>
@@ -60,7 +61,7 @@ function HeroPreview({ d }) {
               {[0, 1, 2, 3, 4].map((i) => (
                 <FaStar key={i} size={11} />
               ))}
-              <span className="text-[11px] text-smoke">{d.ratingText}</span>
+              <span className="text-[0.6875rem] text-smoke">{d.ratingText}</span>
             </div>
           )}
         </div>
@@ -83,7 +84,7 @@ function ProgramsPreview({ d }) {
                 <Icon size={14} />
               </div>
               <div className="mt-2 font-head text-sm font-semibold uppercase text-chalk">{p.name}</div>
-              <div className="text-[10px] uppercase tracking-wider text-smoke">{p.tag}</div>
+              <div className="text-[0.625rem] uppercase tracking-wider text-smoke">{p.tag}</div>
             </div>
           </div>
         )
@@ -102,7 +103,7 @@ function StatsPreview({ d }) {
               {s.value}
               {s.suffix}
             </div>
-            <div className="text-[10px] uppercase tracking-wider text-smoke">{s.label}</div>
+            <div className="text-[0.625rem] uppercase tracking-wider text-smoke">{s.label}</div>
           </div>
         ))}
       </div>
@@ -179,7 +180,7 @@ function GalleryPreview({ d }) {
               <span className="absolute bottom-1 left-1 h-2.5 w-2.5 border-b border-l border-battle" />
               <span className="absolute bottom-1 right-1 h-2.5 w-2.5 border-b border-r border-battle" />
             </div>
-            <figcaption className="absolute bottom-0 left-0 p-1.5 text-[9px] font-semibold uppercase text-chalk">
+            <figcaption className="absolute bottom-0 left-0 p-1.5 text-[0.5625rem] font-semibold uppercase text-chalk">
               {g.label}
             </figcaption>
           </figure>
@@ -206,7 +207,7 @@ function TestimonialPreview({ d }) {
                 “{it.quote} {it.highlight && <span className="text-battle">{it.highlight}</span>}”
               </p>
               <div className="mt-2 font-head text-xs font-semibold uppercase text-chalk">{it.author}</div>
-              <div className="text-[10px] uppercase tracking-wider text-smoke">{it.role}</div>
+              <div className="text-[0.625rem] uppercase tracking-wider text-smoke">{it.role}</div>
             </div>
           ))}
         </div>
@@ -223,17 +224,17 @@ function CtaPreview({ d }) {
         <div className="bg-hazard absolute inset-x-0 top-0 h-1.5" />
         <div className="bg-hazard absolute inset-x-0 bottom-0 h-1.5" />
         <div className="relative">
-          {d.kicker && <div className="text-[10px] font-bold uppercase tracking-widest text-ink/70">{d.kicker}</div>}
+          {d.kicker && <div className="text-[0.625rem] font-bold uppercase tracking-widest text-ink/70">{d.kicker}</div>}
           <div className="mt-1 font-display text-2xl leading-[0.9] text-ink">
             <div>{d.titleLine1}</div>
             {d.titleLine2 && <div>{d.titleLine2}</div>}
           </div>
           <p className="mx-auto mt-2 max-w-xs text-xs font-medium text-ink/80">{d.paragraph}</p>
           <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
-            <span className="bg-ink px-3 py-1.5 font-head text-[10px] font-bold uppercase tracking-wider text-battle">
+            <span className="bg-ink px-3 py-1.5 font-head text-[0.625rem] font-bold uppercase tracking-wider text-battle">
               Claim Yours Now
             </span>
-            <span className="border border-ink/30 px-3 py-1.5 font-head text-[10px] font-bold uppercase tracking-wider text-ink">
+            <span className="border border-ink/30 px-3 py-1.5 font-head text-[0.625rem] font-bold uppercase tracking-wider text-ink">
               <FaWhatsapp className="mr-1 inline" size={10} /> WhatsApp Us
             </span>
           </div>
@@ -265,11 +266,11 @@ function NavPreview({ d }) {
         {(d || []).map((n, i) => (
           <span key={i} className="font-head text-xs font-semibold uppercase tracking-wider text-fog">
             {n.label}
-            <span className="ml-1 text-[10px] normal-case text-smoke">{n.to || n.hash}</span>
+            <span className="ml-1 text-[0.625rem] normal-case text-smoke">{n.to || n.hash}</span>
           </span>
         ))}
       </div>
-      <span className="ml-auto bg-battle px-2.5 py-1.5 font-head text-[9px] font-bold uppercase tracking-wider text-ink">
+      <span className="ml-auto bg-battle px-2.5 py-1.5 font-head text-[0.5625rem] font-bold uppercase tracking-wider text-ink">
         Free Pass
       </span>
     </div>
@@ -297,11 +298,11 @@ function BrandPreview({ d }) {
           <div className="font-display text-2xl leading-none text-chalk">
             BATTLE <span className="text-battle">HQ</span>
           </div>
-          <div className="mt-1 font-head text-[9px] font-semibold uppercase tracking-[0.2em] text-smoke">
+          <div className="mt-1 font-head text-[0.5625rem] font-semibold uppercase tracking-[0.2em] text-smoke">
             {d.city}
           </div>
         </div>
-        <span className="flex items-center gap-1.5 rounded-full border border-iron bg-coal px-2.5 py-1 font-head text-[9px] font-semibold uppercase tracking-wider text-fog">
+        <span className="flex items-center gap-1.5 rounded-full border border-iron bg-coal px-2.5 py-1 font-head text-[0.5625rem] font-semibold uppercase tracking-wider text-fog">
           <span className="h-1.5 w-1.5 rounded-full bg-battle" /> Ready
         </span>
       </div>
@@ -315,7 +316,7 @@ function BrandPreview({ d }) {
                 <Icon size={13} />
               </span>
               <span className="min-w-0 flex-1">
-                <span className="block font-head text-[9px] font-semibold uppercase tracking-[0.2em] text-smoke">
+                <span className="block font-head text-[0.5625rem] font-semibold uppercase tracking-[0.2em] text-smoke">
                   {r.label}
                 </span>
                 <span className="block truncate text-xs text-chalk">{r.value}</span>
@@ -327,7 +328,7 @@ function BrandPreview({ d }) {
       </div>
       {/* action + socials */}
       <div className="flex items-center gap-2 border-t border-iron p-3">
-        <span className="flex flex-1 items-center justify-center gap-1.5 bg-battle px-3 py-2 font-head text-[10px] font-bold uppercase tracking-wider text-ink">
+        <span className="flex flex-1 items-center justify-center gap-1.5 bg-battle px-3 py-2 font-head text-[0.625rem] font-bold uppercase tracking-wider text-ink">
           <FaWhatsapp size={12} /> Chat on WhatsApp
         </span>
         {socials.map((s, i) => {
@@ -364,7 +365,7 @@ function SchedulePreview({ d }) {
 
   return (
     <div className="overflow-x-auto rounded-xl border border-iron">
-      <table className="w-full border-collapse text-[11px]">
+      <table className="w-full border-collapse text-[0.6875rem]">
         <thead>
           <tr>
             <th className="border border-iron bg-coal p-1.5 text-left font-head uppercase tracking-wider text-smoke">
@@ -378,7 +379,7 @@ function SchedulePreview({ d }) {
                 }`}
               >
                 {day}
-                <span className="mt-0.5 block text-[8px] font-medium tracking-normal text-smoke">
+                <span className="mt-0.5 block text-[0.5rem] font-medium tracking-normal text-smoke">
                   {count(day) ? `${count(day)} clases` : 'Descanso'}
                 </span>
               </th>
@@ -399,7 +400,7 @@ function SchedulePreview({ d }) {
                     }`}
                   >
                     {name ? (
-                      <span className="font-head text-[10px] font-semibold uppercase text-chalk">
+                      <span className="font-head text-[0.625rem] font-semibold uppercase text-chalk">
                         {name}
                       </span>
                     ) : (
@@ -426,10 +427,10 @@ function PlansPreview({ d }) {
         >
           <div className="font-head text-sm font-semibold uppercase text-chalk">{p.name}</div>
           <div className="mt-1 font-display text-2xl text-battle">{p.price}</div>
-          <div className="text-[10px] uppercase tracking-wider text-smoke">{p.period}</div>
+          <div className="text-[0.625rem] uppercase tracking-wider text-smoke">{p.period}</div>
           <ul className="mt-2 space-y-1">
             {(p.perks || []).map((perk, j) => (
-              <li key={j} className="text-[11px] text-fog">
+              <li key={j} className="text-[0.6875rem] text-fog">
                 • {perk}
               </li>
             ))}
@@ -446,7 +447,7 @@ function VideosPreview({ d }) {
     <Frame>
       <div className="p-5 text-center">
         {d.kicker && (
-          <div className="text-[10px] font-bold uppercase tracking-widest text-battle">{d.kicker}</div>
+          <div className="text-[0.625rem] font-bold uppercase tracking-widest text-battle">{d.kicker}</div>
         )}
         <div className="mt-1 font-display text-2xl leading-none text-chalk">
           {d.titleLine1} {d.accent && <span className="text-battle">{d.accent}</span>}
@@ -476,7 +477,7 @@ function VideosPreview({ d }) {
                       className={`w-24 rounded-sm border-2 border-alert/50 bg-alert/10 p-2 text-center ${tilt}`}
                     >
                       <FaTriangleExclamation className="mx-auto text-alert" size={14} />
-                      <div className="mt-1 text-[8px] uppercase tracking-wider text-alert">
+                      <div className="mt-1 text-[0.5rem] uppercase tracking-wider text-alert">
                         Enlace no reconocido
                       </div>
                     </div>
@@ -496,7 +497,7 @@ function VideosPreview({ d }) {
                           <div className="h-full w-full bg-gradient-to-br from-coal via-ink to-coal" />
                         )}
                         <div className="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-transparent" />
-                        <span className="absolute left-1 top-1 border border-battle/70 px-1 font-head text-[7px] font-bold uppercase tracking-wider text-battle">
+                        <span className="absolute left-1 top-1 border border-battle/70 px-1 font-head text-[0.4375rem] font-bold uppercase tracking-wider text-battle">
                           {embed.platform}
                         </span>
                         <span className="absolute inset-x-0 bottom-1.5 flex justify-center">
@@ -506,7 +507,7 @@ function VideosPreview({ d }) {
                         </span>
                       </div>
                       <div className="border-t border-iron bg-coal px-1.5 py-1">
-                        <div className="line-clamp-1 font-head text-[8px] font-semibold uppercase text-chalk">
+                        <div className="line-clamp-1 font-head text-[0.5rem] font-semibold uppercase text-chalk">
                           {it.label || `Round ${i + 1}`}
                         </div>
                       </div>
@@ -529,7 +530,7 @@ function CoachesPreview({ d }) {
       <div className="p-4">
         <div className="text-center">
           {d?.kicker && (
-            <div className="font-head text-[10px] font-semibold uppercase tracking-[0.25em] text-battle">
+            <div className="font-head text-[0.625rem] font-semibold uppercase tracking-[0.25em] text-battle">
               {d.kicker}
             </div>
           )}
@@ -546,11 +547,11 @@ function CoachesPreview({ d }) {
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-transparent" />
                 <div className="absolute inset-x-2 bottom-1.5">
-                  <div className="truncate font-head text-[11px] font-bold uppercase text-chalk">
+                  <div className="truncate font-head text-[0.6875rem] font-bold uppercase text-chalk">
                     {c.name || 'Coach'}
                   </div>
                   {c.alias && (
-                    <div className="truncate text-[9px] uppercase tracking-wider text-battle">
+                    <div className="truncate text-[0.5625rem] uppercase tracking-wider text-battle">
                       “{c.alias}”
                     </div>
                   )}
@@ -574,7 +575,52 @@ function CoachesPreview({ d }) {
   )
 }
 
+function LegalPreview({ d }) {
+  const sections = d?.sections || []
+  return (
+    <Frame>
+      <div className="p-5">
+        {d?.kicker && (
+          <div className="font-head text-[0.625rem] font-semibold uppercase tracking-[0.25em] text-battle">{d.kicker}</div>
+        )}
+        <div className="mt-1 font-display text-3xl leading-none text-chalk">
+          {d?.title} {d?.accent && <span className="text-battle">{d.accent}</span>}
+        </div>
+        {d?.updated && (
+          <div className="mt-2 font-head text-[0.625rem] uppercase tracking-wider text-smoke">Last updated: {d.updated}</div>
+        )}
+        {d?.intro && <p className="mt-3 text-xs leading-relaxed text-fog">{d.intro}</p>}
+        <div className="mt-4 space-y-4">
+          {sections.map((s, i) => (
+            <div key={i} className="rounded-lg border border-iron bg-coal p-3">
+              <div className="flex items-baseline gap-2 font-head text-sm font-semibold uppercase tracking-wide text-chalk">
+                <span className="font-display text-base text-battle">{String(i + 1).padStart(2, '0')}</span>
+                {s.title}
+              </div>
+              <div className="mt-2 space-y-2 text-[0.6875rem] leading-relaxed text-fog">
+                {parseLegalBody(s.body).map((b, j) =>
+                  b.type === 'ul' ? (
+                    <ul key={j} className="list-disc space-y-1 pl-4 marker:text-battle">
+                      {b.items.map((it, k) => (
+                        <li key={k}>{it}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p key={j}>{b.text}</p>
+                  ),
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </Frame>
+  )
+}
+
 const MAP = {
+  legal: LegalPreview,
+  accessibility: LegalPreview,
   hero: HeroPreview,
   coaches: CoachesPreview,
   videos: VideosPreview,

@@ -54,7 +54,7 @@ export default function PreviewShell({ draft, children }) {
           <span className="h-2.5 w-2.5 rounded-full bg-battle/70" />
           <span className="h-2.5 w-2.5 rounded-full bg-green-500/70" />
         </div>
-        <div className="hidden flex-1 truncate rounded-full bg-ink px-3 py-1 text-center text-[11px] text-smoke sm:block">
+        <div className="hidden flex-1 truncate rounded-full bg-ink px-3 py-1 text-center text-[0.6875rem] text-smoke sm:block">
           battlereadyfitness.com
         </div>
         <div className="ml-auto flex items-center gap-0.5 rounded-lg border border-iron bg-ink p-0.5 sm:ml-0">

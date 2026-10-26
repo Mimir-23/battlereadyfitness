@@ -1,0 +1,38 @@
+---
+import { FaUniversalAccess } from 'react-icons/fa6'
+import BaseLayout from '../layouts/BaseLayout.astro'
+import PageBanner from '../components/ui/PageBanner.astro'
+import PolicyDocument from '../components/ui/PolicyDocument.astro'
+import { loadContent, cacheContentPage } from '../lib/content.js'
+import { fullBleedImage } from '../lib/images.js'
+
+/* Accessibility statement: what the site offers to blind, low-vision,
+   color-blind, Deaf and hard-of-hearing visitors, and how to reach us —
+   editable from the panel (section "Accesibilidad"). */
+const { content, live } = await loadContent()
+cacheContentPage(Astro, live)
+
+const doc = content.accessibility
+const banner = '/images/g1.webp'
+---
+
+<BaseLayout
+  content={content}
+  title="Accessibility"
+  description="How Battle Ready Fitness makes its website usable for everyone: screen readers, keyboard, color vision, captions and text-based contact."
+  preloadImage={fullBleedImage(banner)}
+>
+  <PageBanner
+    kicker={doc.kicker}
+    title={doc.title}
+    accent={doc.accent}
+    subtitle={doc.updated ? `Last updated: ${doc.updated}` : undefined}
+    image={banner}
+  />
+  <PolicyDocument
+    doc={doc}
+    brand={content.brand}
+    icon={FaUniversalAccess}
+    question="Found a barrier or need something in another format?"
+  />
+</BaseLayout>

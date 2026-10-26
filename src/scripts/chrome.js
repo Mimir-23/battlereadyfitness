@@ -1,4 +1,4 @@
-import { fx, setLenis, getLenis, scrollToTarget, onFrame } from './core.js'
+import { fx, setLenis, getLenis, scrollToTarget, onFrame, onStill } from './core.js'
 
 /* ------------------------------------------------------------------ */
 /*  Global chrome: smooth scroll, navbar, floating contact hub.         */
@@ -12,8 +12,16 @@ export async function initSmoothScroll() {
   const { default: Lenis } = await import('lenis')
   const lenis = new Lenis({ duration: 1.1, lerp: 0.09, smoothWheel: true, wheelMultiplier: 1 })
   setLenis(lenis)
+  let running = true
   onFrame((_, now) => {
+    if (!running) return false
     lenis.raf(now)
+  })
+  // "Stop animations" (accessibility panel): back to native, instant scrolling.
+  onStill(() => {
+    running = false
+    lenis.destroy()
+    setLenis(null)
   })
   // Arriving with a #section (e.g. /#programs from another page): land where
   // an in-page click would, like the SPA did through Lenis.
@@ -47,6 +55,28 @@ document.addEventListener('click', (e) => {
   getLenis().scrollTo(el, { offset: -72, duration: 1.2 })
   // Hash links that name a page (/#programs) also update the address bar.
   if (a.getAttribute('href') !== url.hash) history.pushState(null, '', url.hash)
+  // Keyboard and screen-reader users continue from the section they jumped
+  // to, as a native anchor jump would do (skip link included).
+  focusTarget(el)
+})
+
+/** Moves focus to an in-page target without scrolling (the scroll is animated). */
+function focusTarget(el) {
+  if (!el.matches('a[href], button, input, select, textarea, [tabindex]')) el.setAttribute('tabindex', '-1')
+  el.focus({ preventScroll: true })
+}
+
+/* ---------- focus never hidden behind the fixed navbar (WCAG 2.4.11) ---------- */
+document.addEventListener('focusin', (e) => {
+  const el = e.target
+  // Keyboard focus only: adjusting the scroll under a mouse click could move
+  // the target away between press and release.
+  if (!(el instanceof HTMLElement) || !el.matches(':focus-visible')) return
+  if (el.closest('[data-navbar], [data-fab], [data-a11y], [data-consent], [data-dialog]')) return
+  const header = document.querySelector('[data-navbar]')
+  const top = header ? header.getBoundingClientRect().bottom + 12 : 0
+  const rect = el.getBoundingClientRect()
+  if (rect.height && rect.top < top) scrollToTarget(scrollY + rect.top - top, { immediate: true })
 })
 
 /* ---------- navbar: solid background after scrolling + mobile menu ---------- */

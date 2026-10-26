@@ -1,4 +1,4 @@
-import { reducedMotion } from './core.js'
+import { reducedMotion, isStill, onStill } from './core.js'
 import { coachStrip } from '../lib/ui-state.js'
 import { createSlideDialog } from './dialog.js'
 import { runCounter } from './reveal.js'
@@ -51,7 +51,7 @@ if (section) {
   // Arcade demo: only while on screen, not hovered and with no profile open.
   const sync = () => {
     clearInterval(timer)
-    if (!inView || paused || isOpen || reducedMotion || strips.length < 2) return
+    if (!inView || paused || isOpen || reducedMotion || isStill() || strips.length < 2) return
     timer = setInterval(() => setActive((active + 1) % strips.length), AUTOPLAY_MS)
   }
 
@@ -65,14 +65,16 @@ if (section) {
     ).observe(wall)
   }
 
-  wall.addEventListener('mouseenter', () => {
-    paused = true
+  // Pauses while the pointer or the keyboard focus is on the wall.
+  const hold = (on) => {
+    paused = on || wall.matches(':hover') || wall.contains(document.activeElement)
     sync()
-  })
-  wall.addEventListener('mouseleave', () => {
-    paused = false
-    sync()
-  })
+  }
+  wall.addEventListener('mouseenter', () => hold(true))
+  wall.addEventListener('mouseleave', () => hold(false))
+  wall.addEventListener('focusin', () => hold(true))
+  wall.addEventListener('focusout', (e) => hold(wall.contains(e.relatedTarget)))
+  onStill(sync)
   strips.forEach((strip, i) => {
     strip.addEventListener('mouseenter', () => setActive(i))
     strip.addEventListener('focus', () => setActive(i))

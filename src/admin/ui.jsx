@@ -1,5 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useCallback, useContext, useEffect, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { FaCircleCheck, FaCircleExclamation, FaXmark, FaTriangleExclamation } from 'react-icons/fa6'
 
 /* ------------------------------------------------------------------ */
@@ -74,6 +74,9 @@ const ConfirmContext = createContext(() => Promise.resolve(true))
 
 export function ConfirmProvider({ children }) {
   const [dialog, setDialog] = useState(null)
+  const boxRef = useRef(null)
+  const cancelRef = useRef(null)
+  const okRef = useRef(null)
 
   const confirm = useCallback(
     (opts) => new Promise((resolve) => setDialog({ ...opts, resolve })),
@@ -87,13 +90,28 @@ export function ConfirmProvider({ children }) {
     [dialog],
   )
 
+  // Modal for the keyboard: focus starts inside (on "Cancelar" when the action
+  // is destructive), Tab stays between its buttons, Escape cancels and focus
+  // goes back to whatever opened it.
   useEffect(() => {
     if (!dialog) return
+    const opener = document.activeElement
+    ;(dialog.danger ? cancelRef : okRef).current?.focus()
     const onKey = (e) => {
       if (e.key === 'Escape') close(false)
+      else if (e.key === 'Tab') {
+        const items = [...(boxRef.current?.querySelectorAll('button') || [])]
+        const i = items.indexOf(document.activeElement)
+        const next = e.shiftKey ? (i <= 0 ? items.length - 1 : i - 1) : (i + 1) % items.length
+        e.preventDefault()
+        items[next]?.focus()
+      }
     }
     window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      opener?.focus?.()
+    }
   }, [dialog, close])
 
   return (
@@ -101,13 +119,16 @@ export function ConfirmProvider({ children }) {
       {children}
       {dialog && (
         <div
+          role="presentation"
           className="fixed inset-0 z-[400] flex items-center justify-center bg-ink/70 px-5 backdrop-blur-sm"
-          onClick={() => close(false)}
+          onClick={(e) => e.target === e.currentTarget && close(false)}
         >
           <div
-            role="dialog"
+            ref={boxRef}
+            role="alertdialog"
             aria-modal="true"
-            onClick={(e) => e.stopPropagation()}
+            aria-labelledby="confirm-title"
+            aria-describedby={dialog.body ? 'confirm-body' : undefined}
             className="w-full max-w-sm rounded-2xl border border-iron bg-coal p-5 shadow-2xl"
           >
             <div className="flex items-start gap-3">
@@ -116,24 +137,29 @@ export function ConfirmProvider({ children }) {
                   dialog.danger ? 'bg-alert/15 text-alert' : 'bg-battle/15 text-battle'
                 }`}
               >
-                <FaTriangleExclamation size={16} />
+                <FaTriangleExclamation aria-hidden="true" size={16} />
               </span>
               <div>
-                <h2 className="font-head text-sm font-bold uppercase tracking-wide text-chalk">
+                <h2 id="confirm-title" className="font-head text-sm font-bold uppercase tracking-wide text-chalk">
                   {dialog.title}
                 </h2>
-                {dialog.body && <p className="mt-1.5 text-sm text-fog">{dialog.body}</p>}
+                {dialog.body && (
+                  <p id="confirm-body" className="mt-1.5 text-sm text-fog">
+                    {dialog.body}
+                  </p>
+                )}
               </div>
             </div>
             <div className="mt-5 flex justify-end gap-2">
               <button
+                ref={cancelRef}
                 onClick={() => close(false)}
                 className="rounded-lg border border-iron px-4 py-2 font-head text-xs font-semibold uppercase tracking-wider text-fog hover:text-chalk"
               >
                 Cancelar
               </button>
               <button
-                autoFocus
+                ref={okRef}
                 onClick={() => close(true)}
                 className={`rounded-lg px-4 py-2 font-head text-xs font-bold uppercase tracking-wider ${
                   dialog.danger
