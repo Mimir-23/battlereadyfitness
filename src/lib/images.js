@@ -55,8 +55,8 @@ export function responsiveImage(src, { sizes = '100vw', widths = [640, 828, 1080
 /** Full-bleed photo (hero, banners). Without the CDN optimizer, only the
     bundled default hero has a pre-generated mobile variant. */
 export function fullBleedImage(src) {
-  // Always under dark gradients: q70 is visually identical and lighter.
-  const photo = responsiveImage(src, { sizes: '100vw', widths: [640, 828, 1080, 1280, 1600, 1920], quality: 70 })
+  // Always under dark gradients: q60 is visually identical and lighter.
+  const photo = responsiveImage(src, { sizes: '100vw', widths: [640, 828, 1080, 1280, 1600, 1920], quality: 60 })
   if (!photo.srcset && src === '/images/hero.webp') {
     return { src, srcset: '/images/hero-sm.webp 828w, /images/hero.webp 1920w', sizes: '100vw' }
   }

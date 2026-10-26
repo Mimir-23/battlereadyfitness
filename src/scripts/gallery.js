@@ -6,9 +6,10 @@ import { createSlideDialog } from './dialog.js'
    to the next photo every 2.4s; hovering a photo takes the lock and pauses
    the sweep so the visitor is always in control. */
 
-const section = document.querySelector('[data-gallery]')
+export function initGallery() {
+  const section = document.querySelector('[data-gallery]')
+  if (!section) return
 
-if (section) {
   const grid = section.querySelector('[data-gallery-grid]')
   const tiles = [...grid.querySelectorAll('[data-tile]')]
   let active = -1

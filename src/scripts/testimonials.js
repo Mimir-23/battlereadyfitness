@@ -9,10 +9,11 @@ import { quoteDot } from '../lib/ui-state.js'
    hear the new review (live region) only when it isn't rotating on its own. */
 
 const AUTOPLAY_MS = 7000
-const section = document.querySelector('[data-testimonials]')
-const quotes = section ? [...section.querySelectorAll('[data-quote]')] : []
+export function initTestimonials() {
+  const section = document.querySelector('[data-testimonials]')
+  const quotes = section ? [...section.querySelectorAll('[data-quote]')] : []
+  if (quotes.length < 2) return
 
-if (quotes.length > 1) {
   const stage = section.querySelector('[data-quote-stage]')
   const dots = [...section.querySelectorAll('[data-quote-dot]')]
   const pauseBtn = section.querySelector('[data-quote-pause]')

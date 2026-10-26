@@ -20,7 +20,8 @@ const { programs = [] } = Astro.props
           const Icon = getIcon(p.icon)
           const featured = i === 1
           const img = responsiveImage(p.img, {
-            sizes: featured ? '(min-width: 1024px) 520px, 130vw' : '(min-width: 1024px) 520px, (min-width: 640px) 65vw, 130vw',
+            // Wider than the card: the photo covers taller-than-wide cards.
+            sizes: featured ? '(min-width: 1024px) 520px, 110vw' : '(min-width: 1024px) 520px, (min-width: 640px) 65vw, 110vw',
             widths: [640, 828, 1080, 1280],
           })
           return (

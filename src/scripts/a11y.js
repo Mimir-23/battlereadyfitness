@@ -108,7 +108,8 @@ function setReader(on, { rate, voice, greet = false } = {}) {
   else readerModule?.then((m) => m.disable())
 }
 
-if (dock) {
+export function initA11y() {
+  if (!dock) return
   const toggle = dock.querySelector('[data-a11y-toggle]')
   const panel = dock.querySelector('[data-a11y-panel]')
   const readerBar = dock.querySelector('[data-reader-bar]')
@@ -269,7 +270,8 @@ if (dock) {
   }
   if (consent) {
     dock.style.transition = 'translate 0.5s var(--ease-power)'
-    place()
+    // The observer's first call comes once the page is laid out: measuring
+    // here, during startup, forced a full layout (~75 ms on a phone).
     new ResizeObserver(place).observe(consent)
     addEventListener('resize', place)
     addEventListener('br:consent', place)
