@@ -12,7 +12,6 @@ import { initMap } from './map.js'
 import { initRecess } from './recess.js'
 import { initSchedule } from './schedule.js'
 import { initMemberships } from './memberships.js'
-import { initFaq } from './faq.js'
 
 /* Entry point of the public site's client code: one deferred module on
    every page (one request instead of a chain of small per-section ones).
@@ -46,7 +45,6 @@ for (const init of [
   initRecess,
   initSchedule,
   initMemberships,
-  initFaq,
 ]) {
   try {
     init()
