@@ -17,6 +17,7 @@ import {
   FaLayerGroup,
   FaScaleBalanced,
   FaUniversalAccess,
+  FaCircleQuestion,
 } from 'react-icons/fa6'
 
 /* Maps the `icon` names used in content/schema.js to components. */
@@ -38,6 +39,7 @@ const MAP = {
   FaUserNinja,
   FaScaleBalanced,
   FaUniversalAccess,
+  FaCircleQuestion,
 }
 
 export function sectionIcon(name) {
