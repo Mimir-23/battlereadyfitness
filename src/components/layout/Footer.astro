@@ -25,8 +25,6 @@ const SOCIALS = [
 ].filter((s) => s.href)
 const logo = logoImage()
 const hrefOf = (item) => item.to || `/${item.hash || ''}`
-// The FAQ link, unless the admin already put it in the menu.
-const showFaq = (content.faq?.items || []).length > 0 && !NAV.some((n) => n.hash === '#faq')
 ---
 
 <footer class="border-t border-iron bg-ink">
@@ -101,15 +99,6 @@ const showFaq = (content.faq?.items || []).length > 0 && !NAV.some((n) => n.hash
               </a>
             </li>
           ))
-        }
-        {
-          showFaq && (
-            <li>
-              <a href="/#faq" class="inline-block py-1 text-sm text-fog transition-colors hover:text-battle">
-                FAQ
-              </a>
-            </li>
-          )
         }
       </ul>
       <h3

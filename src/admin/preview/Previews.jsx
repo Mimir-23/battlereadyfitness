@@ -15,7 +15,6 @@ import {
 } from 'react-icons/fa6'
 import { resolveVideoEmbed } from '../../lib/videoEmbed'
 import { parseLegalBody } from '../../lib/legal'
-import { faqItems, faqTopics } from '../../lib/faq'
 
 /* ------------------------------------------------------------------ */
 /*  Live previews — compact, brand-styled mirrors of each section that  */
@@ -619,125 +618,7 @@ function LegalPreview({ d }) {
   )
 }
 
-/* Interactive like the real section: topics filter, questions open. */
-function FaqPreview({ d }) {
-  const items = faqItems(d)
-  const topics = faqTopics(items)
-  const [topic, setTopic] = useState('')
-  const [open, setOpen] = useState(() => new Set([0]))
-  const shown = items.map((it, i) => ({ ...it, i })).filter((it) => !topic || it.topic === topic)
-  const toggle = (i) =>
-    setOpen((prev) => {
-      const next = new Set(prev)
-      if (next.has(i)) next.delete(i)
-      else next.add(i)
-      return next
-    })
-  return (
-    <Frame>
-      <div className="p-5">
-        {d?.kicker && (
-          <div className="font-head text-[0.625rem] font-semibold uppercase tracking-[0.25em] text-battle">{d.kicker}</div>
-        )}
-        <div className="mt-1 font-display text-3xl leading-none text-chalk">
-          {d?.titleLine1} {d?.accent && <span className="text-battle">{d.accent}</span>}
-        </div>
-        {d?.paragraph && <p className="mt-2 text-xs leading-relaxed text-fog">{d.paragraph}</p>}
-
-        {items.length === 0 ? (
-          <p className="mt-5 rounded-lg border border-dashed border-iron p-4 text-center text-xs text-smoke">
-            Sin preguntas: la sección no se mostrará en el sitio hasta que añadas una con pregunta y respuesta.
-          </p>
-        ) : (
-          <>
-            {topics.length > 1 && (
-              <div className="mt-4 flex flex-wrap gap-1.5">
-                {[{ slug: '', label: 'All', count: items.length }, ...topics].map((t) => (
-                  <button
-                    key={t.slug}
-                    type="button"
-                    onClick={() => setTopic(t.slug)}
-                    aria-pressed={topic === t.slug}
-                    className={`rounded-full border px-2.5 py-1 font-head text-[0.6875rem] transition-colors ${
-                      topic === t.slug ? 'border-battle bg-battle text-ink' : 'border-iron bg-coal text-fog'
-                    }`}
-                  >
-                    {t.label} <span className="opacity-60">{t.count}</span>
-                  </button>
-                ))}
-              </div>
-            )}
-            <div className="mt-4 border-t border-iron">
-              {shown.map((it) => {
-                const isOpen = open.has(it.i)
-                return (
-                  <div key={it.i} className="relative border-b border-iron">
-                    {isOpen && <span className="absolute bottom-3 left-0 top-3 w-[3px] bg-battle" />}
-                    <button
-                      type="button"
-                      onClick={() => toggle(it.i)}
-                      aria-expanded={isOpen}
-                      className="flex w-full items-start gap-3 py-3 pl-3 text-left"
-                    >
-                      <span className="min-w-0 flex-1">
-                        <span className={`block font-head text-sm font-medium ${isOpen ? 'text-battle' : 'text-chalk'}`}>
-                          {it.question}
-                        </span>
-                        {topics.length > 1 && !topic && (
-                          <span className="mt-0.5 block font-head text-[0.625rem] text-smoke">{it.category}</span>
-                        )}
-                      </span>
-                      <span
-                        className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md border text-sm leading-none ${
-                          isOpen ? 'border-battle bg-battle text-ink' : 'border-iron text-chalk'
-                        }`}
-                      >
-                        {isOpen ? '−' : '+'}
-                      </span>
-                    </button>
-                    {isOpen && (
-                      <div className="space-y-2 pb-4 pl-3 pr-8 text-[0.6875rem] leading-relaxed text-fog">
-                        {it.blocks.map((b, j) =>
-                          b.type === 'ul' ? (
-                            <ul key={j} className="list-disc space-y-1 pl-4 marker:text-battle">
-                              {b.items.map((li, k) => (
-                                <li key={k}>{li}</li>
-                              ))}
-                            </ul>
-                          ) : (
-                            <p key={j}>{b.text}</p>
-                          ),
-                        )}
-                        {it.link && (
-                          <span className="inline-flex items-center gap-1.5 border-b border-battle/60 font-head text-[0.625rem] font-semibold uppercase tracking-wider text-battle">
-                            {it.link.label} <FaArrowRightLong size={9} />
-                          </span>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                )
-              })}
-            </div>
-            {(d?.items || []).length > items.length && (
-              <p className="mt-3 flex items-center gap-1.5 text-[0.625rem] text-battle">
-                <FaTriangleExclamation size={10} /> Las preguntas sin pregunta o sin respuesta no se muestran.
-              </p>
-            )}
-            {items.some((it) => !it.link && (d.items.find((x) => x.question?.trim() === it.question)?.linkUrl || '').trim()) && (
-              <p className="mt-2 flex items-center gap-1.5 text-[0.625rem] text-battle">
-                <FaTriangleExclamation size={10} /> Algún botón no se muestra: le falta el texto o el enlace no es válido.
-              </p>
-            )}
-          </>
-        )}
-      </div>
-    </Frame>
-  )
-}
-
 const MAP = {
-  faq: FaqPreview,
   legal: LegalPreview,
   accessibility: LegalPreview,
   hero: HeroPreview,

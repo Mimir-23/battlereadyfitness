@@ -291,55 +291,6 @@ export const SECTIONS = [
     ],
   },
 
-  /* ---------- Preguntas frecuentes ---------- */
-  {
-    key: 'faq',
-    label: 'Preguntas frecuentes',
-    icon: 'FaCircleQuestion',
-    description: 'Las preguntas y respuestas del inicio, agrupadas por tema, con buscador para los visitantes.',
-    shape: 'object',
-    fields: [
-      { name: 'kicker', label: 'Texto pequeño superior', type: 'text' },
-      { name: 'titleLine1', label: 'Título', type: 'text', required: true },
-      { name: 'accent', label: 'Título — parte destacada (amarilla)', type: 'text' },
-      { name: 'paragraph', label: 'Párrafo', type: 'textarea' },
-      {
-        name: 'items',
-        label: 'Preguntas',
-        type: 'list',
-        searchable: true,
-        itemLabel: (it) => it.question || 'Pregunta nueva',
-        itemTag: (it) => it.category,
-        newItem: () => ({ category: '', question: '', answer: '', linkLabel: '', linkUrl: '' }),
-        item: [
-          {
-            name: 'category',
-            label: 'Tema',
-            type: 'text',
-            required: true,
-            suggest: true,
-            help: 'Las preguntas con el mismo tema se agrupan en un filtro. Elige uno de la lista para no repetirlo con otro nombre.',
-          },
-          { name: 'question', label: 'Pregunta', type: 'text', required: true },
-          {
-            name: 'answer',
-            label: 'Respuesta',
-            type: 'textarea',
-            required: true,
-            help: 'Deja una línea en blanco entre párrafos. Empieza una línea con "- " para hacer una lista.',
-          },
-          { name: 'linkLabel', label: 'Botón bajo la respuesta (texto)', type: 'text', help: 'Opcional. Ej: See the schedule' },
-          {
-            name: 'linkUrl',
-            label: 'Botón bajo la respuesta (enlace)',
-            type: 'text',
-            help: 'Ej: /schedule, /terms#media-policy o una web completa. Escribe whatsapp para abrir el chat.',
-          },
-        ],
-      },
-    ],
-  },
-
   /* ---------- Horario de apertura ---------- */
   {
     key: 'hours',
