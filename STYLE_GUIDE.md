@@ -149,7 +149,7 @@ All copy is reused from the live site (battlereadyfitness.com):
 - Tagline "we're not just the best, we're just simply unique"
 - 7 programs (Personal Training, Bootcamp, Step Circuit, Kickboxing, Full Body,
   Zumba, HIIT by Javi) with original descriptions
-- CTAs: "3 Day Free Pass", "Reserva Ahora", "No esperes más", "Are you ready?",
+- CTAs: "2-Day Free Pass", "Reserva Ahora", "No esperes más", "Are you ready?",
   "Claim Yours Now"
 - Ana Machado's Google testimonial (verbatim)
 - Contact: address, phone, mobile, email, social links
