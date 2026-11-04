@@ -16,6 +16,7 @@ import {
 import { resolveVideoEmbed } from '../../lib/videoEmbed'
 import { parseLegalBody } from '../../lib/legal'
 import { faqItems, faqTopics } from '../../lib/faq'
+import { groupPlans } from '../../lib/plans'
 
 /* ------------------------------------------------------------------ */
 /*  Live previews — compact, brand-styled mirrors of each section that  */
@@ -418,27 +419,48 @@ function SchedulePreview({ d }) {
   )
 }
 
+/* Same grouping as the Memberships page: by type, cheapest first. */
 function PlansPreview({ d }) {
+  const groups = groupPlans(d)
   return (
-    <div className="grid gap-3 sm:grid-cols-3">
-      {(d || []).map((p, i) => (
-        <div
-          key={i}
-          className={`rounded-xl border p-4 ${p.featured ? 'border-battle bg-coal' : 'border-iron bg-coal'}`}
-        >
-          <div className="font-head text-sm font-semibold uppercase text-chalk">{p.name}</div>
-          <div className="mt-1 font-display text-2xl text-battle">{p.price}</div>
-          <div className="text-[0.625rem] uppercase tracking-wider text-smoke">{p.period}</div>
-          <ul className="mt-2 space-y-1">
-            {(p.perks || []).map((perk, j) => (
-              <li key={j} className="text-[0.6875rem] text-fog">
-                • {perk}
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))}
-    </div>
+    <Frame>
+      <div className="space-y-5 p-4">
+        {groups.map((g) => (
+          <div key={g.id}>
+            <div className="flex items-baseline justify-between gap-3 border-b border-iron pb-1.5">
+              <div className="font-display text-xl leading-none text-chalk">{g.label}</div>
+              <div className="font-head text-[0.625rem] text-smoke">
+                {g.admin} · {g.plans.length}
+              </div>
+            </div>
+            <div className="mt-2.5 grid gap-2.5 sm:grid-cols-3">
+              {g.plans.map((p, i) => (
+                <div
+                  key={i}
+                  className={`rounded-xl border p-3 ${p.featured ? 'border-battle bg-coal' : 'border-iron bg-coal'}`}
+                >
+                  <div className="font-head text-xs font-semibold uppercase text-chalk">{p.name}</div>
+                  <div className="mt-1 font-display text-2xl leading-none text-battle">{p.price}</div>
+                  <div className="text-[0.625rem] uppercase tracking-wider text-smoke">{p.period}</div>
+                  <ul className="mt-2 space-y-1">
+                    {(p.perks || []).map((perk, j) => (
+                      <li key={j} className="text-[0.6875rem] text-fog">
+                        • {perk}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+        {(d || []).length > groups.reduce((n, g) => n + g.plans.length, 0) && (
+          <p className="flex items-center gap-1.5 text-[0.625rem] text-battle">
+            <FaTriangleExclamation size={10} /> Los planes repetidos (mismo nombre, precio y descripción) se muestran una sola vez.
+          </p>
+        )}
+      </div>
+    </Frame>
   )
 }
 

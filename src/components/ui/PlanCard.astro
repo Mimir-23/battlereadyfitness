@@ -1,0 +1,76 @@
+---
+import { FaCheck } from 'react-icons/fa6'
+import CTAButton from './CTAButton.astro'
+
+/** One membership card. `src` is the plan's Recess package (empty = all). */
+const { plan, src = '', wide = false } = Astro.props
+---
+
+<div
+  data-reveal
+  data-reveal-item
+  data-spotlight
+  data-lift
+  class={`spotlight relative flex flex-col overflow-hidden rounded-2xl border p-7 ${
+    plan.featured ? 'border-battle bg-coal' : 'border-iron bg-coal hover:border-battle/40'
+  } ${wide ? 'lg:flex-row lg:items-center lg:gap-10' : ''}`}
+  data-glow={plan.featured ? '' : undefined}
+>
+  {
+    plan.featured && (
+      <>
+        <div class="bg-hazard absolute inset-x-0 top-0 h-2 opacity-80" />
+        <span class="absolute right-5 top-5 rounded-full bg-battle px-3 py-1 font-head text-[0.625rem] font-bold uppercase tracking-[0.2em] text-ink">
+          Most Popular
+        </span>
+      </>
+    )
+  }
+
+  <div class={wide ? 'lg:w-64 lg:shrink-0' : ''}>
+    <h4 class={`font-head text-lg font-semibold uppercase leading-snug tracking-wide text-chalk ${plan.featured ? 'pr-28' : ''}`}>
+      {plan.name}
+    </h4>
+    <div class="mt-3 flex flex-wrap items-end gap-x-2">
+      <span class="font-display text-5xl leading-none text-battle">{plan.price}</span>
+      {plan.period && <span class="mb-1 text-sm text-smoke">{plan.period}</span>}
+    </div>
+  </div>
+
+  <div class={wide ? 'mt-4 flex-1 lg:mt-0' : 'flex-1'}>
+    {plan.desc && <p class={`text-sm leading-relaxed text-fog ${wide ? '' : 'mt-4'}`}>{plan.desc}</p>}
+    {
+      (plan.perks || []).length > 0 && (
+        <ul class={`mt-5 ${wide ? 'flex flex-wrap gap-x-6 gap-y-2' : 'space-y-2.5'}`}>
+          {plan.perks.map((perk, pi) => (
+            <li
+              data-reveal="perk"
+              style={`--reveal-delay: ${(0.1 + pi * 0.08).toFixed(2)}s`}
+              class="flex items-center gap-3 text-sm text-fog"
+            >
+              <span class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-battle/15 text-battle">
+                <FaCheck aria-hidden="true" size={10} />
+              </span>
+              {perk}
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </div>
+
+  <div class={wide ? 'mt-7 lg:mt-0 lg:w-56 lg:shrink-0' : 'mt-7'}>
+    <CTAButton
+      href="#join"
+      full
+      variant={plan.featured || wide ? 'primary' : 'ghost'}
+      magnetic={false}
+      data-select-plan
+      data-plan-src={src}
+      data-plan-name={plan.name}
+    >
+      {plan.cta || 'Join Now'}
+      <span class="sr-only">{`: ${plan.name}`}</span>
+    </CTAButton>
+  </div>
+</div>

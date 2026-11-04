@@ -12,7 +12,7 @@
 /*  2. Extrae las membresías visibles y activas.                         */
 /*  3. Las fusiona con los planes guardados en Supabase: nombre, precio, */
 /*     periodo y descripción vienen SIEMPRE de Recess (fuente única);    */
-/*     beneficios, "destacado" y texto del botón se conservan del admin  */
+/*     beneficios, "destacado", botón y grupo se conservan del admin     */
 /*     (emparejados por nombre). Los planes gratis (p. ej. el free pass, */
 /*     que no existe en Recess) también se conservan.                    */
 /*  4. Escribe el resultado en site_content.plans con la service key.    */
@@ -221,7 +221,7 @@ export function buildScheduleGrid(classes, timeZone = DEFAULT_TIME_ZONE) {
 
 const norm = (s) => (s || '').toLowerCase().replace(/\s+/g, ' ').trim()
 
-/** Recess manda; el admin conserva perks/featured/cta y los planes gratis. */
+/** Recess manda; el admin conserva perks/featured/cta/group y los planes gratis. */
 export function mergePlans(recess, existing) {
   const byName = new Map((existing || []).map((p) => [norm(p.name), p]))
   const inRecess = new Set(recess.map((r) => norm(r.name)))
@@ -252,6 +252,8 @@ export function mergePlans(recess, existing) {
       recessId: r.recessId,
       featured: prev?.featured || false,
       cta: prev?.cta || 'Join Now',
+      // Grupo elegido en el panel (vacío = automático según el nombre).
+      group: prev?.group || '',
     }
   })
 

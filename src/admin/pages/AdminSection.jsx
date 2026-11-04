@@ -572,7 +572,14 @@ function SectionEditorBody({ section, draft, setDraft }) {
   if (section.shape === 'list') {
     return (
       <ListField
-        field={{ item: section.item, itemLabel: section.itemLabel, newItem: section.newItem }}
+        field={{
+          label: section.label,
+          item: section.item,
+          itemLabel: section.itemLabel,
+          itemTag: section.itemTag,
+          newItem: section.newItem,
+          searchable: section.searchable,
+        }}
         value={draft}
         onChange={setDraft}
       />

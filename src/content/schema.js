@@ -7,6 +7,8 @@
 /*  string-list, list. A few sections use a custom editor (`custom`).    */
 /* ------------------------------------------------------------------ */
 
+import { PLAN_GROUP_OPTIONS, planGroupLabel } from '../lib/plans.js'
+
 const DAY_OPTIONS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
 export const SPAN_OPTIONS = [
@@ -373,15 +375,24 @@ export const SECTIONS = [
     label: 'Planes de membresía',
     icon: 'FaTags',
     description:
-      'Las tarjetas de planes sobre el checkout de membresías. Nombre, precio, periodo, descripción y los beneficios de Recess (p. ej. «3 Guest Passes») se sincronizan cada día desde Recess — edítalos allá. Aquí puedes añadir beneficios extra, destacar un plan y cambiar el texto del botón.',
+      'Las tarjetas de planes de la página de Membresías, agrupadas por tipo (individuales, familiares, semiprivadas, privadas…). Nombre, precio, periodo, descripción y los beneficios de Recess (p. ej. «3 Guest Passes») se sincronizan cada día desde Recess — edítalos allá. Aquí puedes cambiar el grupo de un plan, añadir beneficios extra, destacar un plan y cambiar el texto del botón.',
     shape: 'list',
+    searchable: true,
     itemLabel: (it) => it.name || 'Plan',
-    newItem: () => ({ name: '', price: '', period: '', desc: '', perks: [], featured: false, cta: '' }),
+    itemTag: planGroupLabel,
+    newItem: () => ({ name: '', price: '', period: '', desc: '', group: '', perks: [], featured: false, cta: '' }),
     item: [
       { name: 'name', label: 'Nombre del plan', type: 'text', required: true },
       { name: 'price', label: 'Precio', type: 'text', required: true, help: 'Ej: Free, $, $$' },
       { name: 'period', label: 'Periodo', type: 'text', help: 'Ej: per month' },
-      { name: 'desc', label: 'Descripción', type: 'textarea', required: true },
+      { name: 'desc', label: 'Descripción', type: 'textarea' },
+      {
+        name: 'group',
+        label: 'Grupo en la página',
+        type: 'select',
+        options: PLAN_GROUP_OPTIONS,
+        help: 'En automático se deduce del nombre (Family → Familiares, Semi-Private → Semiprivadas, PT → Privadas…). Elige uno si queda en el grupo equivocado.',
+      },
       { name: 'perks', label: 'Beneficios', type: 'string-list', itemLabel: 'Beneficio' },
       { name: 'featured', label: 'Destacar este plan', type: 'boolean' },
       { name: 'cta', label: 'Texto del botón', type: 'text', required: true },

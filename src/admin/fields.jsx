@@ -397,7 +397,7 @@ export function ListField({ field, value, onChange }) {
   const tags = field.itemTag ? [...new Set(list.map(tagOf).filter(Boolean))] : []
   const searching = field.searchable && list.length > 5
   const q = searching ? fold(query.trim()) : ''
-  const matches = (it) => !q || fold(itemText(it)).includes(q)
+  const matches = (it) => !q || fold(`${itemText(it)} ${tagOf(it)}`).includes(q)
   const shown = list.filter(matches).length
 
   const update = (i, item) => onChange(list.map((x, j) => (j === i ? item : x)))
