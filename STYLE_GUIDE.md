@@ -136,7 +136,7 @@ Scroll progress → Navbar → **Hero** (full-bleed image, Ken Burns) → Marque
 Stats → **01 Programs** (image cards) → **02 Why Battle Ready** (parallax coach
 image + features) → **03 The Battleground** (gallery) → reverse Marquee →
 **Testimonial** (image overlay) → **Membership CTA** (image band) →
-**04 Contact** (cards + Google Map embed) → **Footer** (4-column: brand/social,
+**05 FAQ** (search, topic filters, accordion) → **06 Contact** (cards + Google Map embed) → **Footer** (4-column: brand/social,
 programs, explore + hours, contact) + legal bar → Floating WhatsApp + back-to-top.
 
 **WhatsApp** is wired everywhere (navbar, hero, CTA band, contact card, footer,

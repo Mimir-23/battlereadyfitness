@@ -39,6 +39,7 @@ const SITE_LINK = {
   videos: '/#videos',
   testimonial: '/',
   cta: '/',
+  faq: '/#faq',
   brand: '/#contact',
   hours: '/#contact',
   schedule: '/schedule',

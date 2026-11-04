@@ -7,6 +7,8 @@ import {
   FaArrowDown,
   FaCopy,
   FaChevronDown,
+  FaMagnifyingGlass,
+  FaXmark,
 } from 'react-icons/fa6'
 import { ICON_NAMES, ICON_LABELS, getIcon } from '../content/icons'
 import { uploadImage } from './contentApi'
@@ -298,14 +300,27 @@ export function FieldInput({ field, value, onChange, id, labelId, describedBy })
     case 'list':
       return group(<ListField field={field} value={value} onChange={onChange} />)
     default:
+      // `suggest` fields offer the values already used in sibling items
+      // (e.g. FAQ topics), so the same topic isn't typed two ways.
       return (
-        <input
-          {...a11y}
-          value={value ?? ''}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder={field.placeholder}
-          className={inputCls}
-        />
+        <>
+          <input
+            {...a11y}
+            value={value ?? ''}
+            onChange={(e) => onChange(e.target.value)}
+            placeholder={field.placeholder}
+            list={field.suggestions?.length ? `${id}-options` : undefined}
+            autoComplete={field.suggestions?.length ? 'off' : undefined}
+            className={inputCls}
+          />
+          {field.suggestions?.length > 0 && (
+            <datalist id={`${id}-options`}>
+              {field.suggestions.map((s) => (
+                <option key={s} value={s} />
+              ))}
+            </datalist>
+          )}
+        </>
       )
   }
 }
@@ -354,14 +369,42 @@ export function ObjectFields({ fields, value, onChange }) {
 }
 
 /* ---------- A list of object items (add / remove / reorder) ---------- */
+/** Every string value of an item, for the list search. */
+const itemText = (item) =>
+  Object.values(item || {})
+    .filter((v) => typeof v === 'string')
+    .join(' ')
+
+const fold = (s) =>
+  String(s || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+
 export function ListField({ field, value, onChange }) {
   const list = Array.isArray(value) ? value : []
   const [open, setOpen] = useState(0)
+  const [query, setQuery] = useState('')
+  const searchId = useId()
+
+  // Values already used by `suggest` fields, offered while typing.
+  const itemFields = field.item?.map((f) =>
+    f.suggest
+      ? { ...f, suggestions: [...new Set(list.map((it) => String(it?.[f.name] || '').trim()).filter(Boolean))] }
+      : f,
+  )
+  const tagOf = (it) => (typeof field.itemTag === 'function' ? String(field.itemTag(it) || '').trim() : '')
+  const tags = field.itemTag ? [...new Set(list.map(tagOf).filter(Boolean))] : []
+  const searching = field.searchable && list.length > 5
+  const q = searching ? fold(query.trim()) : ''
+  const matches = (it) => !q || fold(itemText(it)).includes(q)
+  const shown = list.filter(matches).length
 
   const update = (i, item) => onChange(list.map((x, j) => (j === i ? item : x)))
   const add = () => {
     onChange([...list, field.newItem ? field.newItem() : {}])
     setOpen(list.length)
+    setQuery('')
   }
   const duplicate = (i) => {
     const next = [...list]
@@ -388,12 +431,70 @@ export function ListField({ field, value, onChange }) {
 
   return (
     <div className="space-y-2">
+      {searching && (
+        <div className="space-y-2 pb-1">
+          <div className="relative">
+            <label htmlFor={searchId} className="sr-only">
+              Buscar en {field.label?.toLowerCase() || 'la lista'}
+            </label>
+            <FaMagnifyingGlass
+              aria-hidden="true"
+              size={12}
+              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-smoke"
+            />
+            <input
+              id={searchId}
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={(e) => e.key === 'Escape' && setQuery('')}
+              placeholder={`Buscar en ${list.length} ${field.label?.toLowerCase() || 'elementos'}…`}
+              className={inputCls + ' pl-8 pr-9'}
+            />
+            {query && (
+              <button
+                type="button"
+                onClick={() => setQuery('')}
+                aria-label="Borrar búsqueda"
+                className="absolute right-1.5 top-1/2 -translate-y-1/2 rounded p-1.5 text-smoke hover:text-chalk"
+              >
+                <FaXmark aria-hidden="true" size={12} />
+              </button>
+            )}
+          </div>
+          {tags.length > 1 && (
+            <div role="group" aria-label="Filtrar por tema" className="flex flex-wrap gap-1.5">
+              {tags.map((t) => {
+                const active = fold(query.trim()) === fold(t)
+                return (
+                  <button
+                    key={t}
+                    type="button"
+                    aria-pressed={active}
+                    onClick={() => setQuery(active ? '' : t)}
+                    className={`rounded-full border px-2.5 py-1 text-[0.6875rem] transition-colors ${
+                      active ? 'border-battle bg-battle text-ink' : 'border-iron text-fog hover:border-battle/50'
+                    }`}
+                  >
+                    {t} <span className="opacity-60">{list.filter((it) => tagOf(it) === t).length}</span>
+                  </button>
+                )
+              })}
+            </div>
+          )}
+        </div>
+      )}
       {list.length > 1 && (
-        <div className="text-[0.6875rem] text-smoke">
-          {list.length} elementos — pulsa uno para abrirlo o cerrarlo.
+        <div role="status" className="text-[0.6875rem] text-smoke">
+          {q
+            ? shown
+              ? `${shown} de ${list.length} coinciden con “${query.trim()}”.`
+              : `Nada coincide con “${query.trim()}”.`
+            : `${list.length} elementos — pulsa uno para abrirlo o cerrarlo.`}
         </div>
       )}
       {list.map((item, i) => (
+        !matches(item) ? null : (
         <div key={i} className="overflow-hidden rounded-xl border border-iron bg-coal">
           <div className="flex items-center gap-1 px-3 py-2">
             <button
@@ -407,7 +508,13 @@ export function ListField({ field, value, onChange }) {
                 size={11}
                 className={`shrink-0 text-smoke transition-transform ${open === i ? '' : '-rotate-90'}`}
               />
-              <span className="text-smoke">#{i + 1}</span> {labelOf(item, i)}
+              <span className="text-smoke">#{i + 1}</span>
+              <span className="min-w-0 flex-1 truncate">{labelOf(item, i)}</span>
+              {tagOf(item) && (
+                <span className="hidden shrink-0 rounded-full border border-iron px-2 py-0.5 text-[0.625rem] font-normal text-smoke sm:inline">
+                  {tagOf(item)}
+                </span>
+              )}
             </button>
             <button type="button" onClick={() => move(i, -1)} disabled={i === 0} className="rounded p-1.5 text-smoke hover:text-chalk disabled:opacity-30" aria-label={`Subir: ${labelOf(item, i)}`} title="Subir">
               <FaArrowUp aria-hidden="true" size={12} />
@@ -424,10 +531,11 @@ export function ListField({ field, value, onChange }) {
           </div>
           {open === i && (
             <div className="border-t border-iron p-4">
-              <ObjectFields fields={field.item} value={item} onChange={(it) => update(i, it)} />
+              <ObjectFields fields={itemFields} value={item} onChange={(it) => update(i, it)} />
             </div>
           )}
         </div>
+        )
       ))}
       <button
         type="button"
