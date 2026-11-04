@@ -65,7 +65,7 @@ export const DEFAULT_CONTENT = {
   stats: [
     { value: 7, suffix: '', label: 'Battle Programs' },
     { value: 6, suffix: ' days', label: 'Training Weekly' },
-    { value: 3, suffix: '-day', label: 'Free Pass' },
+    { value: 2, suffix: '-day', label: 'Free Pass' },
     { value: 5, suffix: '★', label: 'Google Rated' },
   ],
 
@@ -251,7 +251,7 @@ export const DEFAULT_CONTENT = {
   /* ---------- Banda CTA ---------- */
   cta: {
     kicker: 'Are You Ready?',
-    titleLine1: 'CLAIM YOUR 3-DAY',
+    titleLine1: 'CLAIM YOUR 2-DAY',
     titleLine2: 'FREE PASS',
     paragraph:
       "No excuses. No waiting. Step into the boot camp that guarantees results and find out why we're simply unique.",
@@ -302,7 +302,7 @@ export const DEFAULT_CONTENT = {
       name: '2-Day Free Pass',
       price: 'Free',
       period: 'no card needed',
-      desc: 'Walk in, train hard, feel the difference. Your first three days are on us.',
+      desc: 'Walk in, train hard, feel the difference. Your first two days are on us.',
       perks: ['Full class access', 'Meet the coaches', 'Zero commitment'],
       featured: false,
       cta: 'Claim Free Pass',
