@@ -588,3 +588,74 @@ html[data-cvd='mono'] {
     border: 2px solid CanvasText;
   }
 }
+
+/* ---------- Preguntas frecuentes (src/components/sections/Faq.astro) ---------- */
+/* Abrir/cerrar con la altura animada donde el navegador lo permite
+   (::details-content + interpolate-size); en el resto se abre al instante. */
+.faq-item {
+  interpolate-size: allow-keywords;
+}
+.faq-item::details-content {
+  block-size: 0;
+  overflow-y: clip;
+  transition:
+    block-size 0.45s var(--ease-power),
+    content-visibility 0.45s allow-discrete;
+}
+.faq-item[open]::details-content {
+  block-size: auto;
+}
+.faq-answer {
+  transition: opacity 0.35s ease;
+}
+.faq-item:not([open]) .faq-answer {
+  opacity: 0;
+}
+/* Barra amarilla a la izquierda de la pregunta abierta. */
+.faq-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 1.25rem;
+  bottom: 1.25rem;
+  width: 3px;
+  background: var(--color-battle);
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 0.45s var(--ease-power);
+}
+.faq-item[open]::before {
+  transform: scaleY(1);
+}
+.faq-item > summary:focus-visible {
+  outline-offset: -2px;
+}
+.faq-search::-webkit-search-cancel-button {
+  appearance: none;
+}
+.faq-chip[aria-pressed='true'] {
+  border-color: var(--color-battle);
+  background: var(--color-battle);
+  color: var(--color-ink);
+}
+.faq-chip.is-empty {
+  opacity: 0.45;
+}
+.is-topic .faq-tag {
+  display: none;
+}
+.faq-mark {
+  border-radius: 2px;
+  background: rgba(255, 210, 0, 0.28);
+  color: var(--color-chalk);
+  box-shadow: 0 1px 0 var(--color-battle);
+}
+@media (forced-colors: active) {
+  .faq-mark {
+    background: Mark;
+    color: MarkText;
+  }
+  .faq-chip[aria-pressed='true'] {
+    border: 2px solid Highlight;
+  }
+}

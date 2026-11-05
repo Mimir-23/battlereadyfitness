@@ -430,6 +430,26 @@ DEFAULT_CONTENT.accessibility = {
   ],
 }
 
+/* ---------- Preguntas frecuentes (sección #faq del inicio) ----------
+   Las respuestas usan el mismo formato que los términos: una línea en blanco
+   separa párrafos y las líneas que empiezan con "- " forman una lista. Las
+   preguntas con el mismo `category` se agrupan en un filtro. */
+DEFAULT_CONTENT.faq = {
+  kicker: 'Before Your First Round',
+  titleLine1: 'GOT',
+  accent: 'QUESTIONS?',
+  paragraph: 'Straight answers before you join the battle.',
+  items: [
+    {
+      category: 'Memberships',
+      question: 'Are all classes included in the membership?',
+      answer: 'Yes. Your membership includes all of our classes.',
+      linkLabel: '',
+      linkUrl: '',
+    },
+  ],
+}
+
 /** URL-friendly anchor for a heading ("Privacy Policy" → "privacy-policy"). */
 export function slugify(text) {
   return String(text || '')

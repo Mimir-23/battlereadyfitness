@@ -1,6 +1,5 @@
 ---
 import {
-  FaCheck,
   FaWhatsapp,
   FaArrowRightLong,
   FaArrowLeftLong,
@@ -13,10 +12,12 @@ import BaseLayout from '../layouts/BaseLayout.astro'
 import PageBanner from '../components/ui/PageBanner.astro'
 import SectionHeading from '../components/ui/SectionHeading.astro'
 import CTAButton from '../components/ui/CTAButton.astro'
+import PlanCard from '../components/ui/PlanCard.astro'
 import RecessEmbed from '../components/ui/RecessEmbed.astro'
 import { loadContent, cacheContentPage } from '../lib/content.js'
 import { fullBleedImage } from '../lib/images.js'
 import { whatsappUrl } from '../content/defaults.js'
+import { groupPlans } from '../lib/plans.js'
 
 const { content, live } = await loadContent()
 cacheContentPage(Astro, live)
@@ -24,6 +25,17 @@ cacheContentPage(Astro, live)
 const { plans: PLANS, brand } = content
 const RECESS_MEMBERSHIPS = brand.recessUrl
 const WHATSAPP = whatsappUrl(brand)
+// Grouped by type (individual, family, semi-private…), cheapest first.
+const GROUPS = groupPlans(PLANS)
+// Columns that fit each group's count, so no card is left alone on a row.
+const gridOf = (n) =>
+  n === 1
+    ? 'max-w-md'
+    : n === 2
+      ? 'sm:grid-cols-2 lg:max-w-4xl'
+      : n === 4
+        ? 'sm:grid-cols-2 xl:grid-cols-4'
+        : 'sm:grid-cols-2 lg:grid-cols-3'
 
 // A plan synced from Recess opens its exact package in the checkout below
 // (…/embed/checkout/package/<id>) instead of the full list.
@@ -54,68 +66,48 @@ const banner = '/images/cta.webp'
       <div class="mx-auto max-w-7xl px-5 lg:px-8">
         <SectionHeading number="01" kicker="Choose Your Plan" title="JOIN THE" accent="RANKS" />
 
-        <div data-reveal-group class="mt-14 grid gap-5 lg:grid-cols-3">
-          {
-            PLANS.map((plan) => (
-              <div
-                data-reveal
-                data-reveal-item
-                data-spotlight
-                data-lift
-                class={`spotlight relative flex flex-col overflow-hidden rounded-2xl border p-8 ${
-                  plan.featured ? 'border-battle bg-coal lg:scale-[1.03]' : 'border-iron bg-coal hover:border-battle/40'
-                }`}
-                data-glow={plan.featured ? '' : undefined}
-              >
-                {plan.featured && (
-                  <>
-                    <div class="bg-hazard absolute inset-x-0 top-0 h-2 opacity-80" />
-                    <span class="absolute right-5 top-5 rounded-full bg-battle px-3 py-1 font-head text-[0.625rem] font-bold uppercase tracking-[0.2em] text-ink">
-                      Most Popular
-                    </span>
-                  </>
-                )}
+        {/* jump to a membership type */}
+        {
+          GROUPS.length > 1 && (
+            <nav aria-label="Membership types" class="mt-12 flex flex-wrap justify-center gap-2">
+              {GROUPS.map((g) => (
+                <a
+                  href={`#plans-${g.id}`}
+                  class="inline-flex items-center gap-2 rounded-full border border-iron bg-coal px-4 py-2 font-head text-sm font-medium text-fog transition-colors hover:border-battle hover:text-battle"
+                >
+                  {g.label}
+                  <span class="text-xs tabular-nums opacity-60">{g.plans.length}</span>
+                </a>
+              ))}
+            </nav>
+          )
+        }
 
-                <h3 class="font-head text-xl font-semibold uppercase tracking-wide text-chalk">{plan.name}</h3>
-                <div class="mt-4 flex flex-wrap items-end gap-x-2">
-                  <span class="font-display text-5xl text-battle">{plan.price}</span>
-                  <span class="mb-1.5 text-sm text-smoke">{plan.period}</span>
+        {
+          GROUPS.map((g) => (
+            <section id={`plans-${g.id}`} aria-labelledby={`plans-${g.id}-title`} class="mt-16">
+              <div class="flex flex-wrap items-end justify-between gap-x-6 gap-y-1 border-b border-iron pb-4">
+                <div>
+                  <h3 id={`plans-${g.id}-title`} class="font-display text-4xl leading-none text-chalk">
+                    {g.label}
+                  </h3>
+                  <p class="mt-2 text-sm text-fog">{g.blurb}</p>
                 </div>
-                <p class="mt-4 text-sm leading-relaxed text-fog">{plan.desc}</p>
-
-                <ul class="mt-6 space-y-3">
-                  {(plan.perks || []).map((perk, pi) => (
-                    <li
-                      data-reveal="perk"
-                      style={`--reveal-delay: ${(0.1 + pi * 0.08).toFixed(2)}s`}
-                      class="flex items-center gap-3 text-sm text-fog"
-                    >
-                      <span class="flex h-5 w-5 items-center justify-center rounded-full bg-battle/15 text-battle">
-                        <FaCheck aria-hidden="true" size={10} />
-                      </span>
-                      {perk}
-                    </li>
-                  ))}
-                </ul>
-
-                <div class="mt-8 pt-2">
-                  <CTAButton
-                    href="#join"
-                    full
-                    variant={plan.featured ? 'primary' : 'ghost'}
-                    magnetic={false}
-                    data-select-plan
-                    data-plan-src={packageSrc(plan)}
-                    data-plan-name={plan.name}
-                  >
-                    {plan.cta}
-                    <span class="sr-only">{`: ${plan.name}`}</span>
-                  </CTAButton>
-                </div>
+                <span class="font-head text-xs tracking-wide text-smoke">
+                  {g.plans.length === 1 ? '1 plan' : `${g.plans.length} plans`}
+                </span>
               </div>
-            ))
-          }
-        </div>
+              <div
+                data-reveal-group
+                class={`mt-6 grid gap-5 ${g.id === 'trial' ? '' : gridOf(g.plans.length)}`}
+              >
+                {g.plans.map((plan) => (
+                  <PlanCard plan={plan} src={packageSrc(plan)} wide={g.id === 'trial'} />
+                ))}
+              </div>
+            </section>
+          ))
+        }
       </div>
     </section>
 
