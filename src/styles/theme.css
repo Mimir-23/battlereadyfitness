@@ -329,6 +329,30 @@ html.lenis body {
     0 24px 70px -28px rgba(255, 210, 0, 0.5);
 }
 
+/* Ambient yellow glow behind sections. It used to be a disc with
+   `filter: blur(140px)`: Safari (iPhone, iPad and Mac) re-renders filters
+   that big while scrolling, which froze the page for 100+ ms at a time,
+   while Chrome/Android coped. A radial gradient with the blurred disc's
+   falloff looks the same and costs nothing to paint. `scale` widens it to
+   the size the blur spread over; it never adds scroll width because every
+   orb sits inside a section with overflow hidden. */
+.glow-orb {
+  --orb: 10%;
+  pointer-events: none;
+  border-radius: 9999px;
+  scale: 2.2;
+  background: radial-gradient(
+    circle closest-side,
+    color-mix(in srgb, var(--color-battle) calc(var(--orb) * 0.68), transparent) 0%,
+    color-mix(in srgb, var(--color-battle) calc(var(--orb) * 0.45), transparent) 45%,
+    color-mix(in srgb, var(--color-battle) calc(var(--orb) * 0.17), transparent) 75%,
+    transparent 100%
+  );
+}
+.glow-orb-strong {
+  --orb: 15%;
+}
+
 /* Film-grain overlay for cinematic depth (fixed, non-interactive).
    `mix-blend-mode` over a full-screen fixed layer is brutal on mobile GPUs
    (forces a full-viewport recomposite every paint → freezes), so it's

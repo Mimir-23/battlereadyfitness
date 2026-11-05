@@ -53,7 +53,7 @@ const many = items.length > 1
       />
 
       <div data-parallax="70,-70" class="pointer-events-none absolute -left-40 top-1/4">
-        <div class="h-[420px] w-[420px] rounded-full bg-battle/10 blur-[140px]" />
+        <div class="h-[420px] w-[420px] glow-orb" />
       </div>
 
       <div class="relative mx-auto max-w-7xl px-5 lg:px-8">
@@ -175,11 +175,11 @@ const many = items.length > 1
         role="dialog"
         aria-modal="true"
         aria-label="Coach profile"
-        class="fixed inset-0 z-[100] bg-ink/95 backdrop-blur-md"
+        class="fixed inset-0 z-[100] bg-ink/95"
       >
         {/* ring atmosphere */}
         <div class="pointer-events-none absolute inset-0 bg-grid opacity-30" />
-        <div class="pointer-events-none absolute left-1/2 top-1/3 h-[520px] w-[520px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-battle/10 blur-[150px]" />
+        <div class="pointer-events-none absolute left-1/2 top-1/3 h-[520px] w-[520px] -translate-x-1/2 -translate-y-1/2 glow-orb" />
         <div class="bg-hazard pointer-events-none absolute inset-x-0 top-0 h-1.5 opacity-70" />
         <EmberField count={12} />
 
@@ -215,7 +215,7 @@ const many = items.length > 1
 
         {/* The dialog's own scroll. m-auto (not justify-center) so short
             screens scroll without clipping the top. Lenis lets the wheel through. */}
-        <div data-lenis-prevent class="relative z-10 h-full overflow-y-auto overscroll-contain">
+        <div data-lenis-prevent class="relative z-10 h-full overflow-y-auto overflow-x-hidden overscroll-contain">
           <div class="flex min-h-full">
             <div data-dialog-content class="m-auto w-full max-w-6xl px-5 py-16 sm:px-12 lg:px-16">
               {items.map((coach, index) => {
@@ -231,7 +231,7 @@ const many = items.length > 1
                   >
                     {/* ---------- cut-out portrait ---------- */}
                     <div class="relative order-1 mx-auto w-full max-w-sm lg:max-w-none">
-                      <div class="pointer-events-none absolute left-1/2 top-1/2 h-[82%] w-[82%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-battle/15 blur-[100px]" />
+                      <div class="pointer-events-none absolute left-1/2 top-1/2 h-[82%] w-[82%] -translate-x-1/2 -translate-y-1/2 glow-orb glow-orb-strong" />
 
                       {/* giant alias behind the portrait */}
                       <div class="pointer-events-none absolute inset-x-0 -top-6 z-0 overflow-hidden text-center">
