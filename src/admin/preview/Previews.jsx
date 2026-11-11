@@ -622,7 +622,11 @@ function LegalPreview({ d }) {
               </div>
               <div className="mt-2 space-y-2 text-[0.6875rem] leading-relaxed text-fog">
                 {parseLegalBody(s.body).map((b, j) =>
-                  b.type === 'ul' ? (
+                  b.type === 'h' ? (
+                    <div key={j} className="pt-1 font-head text-xs font-semibold uppercase tracking-wider text-chalk">
+                      {b.text}
+                    </div>
+                  ) : b.type === 'ul' ? (
                     <ul key={j} className="list-disc space-y-1 pl-4 marker:text-battle">
                       {b.items.map((it, k) => (
                         <li key={k}>{it}</li>

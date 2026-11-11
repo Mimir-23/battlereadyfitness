@@ -1,5 +1,6 @@
 /* Turns the plain text the admin writes into blocks: a blank line separates
-   paragraphs and consecutive lines starting with "- " become a list. Shared
+   paragraphs, consecutive lines starting with "- " become a list and a line
+   starting with "## " is a subheading inside the section. Shared
    by the /terms page and its live preview in the panel. */
 export function parseLegalBody(text = '') {
   const blocks = []
@@ -15,7 +16,10 @@ export function parseLegalBody(text = '') {
       list = []
     }
     for (const line of lines) {
-      if (/^[-•*]\s+/.test(line)) {
+      if (/^#{2,}\s+/.test(line)) {
+        flush()
+        blocks.push({ type: 'h', text: line.replace(/^#{2,}\s+/, '') })
+      } else if (/^[-•*]\s+/.test(line)) {
         if (para.length) {
           blocks.push({ type: 'p', text: para.join(' ') })
           para = []
