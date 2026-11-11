@@ -77,7 +77,9 @@ const pad = (n) => String(n).padStart(2, '0')
               </h2>
               <div class="mt-4 max-w-3xl space-y-4 leading-relaxed text-fog">
                 {s.blocks.map((b) =>
-                  b.type === 'ul' ? (
+                  b.type === 'h' ? (
+                    <h3 class="pt-2 font-head text-base font-semibold uppercase tracking-wider text-chalk">{b.text}</h3>
+                  ) : b.type === 'ul' ? (
                     <ul class="space-y-2">
                       {b.items.map((item) => (
                         <li class="flex gap-3">
